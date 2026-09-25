@@ -6,8 +6,9 @@
  * adding a site later is just dropping the files in /public and listing them.
  *
  * The current entries are stand-ins from past work: the swim-school site for
- * Professional Services and the student consulting group for Marketing &
- * Creative Agency. Swap them freely.
+ * Professional Services, the student consulting group for Marketing &
+ * Creative Agency, and the St. Carlo Acutis foundation site for Nonprofit.
+ * Swap them freely.
  */
 export type ShowcaseMedia = {
   /** Path under /public, e.g. "/seabassaq1.mp4". */
@@ -22,5 +23,9 @@ export const businessShowcase: Record<string, ShowcaseMedia> = {
   },
   "marketing-agency": {
     desktop: "/lmuccg9.mp4",
+  },
+  nonprofit: {
+    desktop: "/carlo2.mp4",
+    mobile: "/carlomobile.mp4",
   },
 };

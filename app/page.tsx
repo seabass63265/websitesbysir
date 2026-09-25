@@ -4,6 +4,7 @@ import BusinessShowcase from "@/app/components/marketing/BusinessShowcase";
 import ServicesList from "@/app/components/marketing/ServicesList";
 import WorkGrid from "@/app/components/marketing/WorkGrid";
 import LanguageToast from "@/app/components/marketing/LanguageToast";
+import SiteFooter from "@/app/components/marketing/SiteFooter";
 import ClosingCta from "@/app/components/marketing/ClosingCta";
 
 export default function Home() {
@@ -17,6 +18,7 @@ export default function Home() {
         <ServicesList />
         <ClosingCta />
       </main>
+      <SiteFooter />
       <LanguageToast />
     </>
   );

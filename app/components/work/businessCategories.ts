@@ -22,5 +22,5 @@ export const businessCategories: BusinessCategory[] = [
   { number: "09", slug: "event-planner", label: "Event Planner / Event Services" },
   { number: "10", slug: "tattoo-shop", label: "Tattoo Shop / Tattoo Artist" },
   { number: "11", slug: "marketing-agency", label: "Marketing & Creative Agency" },
-  { number: "12", slug: "interior-design", label: "Interior Design" },
+  { number: "12", slug: "nonprofit", label: "Nonprofit" },
 ];

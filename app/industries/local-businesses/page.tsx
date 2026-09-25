@@ -14,7 +14,7 @@ import IntakeSection from "@/app/components/contact/IntakeSection";
 export const metadata: Metadata = {
   title: "SIR_ Websites | Local Businesses",
   description:
-    "Custom website design and development for local businesses — food and restaurants, barber and beauty, home services, professional services, retail, pet shops, repair, artists and performers, event planners, tattoo shops, marketing agencies, interior design, and more. Built directly with Sebastian Rocha in Los Angeles.",
+    "Custom website design and development for local businesses — food and restaurants, barber and beauty, home services, professional services, retail, pet shops, repair, artists and performers, event planners, tattoo shops, marketing agencies, nonprofits, and more. Built directly with Sebastian Rocha in Los Angeles.",
 };
 
 // Placeholders for the intake's "what type of business do you own?" question.
@@ -31,7 +31,7 @@ const businessExamples = [
   "e.g. I am an event planner and want a portfolio of past events and a simple way for clients to request a consultation.",
   "e.g. I am a tattoo artist and want a gallery of my work, my style, and a way for clients to request a booking.",
   "e.g. I run a small marketing agency and need a site that presents our services, case studies, and a contact form.",
-  "e.g. I am an interior designer and want to showcase completed projects and let new clients start a conversation.",
+  "e.g. I run a nonprofit and want a website that shares our mission, takes donations, and lets volunteers get involved.",
   "e.g. I own a retail shop and want customers to browse what we carry, find our location, and see our hours.",
 ];
 
@@ -66,7 +66,7 @@ export default function LocalBusinessesPage() {
               label: "I run a restaurant or café",
               href: "/industries/restaurants-and-cafes",
             }}
-            businessTypeHint={"Describe your business, the services you offer, and how you work with your customers in a few words.\n\n(barber or beauty, home services, professional services, retail, pet shop, repair, artist or performer, event planner, tattoo shop, marketing agency, interior design, or something else.)"}
+            businessTypeHint={"Describe your business, the services you offer, and how you work with your customers in a few words.\n\n(barber or beauty, home services, professional services, retail, pet shop, repair, artist or performer, event planner, tattoo shop, marketing agency, nonprofit, or something else.)"}
           />
         </NumberedSection>
       </main>

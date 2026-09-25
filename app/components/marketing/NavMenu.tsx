@@ -10,7 +10,7 @@ type SecondaryLink = { label: string; href: string };
 
 const defaultPrimaryLinks: PrimaryLink[] = [
   { num: "I", label: "Home", href: "/", offset: true },
-  { num: "II", label: "Work", href: "#work", offset: false },
+  { num: "II", label: "Works", href: "/work", offset: false },
   { num: "III", label: "Why SIR_", href: "/why-sir", offset: true },
   { num: "IV", label: "Contact", href: "/contact", offset: false },
 ];
