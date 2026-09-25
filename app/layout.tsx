@@ -69,15 +69,15 @@ export const metadata: Metadata = {
     images: [
       {
         url: "/og-image.jpg",
-        width: 1200,
-        height: 630,
-        alt: "SIR_ — Websites for business. Los Angeles, CA.",
+        width: 1600,
+        height: 900,
+        alt: "SIR_ — All businesses. All budgets. Seriously_",
       },
     ],
     videos: [
       {
         // Not resolved against metadataBase automatically, so made absolute here.
-        url: new URL("/textpre.mp4", siteUrl).toString(),
+        url: new URL("/textpre0.mp4", siteUrl).toString(),
         width: 1920,
         height: 1080,
         type: "video/mp4",
