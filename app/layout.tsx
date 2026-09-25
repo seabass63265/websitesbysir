@@ -59,7 +59,7 @@ export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
   title: siteTitle,
   description: siteDescription,
-  // Link preview (texts, chat apps, social): the reel, with a still of it for
+  // Link preview (texts, chat apps, social): the homepage video, with a still of it for
   // apps that only show an image.
   openGraph: {
     type: "website",
@@ -71,15 +71,15 @@ export const metadata: Metadata = {
         url: "/og-image.jpg",
         width: 1200,
         height: 630,
-        alt: "SIR_ — Something else? Let's build it.",
+        alt: "SIR_ — Websites for business. Los Angeles, CA.",
       },
     ],
     videos: [
       {
         // Not resolved against metadataBase automatically, so made absolute here.
-        url: new URL("/sir-reel-loop-16x9-30fps.mp4", siteUrl).toString(),
-        width: 2560,
-        height: 1440,
+        url: new URL("/textpre.mp4", siteUrl).toString(),
+        width: 1920,
+        height: 1080,
         type: "video/mp4",
       },
     ],
