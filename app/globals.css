@@ -1,0 +1,4783 @@
+@import "tailwindcss";
+
+/*
+ * Design tokens — Tailwind CSS v4 CSS-first config (no tailwind.config.js).
+ * Values in `@theme` are emitted as CSS custom properties and generate matching
+ * utilities. The SIR_ Websites landing design is a single committed look
+ * (white ground, navy ink), so there is no dark-mode variant.
+ */
+@theme {
+  --color-brand: #003153;
+  --color-bg: #ffffff;
+
+  /* Fonts come from next/font/google (Space Mono) via the --font-space-mono
+     variable set on <html> in layout.tsx. */
+  --font-sans: var(--font-space-mono), "Space Mono", ui-monospace, monospace;
+  --font-mono: var(--font-space-mono), "Space Mono", ui-monospace, monospace;
+
+  /* WhyWorkWithMe.tsx — scan line, pulsing eyebrow dot, flowing hover glow. */
+  --animate-scan: why-scan 8s linear infinite;
+  --animate-pulse-slow: why-pulse-slow 4s infinite ease-in-out;
+  --animate-flow-down: why-flow-down 2s linear infinite;
+}
+
+/* Deliberately unlayered (not wrapped in `@layer base`): this file defines
+   its own design-system class names — `.text-lg`, `.text-sm`, `.text-xs`,
+   `.border-b`, `.border-t`, `.border-l`, `.border-r` — that happen to
+   share names with real Tailwind utilities. Unlayered CSS always beats
+   Tailwind's layered utilities regardless of specificity, which is what
+   we want: every existing use of `.text-lg` etc. across the site must
+   keep meaning "this design system's size/border", not Tailwind's.
+   (`@layer base` was tried here once — it made Tailwind's own `.text-lg`
+   etc. win everywhere, sitewide, since CSS layers aren't scoped per
+   component. If a future component needs real Tailwind utilities of these
+   exact names, give it arbitrary-value classes instead, e.g. `text-[1.125rem]`
+   or `border-b-[1px]`, rather than re-layering this file.) */
+:root {
+  --brand: var(--color-brand);
+  --bg: var(--color-bg);
+  --border: 1px solid var(--brand);
+  --pad: 2rem;
+  --font-main: var(--font-sans);
+  /* Sticky header's actual rendered height (2x --pad + one text-sm line +
+     its 1px bottom border) — used to size "fills exactly one screen"
+     sections below it so `100vh` doesn't quietly overflow the fold by
+     the header's own height. */
+  --header-height: 86px;
+}
+
+/* Wrapped in Tailwind's `base` layer (rather than left unlayered, unlike
+   the rest of this file — see the note above) so Tailwind's margin/padding
+   utilities (p-*, m-*, mx-auto, etc.), which live in the higher-priority
+   `utilities` layer, can still override this reset. Left unlayered, this
+   universal selector would silently zero out every such utility sitewide.
+   Scoping the layer to just this rule (rather than the whole file) keeps
+   the fix targeted: it can't touch named classes like `.text-lg`, since
+   those aren't going through this selector at all. */
+@layer base {
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+}
+
+body {
+  background-color: var(--bg);
+  color: var(--brand);
+  font-family: var(--font-main);
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+  line-height: 1.4;
+}
+
+h1,
+h2,
+h3,
+h4 {
+  font-weight: 700;
+  letter-spacing: -0.05em;
+}
+
+.text-huge {
+  font-size: clamp(3rem, 8vw, 10rem);
+  line-height: 0.9;
+  text-transform: uppercase;
+}
+.text-lg {
+  font-size: clamp(1.5rem, 3vw, 3rem);
+  letter-spacing: -0.02em;
+}
+.text-md {
+  font-size: 1.25rem;
+}
+.text-sm {
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  font-weight: 700;
+}
+.text-xs {
+  font-size: 0.75rem;
+}
+
+.grid-container {
+  display: grid;
+  /* minmax(0, 1fr), not bare 1fr: a bare `1fr` track's automatic minimum
+     size is content-based, so a section whose content is wide (even only
+     intrinsically, e.g. the circular gallery's absolutely-positioned ring)
+     can force the track — and the whole page — wider than the viewport.
+     The explicit 0 minimum stops that; the track (and every section in it)
+     is always exactly the container's width. */
+  grid-template-columns: minmax(0, 1fr);
+  width: 100%;
+}
+
+.border-b {
+  border-bottom: var(--border);
+}
+.border-t {
+  border-top: var(--border);
+}
+.border-r {
+  border-right: var(--border);
+}
+.border-l {
+  border-left: var(--border);
+}
+
+.pad-global {
+  padding: var(--pad);
+}
+.pad-y {
+  padding-top: var(--pad);
+  padding-bottom: var(--pad);
+}
+.pad-x {
+  padding-left: var(--pad);
+  padding-right: var(--pad);
+}
+
+header {
+  position: sticky;
+  top: 0;
+  background-color: var(--bg);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  z-index: 100;
+}
+
+/* Every in-page anchor target (nav links, "skip to" links) lands with its
+   top clear of the sticky header instead of tucked underneath it. */
+[id] {
+  scroll-margin-top: var(--header-height);
+}
+
+.site-header__tagline {
+  font-family: var(--font-knewave), system-ui, sans-serif;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  font-size: clamp(0.625rem, 1.2vw, 0.875rem);
+  font-weight: 400;
+  line-height: 1.3;
+  text-align: center;
+  white-space: nowrap;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+/* ============================================================
+   Circular image gallery — ported from CircularGallery.tsx /
+   the standalone circular-image-gallery/ demo. A GSAP-driven ring
+   of photos that idles, spins on scroll, and dims on hover.
+   ============================================================ */
+.circular-gallery {
+  background-color: var(--bg);
+  overflow: hidden;
+}
+
+.circular-gallery__field {
+  position: relative;
+  width: 100%;
+  height: 100vh;
+  min-height: 720px;
+  overflow: hidden;
+}
+
+.circular-gallery__logo {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--brand);
+  text-align: center;
+}
+
+.circular-gallery__wordmark {
+  font-size: 1.75rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  white-space: nowrap;
+}
+
+.circular-gallery__tagline {
+  font-size: 0.85rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  opacity: 0.7;
+  white-space: nowrap;
+}
+
+/* Homepage hero — headline/intro set centered in the gallery ring instead
+   of the wordmark/tagline. Sized well below `.text-huge`/`.text-md` since
+   this has to clear the orbiting images instead of spanning the page. */
+.circular-gallery__hero-heading {
+  font-size: clamp(1.75rem, 3.6vw, 3.25rem);
+  font-weight: 700;
+  line-height: 0.95;
+  letter-spacing: -0.03em;
+  text-transform: uppercase;
+}
+
+.circular-gallery__hero-text {
+  color: var(--brand);
+  font-family: var(--font-main);
+  font-weight: 400;
+  font-size: 1rem;
+  line-height: 1.4;
+  max-width: 380px;
+  white-space: normal;
+  margin-top: 0.5rem;
+}
+
+.circular-gallery__hero-location {
+  color: var(--brand);
+  font-family: var(--font-main);
+  font-weight: 400;
+  font-size: 0.85rem;
+  opacity: 0.7;
+}
+
+/* Sits in the same centered flex column as the rest of the hero text
+   (`.circular-gallery__logo`), directly under `.circular-gallery__hero-location`
+   — no absolute positioning, so it just follows the location line.
+   Selector doubled up as `.btn-pill.circular-gallery__hero-cta` (specificity
+   0,2,0) since `.btn-pill` alone (0,1,0) is defined later in this file and
+   would otherwise win on source order despite equal specificity, silently
+   overriding this button's padding/font-size — including the mobile
+   override below. */
+.btn-pill.circular-gallery__hero-cta {
+  margin-top: 0.75rem;
+  padding: 0.6rem 1.5rem;
+  font-size: 0.8rem;
+}
+
+@media (max-width: 900px) {
+  .circular-gallery__hero-heading {
+    font-size: clamp(1.1rem, 5vw, 1.6rem);
+  }
+  .circular-gallery__hero-text {
+    font-size: 0.75rem;
+    max-width: 220px;
+  }
+  .circular-gallery__hero-location {
+    font-size: 0.7rem;
+  }
+  .btn-pill.circular-gallery__hero-cta {
+    margin-top: 0.5rem;
+    padding: 0.3rem 0.75rem;
+    font-size: 0.65rem;
+    white-space: nowrap;
+    gap: 0.4rem;
+  }
+}
+
+.circular-gallery__cta {
+  position: absolute;
+  right: 3rem;
+  bottom: 3rem;
+  z-index: 20;
+  background-color: var(--bg);
+}
+
+.circular-gallery__item {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 220px;
+  height: 150px;
+  margin-left: -110px;
+  margin-top: -75px;
+  will-change: transform;
+}
+
+.circular-gallery__frame {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  border-radius: 0.25rem;
+}
+
+.circular-gallery__frame video {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+@media (max-width: 900px) {
+  .circular-gallery__field {
+    height: 80vh;
+    min-height: 560px;
+  }
+  .circular-gallery__item {
+    width: 150px;
+    height: 100px;
+    margin-left: -75px;
+    margin-top: -50px;
+  }
+
+  /* "View All Work" sits centered directly under the wordmark/tagline block
+     (which is centered in the field) instead of the bottom-right corner. */
+  .btn-pill.circular-gallery__cta {
+    right: auto;
+    bottom: auto;
+    left: 50%;
+    top: calc(50% + 3.4rem);
+    transform: translateX(-50%);
+    padding: 0.5rem 1.1rem;
+    font-size: 0.7rem;
+    white-space: nowrap;
+    background: var(--bg);
+  }
+  .btn-pill.circular-gallery__cta:hover {
+    background: var(--brand);
+  }
+
+  /* The ring's oval math falls apart on short/narrow mobile viewports —
+     frames overlap into a striped mess. Local Businesses hero opts out of
+     the whole section there rather than ship it broken. */
+  .circular-gallery--hide-mobile {
+    display: none;
+  }
+}
+
+/* ---- /work — category switch: old slider fades out, new one fades in ---- */
+.work-stage {
+  opacity: 1;
+  transition: opacity 0.35s ease;
+}
+.work-stage.is-entering {
+  animation: work-stage-in 0.9s ease both;
+}
+.work-stage.is-leaving {
+  opacity: 0;
+  animation: none;
+}
+@keyframes work-stage-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .work-stage,
+  .work-stage.is-entering {
+    transition: none;
+    animation: none;
+  }
+}
+
+/* ---- /work — infinite vertical slider (WorkSlider.tsx) ---- */
+.work-slider {
+  position: relative;
+  width: 100%;
+  height: calc(100vh - var(--header-height));
+  min-height: 640px;
+  overflow: hidden;
+  background-color: var(--bg);
+}
+
+.work-slider__canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.work-slider__info {
+  position: absolute;
+  top: calc(50% + 4.5rem);
+  left: 0;
+  transform: translateY(-50%);
+  width: 100%;
+  padding: 0 2rem;
+  display: flex;
+  justify-content: space-between;
+  color: var(--brand);
+  z-index: 2;
+  pointer-events: none;
+}
+
+.work-slider__title,
+.work-slider__count {
+  font-family: var(--font-main);
+  font-weight: 700;
+  font-size: clamp(1.1rem, 2vw, 1.75rem);
+}
+
+@media (max-width: 900px) {
+  /* The name overlay is wide enough to block a chunk of the video on
+     narrow screens — mobile keeps just the counter, right-aligned where
+     it already sat, and drops the name entirely. Given a solid background
+     so it reads clearly over any video frame underneath, at the cost of
+     covering a small corner of it. The "◀ select" tag is dropped too —
+     it has nowhere to float clear of the page content underneath. */
+  .work-slider__title {
+    display: none;
+  }
+
+  .work-slider__info {
+    justify-content: flex-end;
+  }
+
+  .work-slider__count {
+    background-color: var(--brand);
+    color: var(--bg);
+    padding: 0.3rem 0.6rem;
+  }
+
+  .work-slider__selection {
+    display: none;
+  }
+}
+
+.work-slider__selection {
+  position: absolute;
+  z-index: 3;
+  transform: translate(12px, -50%);
+  padding: 0.4rem 0.6rem;
+  border: 1px solid var(--bg);
+  background: var(--brand);
+  color: var(--bg);
+  font-family: var(--font-main);
+  font-size: clamp(0.6rem, 1vw, 0.75rem);
+  font-weight: 700;
+  text-transform: uppercase;
+  white-space: nowrap;
+  pointer-events: none;
+}
+
+.work-slider__selection::before {
+  content: "◀";
+  margin-right: 0.4rem;
+}
+
+/* /work — placeholder box for a category with no reference demo ported
+   in yet. Reuses the blueprint field background used elsewhere. */
+.category-placeholder {
+  min-height: 420px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.category-placeholder__label {
+  padding: 0.5rem 1rem;
+  background-color: var(--bg);
+  border: var(--border);
+}
+
+/* /work — filter bar above a category's demo (e.g. Sliders' collection
+   picker). Sits on the section's normal (non-inverted) white background. */
+.filter-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.filter-tag {
+  appearance: none;
+  background: none;
+  color: inherit;
+  cursor: pointer;
+  transition: background-color 0.2s ease, color 0.2s ease;
+  font-family: inherit;
+}
+
+.filter-tag.is-selected {
+  background-color: var(--brand);
+  color: var(--bg);
+}
+
+/* /work — floats a filter bar directly over its content pane (the slider,
+   the circular gallery, or a placeholder) instead of sitting above it in
+   its own white strip. The translucent dark scrim reads on light or dark
+   content alike, same idea as the slider's own title/counter overlay. */
+.work-showcase {
+  position: relative;
+  min-height: calc(100vh - var(--header-height));
+}
+
+.demo-filter-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 20;
+  max-width: 420px;
+  padding: 1.5rem;
+  background-color: var(--bg);
+  border-bottom: var(--border);
+  border-right: var(--border);
+}
+
+.demo-filter-overlay .filter-bar {
+  gap: 0.5rem;
+}
+
+.demo-filter-toggle {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 0.25rem;
+  margin-bottom: 1rem;
+}
+
+.demo-filter-overlay--bottom-right {
+  top: auto;
+  bottom: 0;
+  left: auto;
+  right: 0;
+  border-bottom: none;
+  border-right: none;
+  border-left: var(--border);
+  border-top: var(--border);
+}
+
+.demo-filter-overlay__toggle {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  width: 100%;
+  appearance: none;
+  background: none;
+  border: none;
+  padding: 0;
+  font-family: inherit;
+  color: inherit;
+  cursor: pointer;
+  text-align: left;
+}
+
+.demo-filter-overlay__label {
+  opacity: 0.7;
+  white-space: nowrap;
+}
+
+.demo-filter-overlay__current {
+  display: block;
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  opacity: 0.55;
+}
+
+.demo-filter-overlay__chevron {
+  display: inline-flex;
+  flex-shrink: 0;
+  transition: transform 0.25s ease;
+}
+
+.demo-filter-overlay.is-open .demo-filter-overlay__chevron {
+  transform: rotate(180deg);
+}
+
+/* Collapsed by default — the panel is a single compact bar ("Browse By ·
+   current selection ⌄") instead of the full toggle + 14-tag grid eating
+   the corner. Clicking it expands a smooth height-animated dropdown;
+   picking a tag closes it again. Same behavior at every screen size. */
+.demo-filter-overlay__body {
+  display: grid;
+  grid-template-rows: 0fr;
+  margin-top: 0;
+  transition: grid-template-rows 0.3s ease, margin-top 0.3s ease;
+}
+
+.demo-filter-overlay.is-open .demo-filter-overlay__body {
+  grid-template-rows: 1fr;
+  margin-top: 0.75rem;
+}
+
+.demo-filter-overlay__body-inner {
+  overflow: hidden;
+  min-height: 0;
+}
+
+.demo-filter-overlay .filter-tag {
+  padding: 0.25rem 0.6rem;
+  font-size: 0.7rem;
+}
+
+@media (max-width: 900px) {
+  .demo-filter-overlay {
+    max-width: 100%;
+    padding: 1rem 1.25rem;
+  }
+
+  .demo-filter-overlay--bottom-right {
+    display: none;
+  }
+}
+
+/* ============================================================
+   Intro loader — ported from reference/. Fixed full-screen splash
+   that draws in, holds, then slides up to reveal the page beneath.
+   ============================================================ */
+.loader-screen {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: var(--bg);
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-image: linear-gradient(rgba(0, 49, 83, 0.1) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 49, 83, 0.1) 1px, transparent 1px);
+  background-size: 20px 20px;
+  animation: slideUp 0.72s cubic-bezier(0.77, 0, 0.175, 1) 1.45s forwards;
+}
+
+.loader-graphic {
+  position: relative;
+  width: 40vh;
+  height: 40vh;
+  max-width: 400px;
+  max-height: 400px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.loader-circle {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  position: absolute;
+}
+
+.loader-circle svg {
+  width: 100%;
+  height: 100%;
+  transform: rotate(-90deg);
+}
+
+.loader-circle circle {
+  fill: none;
+  stroke: var(--brand);
+  stroke-width: 2;
+  stroke-dasharray: 4 8;
+  stroke-dashoffset: 1000;
+  animation: drawCircle 0.98s ease-in-out forwards;
+}
+
+.loader-lines {
+  position: absolute;
+  width: 140%;
+  height: 140%;
+}
+
+.loader-line-h {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  width: 0;
+  height: 1px;
+  background: var(--brand);
+  animation: drawLineH 0.55s ease-out 0.72s forwards;
+}
+
+.loader-line-v {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  width: 1px;
+  height: 0;
+  background: var(--brand);
+  animation: drawLineV 0.55s ease-out 0.72s forwards;
+}
+
+.loader-text {
+  position: absolute;
+  bottom: 2rem;
+  right: 2rem;
+  animation: fadeOut 0.65s ease-out 1.4s forwards;
+}
+
+@keyframes drawCircle {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes drawLineH {
+  to {
+    width: 100%;
+  }
+}
+
+@keyframes drawLineV {
+  to {
+    height: 100%;
+  }
+}
+
+@keyframes fadeOut {
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes slideUp {
+  to {
+    transform: translateY(-100%);
+  }
+}
+
+/* ============================================================
+   Page wipe — click-triggered transition. Same panel as the
+   intro loader, but travels downward: it enters from above to
+   cover the page, the route swaps while it's hidden, then it
+   keeps sliding down to reveal the new page. Driven by
+   PageTransitionProvider / <TransitionLink>.
+   ============================================================ */
+.page-wipe {
+  position: fixed;
+  inset: 0;
+  z-index: 9998;
+  transform: translateY(-100%);
+  background-color: var(--bg);
+  background-image: linear-gradient(rgba(0, 49, 83, 0.1) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 49, 83, 0.1) 1px, transparent 1px);
+  background-size: 20px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+}
+
+.page-wipe.is-covering {
+  transform: translateY(0);
+  transition: transform 0.34s cubic-bezier(0.77, 0, 0.175, 1);
+  pointer-events: auto;
+}
+
+.page-wipe.is-revealing {
+  transform: translateY(100%);
+  transition: transform 0.34s cubic-bezier(0.77, 0, 0.175, 1);
+}
+
+/* Draw the graphic faster than the intro loader so it lands within the wipe. */
+.page-wipe .loader-circle circle {
+  animation-duration: 0.31s;
+}
+.page-wipe .loader-line-h,
+.page-wipe .loader-line-v {
+  animation-delay: 0.05s;
+  animation-duration: 0.22s;
+}
+.page-wipe .loader-text {
+  animation: none;
+  opacity: 1;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .page-wipe.is-covering,
+  .page-wipe.is-revealing {
+    transition-duration: 0.01s;
+  }
+}
+
+.list-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  padding: 1.5rem 0;
+  transition: background-color 0.2s;
+  cursor: crosshair;
+}
+
+.list-row:hover {
+  background-color: var(--brand);
+  color: var(--bg);
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+
+.list-row:hover .pill-tag {
+  border-color: var(--bg);
+  color: var(--bg);
+}
+
+/* "Restaurant Website Pages" list — larger title + body copy than the
+   default list-row (which is sized for a short label, not a sentence). */
+.page-list__title {
+  font-size: clamp(1.75rem, 3.5vw, 3.5rem);
+}
+
+.page-list__detail {
+  font-size: 1.1rem;
+  line-height: 1.5;
+  max-width: 46rem;
+}
+
+.page-list__plan {
+  flex-shrink: 0;
+  align-self: center;
+  margin-left: 1.5rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.page-list__plan--essential {
+  opacity: 0.6;
+}
+
+.page-list__plan--tailored {
+  background-color: var(--brand);
+  border-color: var(--brand);
+  color: var(--bg);
+}
+
+.list-row:hover .page-list__plan--essential {
+  opacity: 1;
+}
+
+.list-row:hover .page-list__plan--tailored {
+  background-color: var(--bg);
+  color: var(--brand);
+}
+
+
+.pill-tag {
+  border: var(--border);
+  border-radius: 0px;
+  padding: 0.3rem 0.8rem;
+  font-size: 0.75rem;
+  display: inline-block;
+  white-space: nowrap;
+}
+
+.btn-pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: var(--border);
+  border-radius: 0px;
+  padding: 1rem 2rem;
+  background: transparent;
+  color: var(--brand);
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-decoration: none;
+  text-transform: uppercase;
+  font-weight: 700;
+}
+
+.btn-pill:hover {
+  background: var(--brand);
+  color: var(--bg);
+}
+
+.btn-pill.filled {
+  background: var(--brand);
+  color: var(--bg);
+}
+
+.btn-pill.filled:hover {
+  background: transparent;
+  color: var(--brand);
+}
+
+.inverted .btn-pill.filled {
+  background: var(--bg);
+  color: var(--brand);
+}
+
+.inverted .btn-pill.filled:hover {
+  background: transparent;
+  color: var(--bg);
+}
+
+.work-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  border-top: var(--border);
+}
+
+.work-card {
+  display: flex;
+  flex-direction: column;
+  border-right: var(--border);
+  border-bottom: var(--border);
+}
+.work-card:last-child {
+  border-right: none;
+}
+
+.work-card__header {
+  padding: 1rem 1.4rem;
+}
+
+.work-card__title {
+  font-size: 0.95rem;
+  font-weight: 700;
+}
+
+.work-card__tagline {
+  font-size: 0.95rem;
+  text-transform: none;
+  letter-spacing: normal;
+  font-weight: 400;
+  line-height: 1.5;
+  opacity: 0.85;
+}
+
+.work-visual {
+  height: 155px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--bg);
+  border-bottom: var(--border);
+  position: relative;
+  overflow: hidden;
+  background-image: linear-gradient(rgba(0, 49, 83, 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 49, 83, 0.05) 1px, transparent 1px);
+  background-size: 10px 10px;
+}
+
+/* Dense 10px blueprint field for small thumbnails (concept cards etc.) —
+   same pattern as `.work-visual`'s background, factored out for reuse. */
+.grid-bg-dense {
+  background-color: var(--bg);
+  background-image: linear-gradient(rgba(0, 49, 83, 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 49, 83, 0.05) 1px, transparent 1px);
+  background-size: 10px 10px;
+}
+
+.inverted .grid-bg-dense {
+  background-color: var(--brand);
+  background-image: linear-gradient(
+      rgba(255, 255, 255, 0.08) 1px,
+      transparent 1px
+    ),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.08) 1px, transparent 1px);
+}
+
+.abstract-shape {
+  border: 2px solid var(--brand);
+  background: transparent;
+}
+
+.shape-1 {
+  width: 40%;
+  height: 60%;
+  border-radius: 999px;
+}
+.shape-2 {
+  width: 50%;
+  aspect-ratio: 1;
+  border-radius: 0;
+}
+.shape-3 {
+  width: 0;
+  height: 0;
+  border-left: 80px solid transparent;
+  border-right: 80px solid transparent;
+  border-bottom: 140px solid var(--brand);
+  background: none;
+}
+
+.work-details {
+  padding: 1.25rem 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  flex-grow: 1;
+  justify-content: space-between;
+}
+
+.work-details .pill-tag {
+  padding: 0.35rem 0.85rem;
+  font-size: 0.8rem;
+}
+
+.tags {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.inverted {
+  background-color: var(--brand);
+  color: var(--bg);
+  --border: 1px solid var(--bg);
+}
+
+.inverted .pill-tag,
+.inverted .btn-pill {
+  border-color: var(--bg);
+  color: var(--bg);
+}
+
+.inverted .btn-pill:hover {
+  background-color: var(--bg);
+  color: var(--brand);
+}
+
+.inverted .abstract-shape {
+  border-color: var(--bg);
+}
+
+.inverted .shape-3 {
+  border-left-color: transparent;
+  border-right-color: transparent;
+  border-bottom-color: var(--bg);
+}
+
+.inverted .work-visual {
+  background-color: var(--brand);
+  background-image: linear-gradient(rgba(255, 255, 255, 0.12) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.12) 1px, transparent 1px);
+}
+
+/* ============================================================
+   "Why a Website" — WorkGrid.tsx. Constrained rather than full-bleed,
+   so it reads as its own contained block against the page. Blueprint
+   diagrams with pulsing nodes that scale up on card hover; pills
+   invert on hover.
+   ============================================================ */
+/* Full-bleed blueprint field behind the card, edge to edge like every
+   other section; the card itself stays small and centered within it. */
+.work-field {
+  padding: 4rem 1.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2.5rem;
+  justify-content: center;
+  background-image: linear-gradient(rgba(0, 49, 83, 0.08) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 49, 83, 0.08) 1px, transparent 1px);
+  background-size: 24px 24px;
+}
+
+.work-field__title {
+  width: 100%;
+  max-width: 68rem;
+  color: var(--brand);
+  font-size: clamp(1.25rem, 2.4vw, 2rem);
+  font-weight: 700;
+  line-height: 1.35;
+  text-align: center;
+  text-wrap: balance;
+}
+
+.work-field__title span {
+  display: block;
+}
+
+.work-field__title-break {
+  display: none;
+}
+
+@media (max-width: 640px) {
+  .work-field__title-break {
+    display: inline;
+  }
+}
+
+.work-card-frame {
+  width: 100%;
+  max-width: 68rem;
+  border: var(--border);
+  background-color: var(--bg);
+}
+
+.work-card-frame__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1.25rem 1.75rem;
+}
+
+.work-card-frame__label {
+  font-size: 0.95rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+.work-card-frame__header .pill-tag {
+  font-size: 0.8rem;
+  padding: 0.35rem 0.85rem;
+}
+
+.objective-card__number {
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  opacity: 0.7;
+}
+
+.reason-graphic {
+  width: 65%;
+  height: 65%;
+  overflow: visible;
+}
+
+.reason-graphic__static {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.5;
+  vector-effect: non-scaling-stroke;
+  opacity: 0.6;
+}
+
+.reason-graphic__line {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.5;
+  vector-effect: non-scaling-stroke;
+  opacity: 0.8;
+}
+
+.reason-graphic__line--faint {
+  opacity: 0.4;
+}
+
+.reason-graphic__node {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.5;
+  vector-effect: non-scaling-stroke;
+}
+
+.reason-graphic__dot {
+  stroke: none;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .reason-graphic {
+    transition: transform 0.5s ease;
+  }
+  .work-card:hover .reason-graphic {
+    transform: scale(1.05);
+  }
+  .reason-graphic__node {
+    animation: reason-node-pulse 3s ease-in-out infinite;
+  }
+  @keyframes reason-node-pulse {
+    0%,
+    100% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0.5;
+    }
+  }
+}
+
+/* Pills invert (white fill, navy text) on hover, matching the reference. */
+.inverted .work-card .pill-tag:hover {
+  background-color: var(--bg);
+  color: var(--brand);
+}
+
+/* ============================================================
+   "Why Work With Me" — WhyWorkWithMe.tsx. A denser, more ornamented
+   blueprint module (corner brackets, scan line, glow, dashed connector)
+   ported closely from the standalone reference mockup and rebuilt on
+   Tailwind utilities + the site's --brand token instead of the
+   mockup's one-off "navy" color and CDN config. White ground / navy
+   ink, matching the rest of the site.
+   ============================================================ */
+.blueprint-field {
+  background-color: var(--bg);
+  background-image: linear-gradient(rgba(0, 49, 83, 0.07) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 49, 83, 0.07) 1px, transparent 1px);
+  background-size: 30px 30px;
+  background-position: center top;
+}
+
+.blueprint-field--dense {
+  background-image: linear-gradient(rgba(0, 49, 83, 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 49, 83, 0.05) 1px, transparent 1px);
+  background-size: 10px 10px;
+  background-position: center top;
+}
+
+.scan-line {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, rgba(0, 49, 83, 0.9), transparent);
+  box-shadow: 0 0 15px rgba(0, 49, 83, 0.6);
+  z-index: 0;
+  pointer-events: none;
+}
+
+.dashed-flow-y {
+  background-image: linear-gradient(to bottom, rgba(0, 49, 83, 0.5) 50%, transparent 50%);
+  background-size: 2px 12px;
+  background-repeat: repeat-y;
+  background-position: center;
+}
+
+@keyframes why-scan {
+  0% {
+    transform: translateY(-100%);
+    opacity: 0;
+  }
+  10% {
+    opacity: 0.8;
+  }
+  90% {
+    opacity: 0.8;
+  }
+  100% {
+    transform: translateY(100%);
+    opacity: 0;
+  }
+}
+
+@keyframes why-pulse-slow {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.4;
+  }
+}
+
+@keyframes why-flow-down {
+  0% {
+    transform: translateY(-100%);
+  }
+  100% {
+    transform: translateY(100%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .scan-line,
+  .animate-scan,
+  .animate-pulse-slow,
+  .animate-flow-down,
+  .dashed-flow-y {
+    animation: none !important;
+    transition: none !important;
+  }
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.form-group.full {
+  grid-column: 1 / -1;
+}
+
+input,
+select,
+textarea {
+  background: transparent;
+  border: none;
+  border-bottom: var(--border);
+  color: inherit;
+  font-family: inherit;
+  font-size: 1.2rem;
+  padding: 0.5rem 0;
+  outline: none;
+  border-radius: 0;
+}
+
+input::placeholder,
+textarea::placeholder {
+  color: rgba(0, 49, 83, 0.5);
+}
+
+.inverted input::placeholder,
+.inverted textarea::placeholder {
+  color: rgba(255, 255, 255, 0.5);
+}
+
+textarea {
+  resize: vertical;
+  min-height: 100px;
+}
+
+select {
+  appearance: none;
+  cursor: pointer;
+}
+
+.info-block {
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  gap: 2rem;
+  padding: 4rem 0;
+}
+
+/* Build-process flow — "Discover → Blueprint → ... " on desktop,
+   stacked vertically (arrow rotated to point down) on mobile. */
+.build-flow {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-bottom: 3rem;
+}
+
+.build-flow__item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.build-flow__step {
+  border: var(--border);
+  padding: 0.6rem 1.1rem;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  white-space: nowrap;
+}
+
+.build-flow__arrow {
+  font-size: 1.1rem;
+  line-height: 1;
+  opacity: 0.6;
+}
+
+/* Numbered stage labels ("01 — Discover", etc.) below the flow diagram —
+   bumped up from the default text-sm eyebrow size. */
+.build-step__label {
+  font-size: 1.5rem;
+}
+
+@media (max-width: 900px) {
+  .build-flow {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .build-flow__item {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .build-flow__arrow {
+    transform: rotate(90deg);
+    align-self: center;
+    margin: 0.1rem 0;
+  }
+}
+
+/* ============================================================
+   Principles deck — draggable card carousel with an overlapping
+   stack effect (ported from the "overlapping swiper", smooothy).
+   --deck-gap must match measureGap() reads in PrinciplesDeck.tsx.
+   ============================================================ */
+.deck {
+  display: grid;
+  grid-template-columns: 1.5fr 1fr;
+  --deck-gap: 2vw;
+}
+
+.deck-intro {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 1.5rem;
+}
+
+.deck-intro__copy {
+  max-width: 340px;
+  opacity: 0.6;
+}
+
+.deck-viewport {
+  position: relative;
+  overflow: hidden;
+  height: clamp(420px, 46vw, 660px);
+}
+
+.deck-track {
+  display: flex;
+  align-items: center;
+  height: 100%;
+  will-change: transform;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: pan-y;
+  cursor: grab;
+}
+
+.deck-track:active {
+  cursor: grabbing;
+}
+
+.deck-card {
+  position: relative;
+  flex-shrink: 0;
+  width: clamp(240px, 26vw, 420px);
+  height: clamp(320px, 34vw, 560px);
+  padding: 1.75rem;
+  border: 1px solid var(--brand);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  pointer-events: none;
+}
+
+.deck-card + .deck-card {
+  margin-left: var(--deck-gap);
+}
+
+.deck-card--light {
+  background-color: var(--bg);
+  color: var(--brand);
+}
+
+.deck-card--dark {
+  background-color: var(--brand);
+  color: var(--bg);
+}
+
+.deck-card__quote {
+  font-size: clamp(1rem, 1.5vw, 1.35rem);
+  line-height: 1.35;
+  letter-spacing: -0.01em;
+}
+
+.deck-card__cite {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  font-size: 0.8rem;
+}
+
+.deck-card__cite strong {
+  font-weight: 700;
+}
+
+.deck-card__detail {
+  opacity: 0.65;
+}
+
+@media (max-width: 900px) {
+  .work-field {
+    padding: 2rem 1rem;
+  }
+  .work-grid {
+    grid-template-columns: 1fr;
+  }
+  .work-card {
+    border-right: none;
+  }
+  .form-grid {
+    grid-template-columns: 1fr;
+  }
+  .info-block {
+    grid-template-columns: 1fr;
+    padding: 2rem 0;
+  }
+  .deck {
+    grid-template-columns: 1fr;
+    height: auto;
+    min-height: 0;
+    --deck-gap: 5vw;
+  }
+  .deck-intro {
+    border-right: none;
+    border-bottom: var(--border);
+    padding-top: 3rem;
+    padding-bottom: 3rem;
+  }
+  .deck-viewport {
+    height: 78vh;
+    min-height: 440px;
+  }
+  .deck-card {
+    width: 70vw;
+    height: 100%;
+    max-height: 60vh;
+  }
+}
+
+/* ============================================================
+   Navigation — blob toggle, wave overlay, fullscreen menu.
+   Ported from the "Purity of Noise" interaction; the display
+   faces come from next/font/local (--font-display / -italic).
+   ============================================================ */
+.menu-toggle {
+  position: fixed;
+  top: 1rem;
+  right: 2rem;
+  z-index: 140;
+  width: 6.25rem;
+  height: 6.25rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: none;
+  border: 0;
+  padding: 0;
+  cursor: pointer;
+}
+
+/* Two organic blob outlines (pure-CSS morph). They keep their size when the
+   menu opens. The wave is white, so the outline stays brand navy. */
+.menu-toggle__outline {
+  position: absolute;
+  inset: 0;
+  border: 1px solid var(--brand);
+  transition: border-color 500ms cubic-bezier(0.76, 0, 0.24, 1);
+}
+
+.menu-toggle__outline--a {
+  border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%;
+  animation: blobMorph 4s linear infinite;
+}
+
+.menu-toggle__outline--b {
+  border-radius: 53% 47% 43% 57% / 51% 39% 61% 49%;
+}
+
+@keyframes blobMorph {
+  0%,
+  100% {
+    border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%;
+  }
+  50% {
+    border-radius: 30% 60% 70% 40% / 50% 60% 30% 60%;
+  }
+}
+
+/* Local Businesses header — same toggle, scaled down since the default
+   size crowded the page content there. */
+.menu-toggle--sm {
+  transform: scale(0.75);
+  transform-origin: top right;
+}
+
+.menu-toggle__icon {
+  position: relative;
+  z-index: 2;
+  width: 1.5rem;
+  height: 1.5rem;
+}
+
+.menu-toggle__line {
+  position: absolute;
+  right: 0;
+  display: block;
+  height: 1px;
+  background-color: var(--brand);
+  transform-origin: center;
+  transition: transform 500ms cubic-bezier(0.76, 0, 0.24, 1),
+    top 500ms cubic-bezier(0.76, 0, 0.24, 1),
+    width 500ms cubic-bezier(0.76, 0, 0.24, 1),
+    background-color 500ms cubic-bezier(0.76, 0, 0.24, 1);
+}
+
+.menu-toggle__line--top {
+  top: 50%;
+  width: 1.5rem;
+  transform: translateY(-50%);
+}
+
+.menu-toggle__line--bottom {
+  top: calc(50% - 0.3rem);
+  width: 1.125rem;
+  transform: translateY(-50%);
+}
+
+.menu-toggle.is-active .menu-toggle__line--top {
+  transform: translateY(-50%) rotate(45deg);
+}
+
+.menu-toggle.is-active .menu-toggle__line--bottom {
+  top: 50%;
+  width: 1.5rem;
+  transform: translateY(-50%) rotate(-45deg);
+}
+
+/* Wave overlay: sits above the viewport (translateY(-100%)); GSAP slides it to
+   0. The curve is baked into the path. */
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 110vh;
+  z-index: 120;
+  pointer-events: none;
+  transform: translateY(-100%);
+  will-change: transform;
+}
+
+.overlay__svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.overlay__path {
+  fill: var(--bg);
+}
+
+.menu {
+  position: fixed;
+  inset: 0;
+  z-index: 130;
+  display: flex;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.menu.is-open {
+  pointer-events: auto;
+}
+
+.menu__col {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  height: 100%;
+  padding: 5rem 0;
+}
+
+.menu__col--primary {
+  flex: 3;
+  align-items: center;
+  justify-content: center;
+}
+
+.menu__col--secondary {
+  flex: 2;
+  align-items: center;
+  row-gap: 200px;
+}
+
+.menu__list {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.menu__col--primary .menu__list {
+  gap: 1.5rem;
+}
+
+.menu__list--top,
+.menu__list--bottom {
+  gap: 1.875rem;
+}
+
+/* Each item clips its link via overflow:hidden while the link sits below.
+   Inline padding (cancelled by negative margin) leaves room for the italic
+   overhang so letters aren't shaved by the horizontal clip. */
+.menu-item {
+  position: relative;
+  overflow: hidden;
+  line-height: 1;
+  padding-inline: 0.2em;
+  margin-inline: -0.2em;
+}
+
+.menu-item--offset-sm .menu-link {
+  margin-left: 1.5rem;
+}
+
+.menu-link {
+  position: relative;
+  top: 100%;
+  display: inline-flex;
+  align-items: baseline;
+  gap: 1.25rem;
+  color: var(--brand);
+}
+
+.menu-link--primary {
+  font-family: var(--font-display), Georgia, serif;
+  font-size: clamp(60px, 8vw, 125px);
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: -0.01em;
+  line-height: 0.9;
+}
+
+.menu-link--secondary {
+  font-family: var(--font-display-italic), Georgia, serif;
+  font-style: italic;
+  font-size: clamp(28px, 3vw, 38px);
+  line-height: 1;
+}
+
+.menu-link__num {
+  font-family: var(--font-mono), ui-monospace, monospace;
+  font-size: 0.9rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  opacity: 0.5;
+  align-self: center;
+}
+
+@media (max-width: 900px) {
+  .menu-toggle {
+    top: 0.5rem;
+    right: 1rem;
+    width: 5rem;
+    height: 5rem;
+  }
+  .menu {
+    flex-direction: column;
+  }
+  .menu__col--primary,
+  .menu__col--secondary {
+    flex: 1;
+  }
+  .menu__col--secondary {
+    row-gap: 2rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .menu-toggle__outline--a {
+    animation: none;
+  }
+}
+
+/* ============================================================
+   Before / After — drag-to-compare (template vs custom build).
+   Restyled from the before/after split reference. The clipped
+   panel width is set inline from a ResizeObserver read so the
+   mockup doesn't squash as the overlay narrows.
+   ============================================================ */
+.compare {
+  position: relative;
+  width: 100%;
+  border: var(--border);
+  overflow: hidden;
+  background-color: var(--bg);
+  cursor: ew-resize;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.compare__panel {
+  position: relative;
+}
+
+.compare__overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  overflow: hidden;
+  background-color: var(--bg);
+}
+
+.compare__divider {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 0;
+  border-left: var(--border);
+  transform: translateX(-0.5px);
+  pointer-events: none;
+  z-index: 6;
+}
+
+.compare__handle {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  transform: translate(-50%, -50%);
+  width: 3rem;
+  height: 3rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  background-color: var(--bg);
+  border: var(--border);
+  border-radius: 0;
+  color: var(--brand);
+  cursor: ew-resize;
+  pointer-events: auto;
+}
+
+.compare__handle:focus-visible {
+  outline: 2px solid var(--brand);
+  outline-offset: 2px;
+}
+
+.compare__tag {
+  position: absolute;
+  top: 4rem;
+  z-index: 4;
+  background-color: var(--brand);
+  color: var(--bg);
+  border-color: var(--brand);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+.compare__tag--before {
+  left: 1.25rem;
+}
+.compare__tag--after {
+  right: 1.25rem;
+}
+
+/* --- shared mockup shell --- */
+.mock {
+  padding: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  background-color: var(--bg);
+}
+
+.mock__bar {
+  height: 2.25rem;
+  flex-shrink: 0;
+  border: var(--border);
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0 0.6rem;
+}
+
+.mock__dot {
+  width: 0.5rem;
+  height: 0.5rem;
+  border: var(--border);
+}
+
+.mock__url {
+  flex: 1;
+  height: 0.9rem;
+  margin-left: 0.5rem;
+  background-color: rgba(0, 49, 83, 0.12);
+}
+
+/* Real media (image/video) filling the mock body, below the chrome bar.
+   Sized to the source's own aspect ratio (~1600:914 for both assets) so
+   the frame hugs the media exactly — no letterboxing, no cropping. */
+.mock__media {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1600 / 914;
+  overflow: hidden;
+  border: var(--border);
+}
+
+.mock__media img,
+.mock__media video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  background-color: var(--bg);
+}
+
+.mock__line {
+  display: block;
+  height: 0.9rem;
+  background-color: var(--brand);
+}
+.mock__line--lg {
+  height: 1.2rem;
+  width: 62%;
+}
+.mock__line--mid {
+  width: 44%;
+}
+.mock__line--sm {
+  height: 0.7rem;
+  width: 55%;
+  opacity: 0.4;
+}
+.mock__para .mock__line--sm:nth-child(1) {
+  width: 92%;
+}
+.mock__para .mock__line--sm:nth-child(2) {
+  width: 78%;
+}
+.mock__para .mock__line--sm:nth-child(3) {
+  width: 85%;
+}
+.mock__para .mock__line--sm:nth-child(4) {
+  width: 40%;
+}
+
+/* --- AFTER: calm, two columns, lots of air --- */
+.mock--after .mock__body {
+  flex: 1;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2.5rem;
+  align-items: center;
+  padding: 1.5rem 0.5rem;
+}
+.mock__col {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+.mock--after .mock__line--sm {
+  margin-bottom: 0.5rem;
+}
+.mock__cta {
+  width: 8rem;
+  height: 2.25rem;
+  border: var(--border);
+}
+.mock__frame {
+  align-self: stretch;
+  border: var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.mock__frame .abstract-shape {
+  width: 42%;
+  height: 48%;
+}
+
+/* --- BEFORE: cluttered stock template --- */
+.mock--before {
+  gap: 0.75rem;
+}
+.mock--before .mock__bar {
+  gap: 0.35rem;
+}
+.mock__navitem {
+  height: 0.7rem;
+  width: 2.4rem;
+  background-color: rgba(0, 49, 83, 0.25);
+}
+.mock__navitem:nth-child(2) {
+  width: 3.4rem;
+}
+.mock__navitem:nth-child(4) {
+  width: 1.7rem;
+}
+.mock__navitem:nth-child(5) {
+  width: 3rem;
+}
+.mock--before .mock__bar .mock__dot {
+  margin-left: auto;
+}
+
+.mock__stack {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 1.1rem;
+  padding-top: 1.75rem;
+  padding-right: 32%;
+}
+.mock--before .mock__line--lg {
+  width: 34%;
+  height: 1.2rem;
+}
+.mock__headline {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+.mock__cols {
+  display: grid;
+  grid-template-columns: 1.6fr 1fr;
+  gap: 1.25rem;
+  align-items: start;
+}
+.mock__para {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+.mock__btns {
+  display: flex;
+  flex-wrap: wrap;
+  align-content: flex-start;
+  gap: 0.5rem;
+}
+.mock__btn {
+  height: 1.6rem;
+  width: 3.4rem;
+}
+.mock__btn--fill {
+  background-color: var(--brand);
+}
+.mock__btn--out {
+  border: var(--border);
+}
+.mock__btn--dash {
+  width: 4.4rem;
+  border: 1px dashed rgba(0, 49, 83, 0.6);
+}
+.mock__stock {
+  height: 5rem;
+  border: 1px dashed rgba(0, 49, 83, 0.5);
+  background-color: rgba(0, 49, 83, 0.06);
+  background-image: linear-gradient(
+      to top right,
+      transparent calc(50% - 0.5px),
+      rgba(0, 49, 83, 0.3) 50%,
+      transparent calc(50% + 0.5px)
+    ),
+    linear-gradient(
+      to bottom right,
+      transparent calc(50% - 0.5px),
+      rgba(0, 49, 83, 0.3) 50%,
+      transparent calc(50% + 0.5px)
+    );
+}
+
+.mock__popup {
+  position: absolute;
+  left: 8%;
+  bottom: 16%;
+  width: 29%;
+  height: 22%;
+  transform: rotate(-3deg);
+  background-color: var(--bg);
+  border: var(--border);
+  box-shadow: 0 12px 30px rgba(0, 49, 83, 0.18);
+  padding: 0.75rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  z-index: 3;
+}
+.mock__popup-x {
+  align-self: flex-end;
+  width: 0.8rem;
+  height: 0.8rem;
+  border: var(--border);
+}
+
+.mock__cookie {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  border-top: var(--border);
+  background-color: var(--brand);
+  color: var(--bg);
+  padding: 0.5rem 0.9rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 0.55rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+@media (max-width: 900px) {
+  .compare__tag {
+    font-size: 0.6rem;
+    padding: 0.25rem 0.55rem;
+  }
+}
+
+/* ============================================================
+   Industry pages (e.g. /industries/restaurants-and-cafes).
+   Header nav, hero blueprint circle, two-column concept grid,
+   pricing table, integration logo wall. Ported verbatim from
+   the "Restaurants & Cafés" industry design; shared primitives
+   (.hero, .list-row, .work-card, .info-block, .pill-tag,
+   .btn-pill, .inverted, .abstract-shape) are reused as-is.
+   ============================================================ */
+.nav-links {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.5rem 1.25rem;
+}
+
+.nav-links a {
+  font-size: 0.68rem;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  opacity: 0.55;
+  transition: opacity 0.2s ease;
+}
+
+.nav-links a:hover,
+.nav-links a.is-active {
+  opacity: 1;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+
+
+.tier-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 2rem;
+  padding: 3rem var(--pad) 0;
+}
+
+.tier-card {
+  position: relative;
+  border: var(--border);
+  padding: 2.5rem 2rem;
+  display: flex;
+  flex-direction: column;
+}
+
+.tier-card--featured {
+  background-color: var(--brand);
+  color: var(--bg);
+  --border: 1px solid var(--bg);
+}
+
+.tier-card--featured .btn-pill {
+  color: var(--bg);
+}
+
+.tier-card--featured .btn-pill:hover {
+  background-color: var(--bg);
+  color: var(--brand);
+}
+
+/* When the tier grid itself already sits on an inverted (navy) section —
+   e.g. Local Businesses' pricing — flip the featured card the other way
+   (white on navy) so it still pops instead of blending into the section. */
+.inverted .tier-card--featured {
+  background-color: var(--bg);
+  color: var(--brand);
+  --border: 1px solid var(--brand);
+}
+
+.inverted .tier-card--featured .pill-tag,
+.inverted .tier-card--featured .btn-pill {
+  border-color: var(--brand);
+  color: var(--brand);
+}
+
+.inverted .tier-card--featured .btn-pill:hover {
+  background-color: var(--brand);
+  color: var(--bg);
+}
+
+.tier-card__level {
+  align-self: flex-start;
+  margin-bottom: 1.25rem;
+  text-transform: uppercase;
+}
+
+.tier-card h3 {
+  margin-bottom: 0.75rem;
+}
+
+.tier-card__blurb {
+  margin-bottom: 1.75rem;
+  font-size: 1.15rem;
+  text-transform: none;
+  letter-spacing: normal;
+  font-weight: 400;
+  opacity: 0.75;
+}
+
+/* Emphasised phrases in a blurb read as highlighter bars. The paragraph's
+   dimming is dropped so the bars are full-strength. */
+.tier-card__blurb:has(strong) {
+  opacity: 1;
+  line-height: 1.75;
+}
+
+.tier-card__blurb strong {
+  font-weight: 700;
+  background: var(--brand);
+  color: var(--bg);
+  padding: 0.05em 0.35em;
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
+}
+
+/* On a navy section the highlighter bars flip to white-on-navy so they
+   still show; the white "featured" card flips back. */
+.inverted .tier-card__blurb strong {
+  background: var(--bg);
+  color: var(--brand);
+}
+
+.inverted .tier-card--featured .tier-card__blurb strong {
+  background: var(--brand);
+  color: var(--bg);
+}
+
+.tier-card__badge {
+  position: absolute;
+  top: -1.5rem;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--bg);
+  color: var(--brand);
+  border: 2px solid var(--brand);
+  box-shadow: 0 4px 12px rgba(0, 49, 83, 0.25);
+  font-size: 0.85rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  padding: 0.65rem 1.4rem;
+  white-space: nowrap;
+}
+
+.tier-card__price-lead {
+  font-size: 0.85rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  opacity: 0.6;
+}
+
+.tier-card__price-row {
+  display: flex;
+  align-items: baseline;
+  gap: 0.5rem;
+}
+
+.tier-card__price {
+  font-size: 3.25rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1;
+}
+
+.tier-card__price-unit {
+  font-size: 0.9rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  opacity: 0.6;
+}
+
+.tier-card__caption {
+  margin-top: 0.5rem;
+  margin-bottom: 1.75rem;
+  font-size: 1.05rem;
+  opacity: 0.6;
+}
+
+.tier-card__monthly {
+  margin-bottom: 1.75rem;
+}
+
+.tier-card__price-connector {
+  margin-top: 1rem;
+  margin-bottom: 0.25rem;
+  font-size: 1.15rem;
+  font-weight: 700;
+  opacity: 0.9;
+}
+
+.tier-card__cta {
+  width: 100%;
+  margin-bottom: 2rem;
+}
+
+.tier-list {
+  list-style: none;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  font-size: 1.05rem;
+}
+
+.tier-list li {
+  display: flex;
+  gap: 0.75rem;
+}
+
+.tier-list__check {
+  flex-shrink: 0;
+  font-weight: 700;
+  opacity: 0.7;
+}
+
+.tier-list__group-label {
+  margin-bottom: 0.75rem;
+  font-size: 1.05rem;
+  opacity: 0.7;
+}
+
+/* Fine-print note beneath the pricing tiers. */
+/* Deliberate one-off accent (warm amber) — the rest of the site is strictly
+   navy/white, but this fine-print band is meant to visually pop out from
+   the pricing tiers above it rather than blend into either. */
+.tier-footnote {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2.5rem;
+  padding: 3rem var(--pad);
+  background-color: #e3a857;
+  border-top: 2px solid var(--brand);
+}
+
+.tier-footnote__item {
+  padding-left: 1.5rem;
+  border-left: 2px solid var(--brand);
+}
+
+.tier-footnote__label {
+  margin-bottom: 0.75rem;
+  opacity: 0.7;
+}
+
+.tier-footnote p {
+  font-size: 0.95rem;
+  line-height: 1.6;
+  opacity: 0.9;
+}
+
+@media (max-width: 900px) {
+  .tier-footnote {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+}
+
+.logo-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 2rem;
+  padding-top: 2rem;
+}
+
+.logo-item {
+  border: var(--border);
+  padding: 1rem;
+  text-align: center;
+  font-weight: 700;
+  text-transform: uppercase;
+  font-size: 0.85rem;
+}
+
+/* Category headings ("Ordering", "Reservations", "Discovery") above a
+   logo-grid — bumped up from the default text-sm eyebrow size. */
+.tools-category__title {
+  font-size: 1.35rem;
+}
+
+/* Editorial section shell — oversized step number in a fixed left column. */
+.numbered-section {
+  display: grid;
+  grid-template-columns: 200px 1fr;
+}
+
+.numbered-section__num {
+  padding: var(--pad);
+  border-right: var(--border);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 1rem;
+  text-align: center;
+}
+
+.numbered-section__digits {
+  font-size: 8rem;
+  line-height: 0.8;
+  font-weight: 700;
+  letter-spacing: -0.05em;
+}
+
+.numbered-section__body {
+  position: relative;
+  min-width: 0;
+}
+
+.numbered-section__tag {
+  position: absolute;
+  top: var(--pad);
+  right: var(--pad);
+  z-index: 1;
+  opacity: 0.5;
+  text-align: right;
+  pointer-events: none;
+}
+
+@media (max-width: 900px) {
+  .numbered-section__tag {
+    display: none;
+  }
+}
+
+@media (max-width: 900px) {
+  .nav-links {
+    display: none;
+  }
+  .numbered-section {
+    grid-template-columns: 1fr;
+  }
+  .numbered-section__num {
+    flex-direction: row;
+    align-items: center;
+    text-align: left;
+    border-right: none;
+    border-bottom: var(--border);
+    padding: 1rem;
+    justify-content: flex-start;
+  }
+  .numbered-section__digits {
+    font-size: 4rem;
+  }
+  .tier-grid {
+    grid-template-columns: 1fr;
+    gap: 3rem;
+    padding: 2.5rem 1rem 0;
+  }
+  .logo-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* ============================================================
+   Restaurants & Cafés hero — a centered blueprint card on a
+   grid field, plus an auto-scrolling marquee of café-site
+   mockups. Ported from the "Websites For Business" hero.
+   ============================================================ */
+
+/* Reusable 40px blueprint field (also used inside the mockups). */
+.blueprint-grid {
+  background-color: var(--bg);
+  background-image: linear-gradient(
+      to right,
+      rgba(0, 49, 83, 0.1) 1px,
+      transparent 1px
+    ),
+    linear-gradient(to bottom, rgba(0, 49, 83, 0.1) 1px, transparent 1px);
+  background-size: 40px 40px;
+}
+
+.rc-hero {
+  position: relative;
+  overflow: hidden;
+  min-height: 60vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  padding: 3rem 1.5rem 0;
+  background-color: var(--bg);
+  background-image: linear-gradient(
+      to right,
+      rgba(0, 49, 83, 0.1) 1px,
+      transparent 1px
+    ),
+    linear-gradient(to bottom, rgba(0, 49, 83, 0.1) 1px, transparent 1px);
+  background-size: 40px 40px;
+}
+
+.rc-hero__card {
+  position: relative;
+  z-index: 10;
+  max-width: min(64rem, 100%);
+  padding: 1.75rem;
+  background-color: var(--bg);
+  border: var(--border);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.rc-hero__eyebrow {
+  display: block;
+  margin-bottom: 1rem;
+  font-size: clamp(1rem, 1.5vw, 1.35rem);
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.rc-hero__title {
+  font-family: var(--font-anton), "Anton", "Arial Narrow", Impact, sans-serif;
+  font-weight: 400;
+  font-size: clamp(3rem, 9vw, 10rem);
+  /* Tall enough that the acute accent on "É" (line 2) clears the line above. */
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+  text-transform: uppercase;
+  margin-bottom: 1rem;
+}
+
+.rc-hero__sub {
+  max-width: 42rem;
+  margin-bottom: 1.25rem;
+  font-size: clamp(0.875rem, 1.1vw, 1rem);
+  font-weight: 700;
+  line-height: 1.625;
+  letter-spacing: 0.025em;
+  text-transform: uppercase;
+}
+
+.rc-hero__cta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem 2.5rem;
+  background-color: var(--brand);
+  color: var(--bg);
+  border: var(--border);
+  font-size: 0.875rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  transition: none;
+}
+
+.rc-hero__cta:hover {
+  background-color: var(--bg);
+  color: var(--brand);
+}
+
+.rc-hero__note {
+  margin-top: 1rem;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+/* --- marquee --- */
+.rc-hero__marquee {
+  position: relative;
+  width: 100%;
+  margin-top: 1.5rem;
+  padding: 2.5rem 0;
+  border-top: var(--border);
+  background-color: var(--bg);
+}
+
+.rc-hero__viewport {
+  display: flex;
+  width: 100%;
+  overflow: hidden;
+}
+
+.rc-hero__track {
+  display: flex;
+  width: max-content;
+  will-change: transform;
+  animation: rc-marquee 40s linear infinite;
+}
+
+/* Class added by SiteMarquee.tsx once mounted: a real scrollable strip
+   (swipe / trackpad / click-drag) — JS drives the auto-scroll instead of
+   the CSS animation above, which stays only as the no-JS fallback. */
+.rc-hero__viewport.is-scrollable {
+  cursor: grab;
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+}
+
+.rc-hero__viewport.is-scrollable::-webkit-scrollbar {
+  display: none;
+}
+
+.rc-hero__viewport.is-dragging {
+  cursor: grabbing;
+  user-select: none;
+}
+
+.rc-hero__viewport.is-scrollable .rc-hero__track {
+  animation: none;
+  will-change: auto;
+}
+
+@keyframes rc-marquee {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+.rc-hero__group {
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+  height: 622px;
+  padding: 0 1rem;
+}
+
+/* --- mockups ---
+   Deliberate exception to the site's navy/white square-corner system: these
+   cards represent *other people's* website designs inside the showcase
+   marquee, not SIR_'s own chrome, so they're styled to match the original
+   colorful reference (rounded corners, drop shadows, brand colors per
+   mockup) instead of the brutalist tokens used everywhere else. */
+.rc-shot {
+  position: relative;
+  flex-shrink: 0;
+}
+
+.rc-shot--browser {
+  /* Body height (450 - 40px bar) times 16/9 gives a body width of ~729px,
+     matching lmuccg9.mp4's actual 1920x1080 frame so object-fit: cover
+     doesn't have to crop it. */
+  width: 730px;
+  height: 450px;
+  border-radius: 1rem;
+  border: 1px solid rgba(17, 17, 17, 0.08);
+  box-shadow: 0 12px 40px -12px rgba(0, 0, 0, 0.18);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  background-color: #fff;
+}
+
+.rc-shot__bar {
+  flex-shrink: 0;
+  height: 2.5rem;
+  background-color: #f8f9fa;
+  border-bottom: 1px solid #f1f1f1;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0 1rem;
+}
+
+.rc-shot__dot {
+  width: 0.65rem;
+  height: 0.65rem;
+  border-radius: 9999px;
+  background-color: #d1d5db;
+}
+
+.rc-shot__body {
+  flex: 1;
+  position: relative;
+  overflow: hidden;
+}
+
+.rc-shot__body--video {
+  background-color: #000;
+}
+
+.rc-shot--phone {
+  width: 310px;
+  height: 592px;
+  border-radius: 2.5rem;
+  border: 6px solid #111827;
+  box-shadow: 0 12px 40px -12px rgba(0, 0, 0, 0.2);
+  overflow: hidden;
+  background-image: linear-gradient(to top, #ff9533, #ff527b);
+}
+
+.rc-shot__screen {
+  position: absolute;
+  inset: 0;
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.rc-shot__statusbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.rc-shot__batt {
+  width: 1rem;
+  height: 0.5rem;
+  border-radius: 2px;
+  background-color: rgba(255, 255, 255, 0.9);
+}
+
+.rc-shot__phone-hero {
+  text-align: center;
+  color: #fff;
+}
+
+.rc-shot__phone-title {
+  font-family: var(--font-anton), "Anton", "Arial Narrow", Impact, sans-serif;
+  font-weight: 400;
+  font-size: clamp(2.25rem, 4vw, 2.75rem);
+  line-height: 0.9;
+  letter-spacing: -0.01em;
+  color: #ffeae5;
+  text-transform: uppercase;
+}
+
+.rc-shot__phone-btn {
+  height: 3.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 9999px;
+  background-color: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: #fff;
+  font-size: 0.95rem;
+  font-weight: 600;
+  text-transform: none;
+  backdrop-filter: blur(6px);
+}
+
+.rc-shot--logo {
+  /* Matches seabassaq1.mp4's actual 1920x1080 (16:9) frame so
+     object-fit: cover on .rc-shot__video shows the full picture
+     instead of cropping the sides. */
+  width: 693px;
+  height: 390px;
+  border-radius: 1rem;
+  border: 1px solid rgba(17, 17, 17, 0.06);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.04);
+  background-color: #fbfcfc;
+  overflow: hidden;
+}
+
+.rc-shot__video {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.rc-shot--dash {
+  width: 560px;
+  height: 360px;
+  display: flex;
+  flex-direction: column;
+  padding: 2rem;
+  border-radius: 1rem;
+  border: 1px solid rgba(17, 17, 17, 0.06);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.04);
+  background-color: #fff;
+}
+
+.rc-shot__dash-title {
+  width: 8rem;
+  height: 1.25rem;
+  margin-bottom: 2rem;
+  border-radius: 0.375rem;
+  background-color: #f1f5f9;
+}
+
+.rc-shot__dash-row {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.rc-shot__dash-stat {
+  flex: 1;
+  height: 7rem;
+  padding: 1.25rem;
+  border-radius: 1rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+}
+
+.rc-shot__dash-stat--blue {
+  background-color: #f5f8ff;
+  border: 1px solid #eff6ff;
+}
+
+.rc-shot__dash-stat--green {
+  background-color: #f5fff8;
+  border: 1px solid #f0fdf4;
+}
+
+.rc-shot__dash-icon {
+  width: 2.5rem;
+  height: 2.5rem;
+  margin-bottom: 0.75rem;
+  border-radius: 9999px;
+}
+
+.rc-shot__dash-stat--blue .rc-shot__dash-icon {
+  background-color: #dbeafe;
+}
+
+.rc-shot__dash-stat--green .rc-shot__dash-icon {
+  background-color: #dcfce7;
+}
+
+.rc-shot__dash-bar {
+  width: 5rem;
+  height: 0.65rem;
+  border-radius: 9999px;
+}
+
+.rc-shot__dash-stat--blue .rc-shot__dash-bar {
+  background-color: #bfdbfe;
+}
+
+.rc-shot__dash-stat--green .rc-shot__dash-bar {
+  background-color: #bbf7d0;
+}
+
+.rc-shot__dash-canvas {
+  flex: 1;
+  width: 100%;
+  border-radius: 0.75rem;
+  background-color: rgba(248, 250, 252, 0.6);
+  border: 1px solid #f8fafc;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .rc-hero__track {
+    animation: none;
+  }
+}
+
+@media (max-width: 900px) {
+  .rc-hero {
+    min-height: 0;
+    padding: 2.5rem 1rem 0;
+  }
+  .rc-hero__card {
+    padding: 1.5rem;
+  }
+  .rc-hero__marquee {
+    margin-top: 1.25rem;
+  }
+}
+
+/* ============================================================
+   /intake — project intake. Plain white page with navy ink (the
+   site's scheme), palette scoped to `.intake-page`. Class names deliberately avoid `.text-*` /
+   `.border-*` so they can't collide with the design-system classes above.
+   ============================================================ */
+.intake-page {
+  --intake-bg: #ffffff;
+  --intake-fg: #003153;
+  --border-med: rgba(0, 49, 83, 0.3);
+  --intake-dim: rgba(0, 49, 83, 0.15);
+  --intake-ph: rgba(0, 49, 83, 0.1);
+  --text-dim: rgba(0, 49, 83, 0.6);
+  background-color: var(--intake-bg);
+  color: var(--intake-fg);
+  font-family: var(--font-main);
+  line-height: 1.5;
+}
+
+.intake-b-med {
+  border-color: var(--border-med);
+}
+
+.intake-t-dim {
+  color: var(--text-dim);
+}
+
+/* Visually hidden native radio; the card next to it is the visible control. */
+.intake-radio {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  border: 0;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+}
+
+.intake-card {
+  border: 1px solid var(--border-med);
+  background-color: transparent;
+  transition: background-color 0.2s, color 0.2s;
+}
+
+/* Same fill-on-hover as the "Select Service Area" rows on the homepage. */
+.intake-card:hover {
+  background-color: var(--intake-fg);
+  color: var(--intake-bg);
+  border-color: var(--intake-fg);
+}
+
+.intake-radio:checked + .intake-card {
+  background-color: var(--intake-fg);
+  color: var(--intake-bg);
+  border-color: var(--intake-fg);
+}
+
+.intake-radio:focus-visible + .intake-card {
+  outline: 2px solid var(--intake-fg);
+  outline-offset: 2px;
+}
+
+.intake-indicator {
+  border: 1px solid currentColor;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.intake-indicator__inner {
+  width: 10px;
+  height: 10px;
+  background-color: currentColor;
+  opacity: 0;
+}
+
+.intake-radio:checked + .intake-card .intake-indicator__inner {
+  opacity: 1;
+}
+
+/* Text field for the intake's later steps. Class-scoped so it beats the
+   site-wide unlayered `input { ... }` rule, which would otherwise strip
+   the border and padding. */
+.intake-input {
+  width: 100%;
+  background: transparent;
+  border: 1px solid var(--border-med);
+  border-radius: 0;
+  padding: 1.25rem;
+  font-family: inherit;
+  font-size: 1.25rem;
+  line-height: 1.75rem;
+  color: var(--intake-fg);
+  caret-color: var(--intake-fg);
+  outline: none;
+  transition: all 0.15s;
+}
+
+/* Larger variant (the business-type answer, a 3-line textarea so the whole
+   example placeholder shows instead of being clipped). */
+.intake-input--lg {
+  display: block;
+  resize: none;
+  padding: 2.25rem 2rem;
+  font-size: 1.7rem;
+  line-height: 2.5rem;
+  /* Hug the text (placeholder included) instead of a fixed row count, so a
+     short example doesn't leave an empty band inside the box. */
+  field-sizing: content;
+  min-height: 9.5rem;
+}
+
+.intake-input::placeholder {
+  color: var(--intake-fg);
+  opacity: 0.3;
+}
+
+.intake-input:focus {
+  border-color: var(--intake-fg);
+  box-shadow: 0 0 0 2px var(--intake-bg), 0 0 0 4px var(--intake-fg);
+}
+
+.intake-input:-webkit-autofill,
+.intake-input:-webkit-autofill:hover,
+.intake-input:-webkit-autofill:focus,
+.intake-input:-webkit-autofill:active {
+  -webkit-box-shadow: 0 0 0 30px var(--intake-bg) inset !important;
+  -webkit-text-fill-color: var(--intake-fg) !important;
+  transition: background-color 5000s ease-in-out 0s;
+}
+
+/* ============================================================
+   Language toast (LanguageToast.tsx) — first-visit prompt that
+   slides up from the bottom, plus a confirmation chip after a pick.
+   ============================================================ */
+/* Sits above the sticky header (100) and menu toggle (140) so the whole
+   page is blurred and unclickable until a language is chosen. */
+.lang-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 150;
+  background-color: rgba(255, 255, 255, 0.35);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.7s ease, visibility 0s linear 0.7s;
+}
+
+.lang-backdrop.is-open {
+  opacity: 1;
+  visibility: visible;
+  transition-delay: 0s;
+}
+
+.lang-toast {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  z-index: 151;
+  width: min(360px, calc(100% - 2rem));
+  transform: translate(-50%, calc(-50% + 3rem));
+  opacity: 0;
+  visibility: hidden;
+  transition: transform 0.7s cubic-bezier(0.16, 1, 0.3, 1),
+    opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1), visibility 0s linear 0.7s;
+}
+
+.lang-toast.is-open {
+  transform: translate(-50%, -50%);
+  opacity: 1;
+  visibility: visible;
+  transition-delay: 0s;
+}
+
+.lang-toast__panel {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  padding: 1.5rem;
+  overflow: hidden;
+  background-color: var(--brand);
+  color: var(--bg);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+}
+
+.lang-toast__panel::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.2),
+    transparent
+  );
+}
+
+.lang-toast__top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.lang-toast__eyebrow {
+  margin-top: 0.25rem;
+  font-size: 0.625rem;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  opacity: 0.6;
+}
+
+.lang-toast__title {
+  font-size: 1.0625rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+
+.lang-toast__sub {
+  margin-top: 0.125rem;
+  font-size: 0.8125rem;
+  opacity: 0.6;
+}
+
+.lang-toast__actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.75rem;
+}
+
+.lang-toast__btn {
+  appearance: none;
+  padding: 0.625rem 0;
+  border: 1px solid var(--bg);
+  background: transparent;
+  color: var(--bg);
+  font-family: inherit;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.lang-toast__btn--solid {
+  background: var(--bg);
+  color: var(--brand);
+}
+
+.lang-toast__btn:hover {
+  background: var(--bg);
+  color: var(--brand);
+}
+
+.lang-toast__btn--solid:hover {
+  background: transparent;
+  color: var(--bg);
+}
+
+.lang-toast__btn:focus-visible {
+  outline: 2px solid var(--bg);
+  outline-offset: 2px;
+}
+
+.lang-chip {
+  position: fixed;
+  bottom: 2rem;
+  left: 50%;
+  z-index: 151;
+  width: max-content;
+  max-width: calc(100vw - 2rem);
+  transform: translate(-50%, 3rem);
+  opacity: 0;
+  pointer-events: none;
+  transition: transform 0.5s ease-out, opacity 0.5s ease-out;
+}
+
+.lang-chip.is-visible {
+  transform: translate(-50%, 0);
+  opacity: 1;
+}
+
+.lang-chip__inner {
+  display: grid;
+  /* One track pinned to the chip's own (JS-set) width. Without this the
+     auto track grows to the widest stacked message and the shorter one
+     ends up centered off-screen inside a clipped box. */
+  grid-template-columns: minmax(0, 1fr);
+  box-sizing: border-box;
+  overflow: hidden;
+  padding: 0.625rem 1.25rem;
+  background: var(--brand);
+  color: var(--bg);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.3);
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  /* Width is set from JS to fit the active message; this eases the swap. */
+  transition: width 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Both messages sit stacked in one cell and crossfade; only the active
+   one is visible. Rows size to their own content (not the chip's) so JS
+   can measure each. */
+.lang-chip__row {
+  grid-area: 1 / 1;
+  justify-self: center;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  width: max-content;
+  max-width: calc(100vw - 2rem - 2.5rem - 2px);
+  text-align: center;
+  opacity: 0;
+  transform: translateY(0.4rem);
+  transition: opacity 0.35s ease, transform 0.35s ease;
+}
+
+.lang-chip__row.is-active {
+  opacity: 1;
+  transform: translateY(0);
+  /* Incoming text waits a beat so it doesn't overlap the outgoing text. */
+  transition-delay: 0.25s;
+}
+
+.lang-chip__row svg {
+  flex-shrink: 0;
+  color: #4ade80;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lang-chip__inner,
+  .lang-chip__row {
+    transition: none;
+  }
+  .lang-backdrop,
+  .lang-toast,
+  .lang-chip {
+    transition: none;
+  }
+}
+
+/* ============================================================
+   Project intake (/start, IntakeFlow.tsx) — full-screen navy
+   grid, one group of questions per screen.
+   ============================================================ */
+.intake {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 4rem 1.5rem;
+  background-color: var(--brand);
+  color: var(--bg);
+  background-image: linear-gradient(
+      rgba(255, 255, 255, 0.12) 1px,
+      transparent 1px
+    ),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.12) 1px, transparent 1px);
+  background-size: 100px 100px;
+  background-position: center top;
+}
+
+.intake__inner {
+  width: 100%;
+  max-width: 720px;
+}
+
+.intake__header {
+  margin-bottom: 3rem;
+  padding-bottom: 2.5rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.intake__topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 2.5rem;
+}
+
+.intake__brand {
+  font-size: 0.875rem;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+}
+
+.intake__step {
+  font-size: 0.625rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  opacity: 0.6;
+}
+
+.intake__eyebrow {
+  display: block;
+  margin-bottom: 1rem;
+  font-size: 0.875rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  opacity: 0.6;
+}
+
+.intake__title {
+  margin-bottom: 1.5rem;
+  font-size: clamp(2.25rem, 6vw, 3.25rem);
+  font-weight: 700;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  text-transform: uppercase;
+}
+
+.intake__br {
+  display: none;
+}
+
+@media (min-width: 640px) {
+  .intake__br {
+    display: inline;
+  }
+}
+
+.intake__lead {
+  max-width: 36rem;
+  font-size: 1.125rem;
+  line-height: 1.6;
+  opacity: 0.6;
+}
+
+.intake__fields {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  margin-bottom: 1.5rem;
+}
+
+.intake__single {
+  margin-bottom: 3rem;
+}
+
+.intake__label {
+  display: flex;
+  align-items: baseline;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+  font-size: 1.125rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.intake__optional {
+  font-size: 0.75rem;
+  font-weight: 400;
+  letter-spacing: 0.1em;
+  opacity: 0.6;
+}
+
+.intake__input {
+  width: 100%;
+  padding: 1.25rem;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 0;
+  background: transparent;
+  color: var(--bg);
+  caret-color: var(--bg);
+  font-family: inherit;
+  font-size: 1.25rem;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.intake__input::placeholder {
+  color: var(--bg);
+  opacity: 0.3;
+}
+
+.intake__input:focus {
+  outline: none;
+  border-color: var(--bg);
+  box-shadow: 0 0 0 2px var(--brand), 0 0 0 4px var(--bg);
+}
+
+.intake__input:-webkit-autofill,
+.intake__input:-webkit-autofill:hover,
+.intake__input:-webkit-autofill:focus {
+  -webkit-box-shadow: 0 0 0 30px var(--brand) inset !important;
+  -webkit-text-fill-color: var(--bg) !important;
+}
+
+.intake__note {
+  margin-top: 1rem;
+  font-size: 0.875rem;
+  letter-spacing: 0.03em;
+  opacity: 0.6;
+}
+
+.intake__note--spaced {
+  margin: 0 0 3rem;
+}
+
+.intake__actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 1rem;
+}
+
+.intake__back {
+  appearance: none;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-left: -0.5rem;
+  padding: 0.5rem;
+  border: 0;
+  background: none;
+  color: var(--bg);
+  font-family: inherit;
+  font-size: 0.875rem;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  opacity: 0.6;
+  cursor: pointer;
+  transition: opacity 0.2s ease;
+}
+
+.intake__back:hover {
+  opacity: 1;
+}
+
+.intake__continue {
+  appearance: none;
+  padding: 1rem 2rem;
+  border: 1px solid var(--bg);
+  border-radius: 0;
+  background: var(--bg);
+  color: var(--brand);
+  font-family: inherit;
+  font-size: 1.125rem;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+.intake__continue:hover {
+  background: transparent;
+  color: var(--bg);
+}
+
+.intake__back:focus-visible,
+.intake__continue:focus-visible {
+  outline: 2px solid var(--bg);
+  outline-offset: 2px;
+}
+
+/* Marks a field the user still needs to fill (same treatment as :focus). */
+.intake-input--error {
+  border-color: var(--intake-fg);
+  box-shadow: 0 0 0 2px var(--intake-bg), 0 0 0 4px var(--intake-fg);
+}
+
+/* Style-direction cards (the wireframe picker step). Wireframe strokes and
+   placeholder bars use the dim/placeholder tints; card + indicator states
+   are class-driven (`is-checked`) so the controlled radio drives them. */
+.intake-b-dim {
+  border-color: var(--intake-dim);
+}
+
+.intake-bg-ph {
+  background-color: var(--intake-ph);
+}
+
+.intake-stroke-dim {
+  stroke: var(--intake-dim);
+}
+
+.intake-stroke-med {
+  stroke: var(--border-med);
+}
+
+.intake-style-card {
+  border: 1px solid var(--intake-dim);
+  transition: border-color 0.15s;
+}
+
+.intake-style-card:hover,
+.intake-style-card.is-checked {
+  border-color: var(--intake-fg);
+}
+
+.intake-style-card__box {
+  border: 1px solid var(--intake-dim);
+  transition: background-color 0.15s, border-color 0.15s;
+}
+
+.intake-style-card:hover .intake-style-card__box {
+  border-color: var(--intake-fg);
+}
+
+.intake-style-card.is-checked .intake-style-card__box {
+  background-color: var(--intake-fg);
+  border-color: var(--intake-fg);
+}
+
+/* Fill variant (the review confirmation): navy fill with light text on hover
+   and once ticked, like the step-1 answer cards. The box flips to a light
+   outline so it stays visible on the navy. */
+.intake-style-card--fill {
+  transition: background-color 0.2s, color 0.2s, border-color 0.15s;
+}
+
+.intake-style-card--fill:hover,
+.intake-style-card--fill.is-checked {
+  background-color: var(--intake-fg);
+  color: var(--intake-bg);
+}
+
+.intake-style-card--fill:hover .intake-style-card__box,
+.intake-style-card--fill.is-checked .intake-style-card__box {
+  background-color: transparent;
+  border-color: var(--intake-bg);
+}
+
+/* Intake "fill this in to continue" toast (IntakeToast.tsx) — portalled to
+   <body>, so it sets its own colours instead of using the .intake-page tokens. */
+.intake-toast-wrap {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 2rem;
+  z-index: 2000;
+  display: flex;
+  justify-content: center;
+  padding: 0 1rem;
+  pointer-events: none;
+}
+
+.intake-toast {
+  max-width: 32rem;
+  padding: 1rem 1.5rem;
+  background: #003153;
+  color: #ffffff;
+  border: 1px solid #ffffff;
+  outline: 1px solid #003153;
+  font-family: var(--font-mono);
+  font-size: 0.8125rem;
+  line-height: 1.25rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  text-align: center;
+  animation: intake-toast-in 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.intake-toast.is-leaving {
+  animation: intake-toast-out 0.4s cubic-bezier(0.55, 0, 0.55, 0.2) forwards;
+}
+
+@keyframes intake-toast-in {
+  from {
+    opacity: 0;
+    transform: translateY(1.5rem);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes intake-toast-out {
+  from {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(1.5rem);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .intake-toast {
+    animation: none;
+  }
+}
+
+/* Intake thank-you: the check draws itself in. */
+.intake-draw-check {
+  stroke-dasharray: 30;
+  stroke-dashoffset: 30;
+  animation: intake-draw 1.2s cubic-bezier(0.16, 1, 0.3, 1) 0.2s forwards;
+}
+@keyframes intake-draw {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .intake-draw-check {
+    animation: none;
+    stroke-dashoffset: 0;
+  }
+}
+
+/* Unlayered so it beats the global link colour on the thank-you CTA. */
+.intake-cta {
+  color: var(--intake-bg);
+}
+.intake-cta:hover {
+  color: var(--intake-fg);
+}
+
+/* ============================================================
+   /contact — general contact page. A white page (navy on white, like the rest of
+   the site) that fits one screen on desktop. `--brand`/`--bg` are set inside
+   the wrapper. Everything is class-scoped (`.contact-*`) so it beats the
+   site-wide unlayered input/textarea/h1/a rules.
+   ============================================================ */
+.contact-page {
+  --brand: #003153;
+  --bg: #ffffff;
+  --border: 1px solid rgba(0, 49, 83, 0.2);
+  position: relative;
+  min-height: 100vh;
+  background-color: #ffffff;
+  color: #003153;
+  overflow: hidden;
+}
+
+.contact-page__grid {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background-image:
+    linear-gradient(to right, rgba(0, 49, 83, 0.05) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(0, 49, 83, 0.05) 1px, transparent 1px);
+  background-size: 100px 100px;
+}
+
+.contact-page__inner {
+  position: relative;
+  z-index: 1;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.contact-main {
+  flex: 1 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 4rem 2rem;
+}
+
+@media (min-width: 1024px) {
+  .contact-main {
+    padding-top: 6rem;
+    padding-bottom: 6rem;
+  }
+}
+
+/* -- hero -- */
+.contact-hero {
+  width: 100%;
+  max-width: 880px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  margin-bottom: 4rem;
+}
+
+@media (min-width: 1024px) {
+  .contact-hero {
+    margin-bottom: 6rem;
+  }
+}
+
+.contact-hero__eyebrow {
+  margin-bottom: 1.5rem;
+  font-size: 0.625rem;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: rgba(0, 49, 83, 0.55);
+}
+
+.contact-hero__title {
+  margin-bottom: 2rem;
+  font-size: 3rem;
+  font-weight: 700;
+  line-height: 1.05;
+  letter-spacing: -0.025em;
+  text-transform: uppercase;
+  color: #003153;
+}
+
+.contact-hero__italic {
+  font-style: italic;
+}
+
+.contact-hero__sub {
+  max-width: 36rem;
+  font-size: 0.875rem;
+  line-height: 1.625;
+  color: rgba(0, 49, 83, 0.6);
+}
+
+@media (min-width: 640px) {
+  .contact-hero__eyebrow {
+    font-size: 0.75rem;
+  }
+}
+
+@media (min-width: 768px) {
+  .contact-hero__title {
+    font-size: 3.75rem;
+  }
+  .contact-hero__sub {
+    font-size: 1rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .contact-hero__title {
+    font-size: 72px;
+  }
+}
+
+/* -- two columns -- */
+.contact-body {
+  width: 100%;
+  max-width: 1080px;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 3rem;
+  align-items: start;
+}
+
+@media (min-width: 1024px) {
+  .contact-body {
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    gap: 4rem;
+  }
+  .contact-side {
+    grid-column: span 5;
+  }
+  .contact-card {
+    grid-column: span 7;
+    order: -1;
+  }
+}
+
+.contact-side__eyebrow {
+  margin-bottom: 1.5rem;
+  font-size: 0.625rem;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: rgba(0, 49, 83, 0.55);
+}
+
+.contact-rows {
+  display: flex;
+  flex-direction: column;
+  border-top: 1px solid rgba(0, 49, 83, 0.2);
+  background: #ffffff;
+}
+
+.contact-row {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  padding: 1.25rem 1rem;
+  border-bottom: 1px solid rgba(0, 49, 83, 0.2);
+  transition: background-color 0.2s;
+  outline: none;
+}
+
+a.contact-row:hover,
+div.contact-row:hover {
+  background: rgba(0, 49, 83, 0.03);
+}
+
+a.contact-row:focus-visible {
+  background: rgba(0, 49, 83, 0.05);
+  box-shadow: inset 0 0 0 2px #003153;
+}
+
+.contact-row__icon {
+  flex-shrink: 0;
+  width: 3rem;
+  height: 3rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba(0, 49, 83, 0.2);
+  background: #ffffff;
+  color: rgba(0, 49, 83, 0.7);
+  transition: border-color 0.2s;
+}
+
+.contact-row:hover .contact-row__icon {
+  border-color: rgba(0, 49, 83, 0.55);
+}
+
+.contact-row__svg {
+  width: 1.25rem;
+  height: 1.25rem;
+}
+
+.contact-row__label {
+  margin-bottom: 0.25rem;
+  font-size: 0.625rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: rgba(0, 49, 83, 0.5);
+}
+
+.contact-row__value {
+  font-size: 0.875rem;
+  font-weight: 700;
+  letter-spacing: -0.025em;
+  color: #003153;
+}
+
+@media (min-width: 640px) {
+  .contact-row {
+    padding-top: 1.5rem;
+    padding-bottom: 1.5rem;
+  }
+  .contact-row__value {
+    font-size: 1rem;
+  }
+}
+
+.contact-side__intake {
+  display: inline-block;
+  margin-top: 2rem;
+  padding: 0.25rem 1rem;
+  font-size: 1.25rem;
+  font-weight: 700;
+  line-height: 1.4;
+  letter-spacing: 0;
+  text-wrap: balance;
+  color: rgba(0, 49, 83, 0.75);
+  transition: color 0.2s;
+}
+
+.contact-side__arrow {
+  display: inline-block;
+  margin-left: 0.5rem;
+  transition: transform 0.3s;
+}
+
+.contact-side__intake:hover .contact-side__arrow,
+.contact-side__intake:focus-visible .contact-side__arrow {
+  transform: translateX(0.5rem);
+}
+
+.contact-side__intake:hover {
+  color: #003153;
+}
+
+@media (min-width: 1024px) {
+  .contact-side__intake {
+    padding-left: 0;
+    padding-right: 0;
+  }
+}
+
+/* -- form card -- */
+.contact-card {
+  position: relative;
+  width: 100%;
+  padding: 1.5rem;
+  border: 1px solid rgba(0, 49, 83, 0.2);
+  background: #ffffff;
+}
+
+@media (min-width: 640px) {
+  .contact-card {
+    padding: 2rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .contact-card {
+    padding: 2.5rem;
+  }
+}
+
+.contact-form {
+  display: flex;
+  flex-direction: column;
+}
+
+.contact-form.is-pulsing {
+  animation: contact-pulse 0.3s ease-in-out;
+}
+
+@keyframes contact-pulse {
+  50% {
+    opacity: 0.5;
+  }
+}
+
+.contact-form__row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+@media (min-width: 768px) {
+  .contact-form__row {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+.contact-field {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  border: 0;
+  padding: 0;
+}
+
+.contact-field--gap {
+  margin-bottom: 2rem;
+}
+
+.contact-label {
+  display: block;
+  margin-bottom: 0.75rem;
+  padding: 0;
+  font-size: 0.625rem;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: rgba(0, 49, 83, 0.5);
+}
+
+.contact-input {
+  width: 100%;
+  padding: 1rem;
+  border: 1px solid rgba(0, 49, 83, 0.2);
+  border-radius: 0;
+  background: transparent;
+  font-family: inherit;
+  font-size: 0.875rem;
+  line-height: 1.4;
+  color: #003153;
+  outline: none;
+  transition: all 0.15s;
+}
+
+.contact-input::placeholder {
+  color: rgba(0, 49, 83, 0.2);
+  opacity: 1;
+}
+
+.contact-input:focus {
+  border-color: rgba(0, 49, 83, 0.6);
+  background: rgba(0, 49, 83, 0.02);
+}
+
+.contact-input:focus-visible {
+  box-shadow: 0 0 0 1px #003153;
+}
+
+.contact-input--area {
+  display: block;
+  resize: none;
+}
+
+.contact-input:-webkit-autofill,
+.contact-input:-webkit-autofill:hover,
+.contact-input:-webkit-autofill:focus {
+  -webkit-text-fill-color: #003153;
+  -webkit-box-shadow: 0 0 0 1000px #ffffff inset;
+  transition: background-color 5000s ease-in-out 0s;
+}
+
+.contact-input--area::-webkit-scrollbar {
+  width: 8px;
+}
+
+.contact-input--area::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.contact-input--area::-webkit-scrollbar-thumb {
+  background: rgba(0, 49, 83, 0.2);
+}
+
+/* -- topic radios -- */
+.contact-topics {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.contact-topic {
+  position: relative;
+  display: flex;
+  flex-grow: 1;
+  align-items: center;
+  padding: 0.75rem 1rem;
+  border: 1px solid rgba(0, 49, 83, 0.2);
+  background: #ffffff;
+  cursor: pointer;
+  transition: border-color 0.2s, background-color 0.2s;
+}
+
+@media (min-width: 640px) {
+  .contact-topic {
+    flex-grow: 0;
+  }
+}
+
+.contact-topic:hover {
+  border-color: rgba(0, 49, 83, 0.4);
+  background: rgba(0, 49, 83, 0.02);
+}
+
+.contact-topic:focus-within {
+  box-shadow: inset 0 0 0 2px #003153;
+}
+
+.contact-topic__input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  border: 0;
+}
+
+.contact-topic__box {
+  flex-shrink: 0;
+  width: 0.875rem;
+  height: 0.875rem;
+  margin-right: 0.75rem;
+  border: 1px solid rgba(0, 49, 83, 0.4);
+  transition: background-color 0.2s, border-color 0.2s;
+}
+
+.contact-topic__label {
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  color: rgba(0, 49, 83, 0.7);
+}
+
+.contact-topic__input:checked ~ .contact-topic__box {
+  border-color: #003153;
+  background: #003153;
+}
+
+.contact-topic__input:checked ~ .contact-topic__label {
+  color: #003153;
+}
+
+/* -- error + submit -- */
+.contact-error {
+  align-self: flex-start;
+  margin-bottom: 1rem;
+  padding: 0.5rem 0.75rem;
+  border: 1px solid rgba(192, 57, 43, 0.35);
+  background: rgba(192, 57, 43, 0.06);
+  font-size: 0.625rem;
+  font-weight: 700;
+  letter-spacing: 0.025em;
+  text-transform: uppercase;
+  color: #c0392b;
+}
+
+.contact-submit {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  margin-top: auto;
+  padding: 1.25rem 2.5rem;
+  border: 1px solid #003153;
+  border-radius: 0;
+  background: #003153;
+  font-family: inherit;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: #ffffff;
+  cursor: pointer;
+  outline: none;
+  transition: all 0.3s;
+}
+
+.contact-submit > span:first-child {
+  margin-right: 0.75rem;
+}
+
+.contact-submit__arrow {
+  display: inline-block;
+  transition: transform 0.3s;
+}
+
+.contact-submit:hover {
+  background: transparent;
+  color: #003153;
+}
+
+.contact-submit:hover .contact-submit__arrow {
+  transform: translateX(0.375rem);
+}
+
+.contact-submit:focus-visible {
+  box-shadow: 0 0 0 2px #ffffff, 0 0 0 4px #003153;
+}
+
+/* -- sent state -- */
+.contact-sent {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 26rem;
+  text-align: center;
+}
+
+.contact-sent__icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 4rem;
+  height: 4rem;
+  margin-bottom: 2rem;
+  border: 1px solid rgba(0, 49, 83, 0.2);
+  color: #003153;
+}
+
+.contact-sent__check {
+  stroke-dasharray: 45;
+  stroke-dashoffset: 45;
+  animation: contact-draw 1.2s cubic-bezier(0.16, 1, 0.3, 1) 0.1s forwards;
+}
+
+@keyframes contact-draw {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+.contact-sent__title {
+  margin-bottom: 1rem;
+  font-size: 1.875rem;
+  font-weight: 700;
+  letter-spacing: -0.025em;
+  text-transform: uppercase;
+  color: #003153;
+}
+
+.contact-sent__text {
+  max-width: 24rem;
+  margin-bottom: 3rem;
+  font-size: 0.875rem;
+  color: rgba(0, 49, 83, 0.6);
+}
+
+.contact-sent__reset {
+  padding: 0 0 0.25rem;
+  border: 0;
+  border-bottom: 1px solid transparent;
+  background: none;
+  font-family: inherit;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: rgba(0, 49, 83, 0.5);
+  cursor: pointer;
+  outline: none;
+  transition: color 0.2s, border-color 0.2s;
+}
+
+.contact-sent__reset:hover,
+.contact-sent__reset:focus-visible {
+  border-bottom-color: #003153;
+  color: #003153;
+}
+
+@media (min-width: 640px) {
+  .contact-sent__title {
+    font-size: 2.25rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .contact-form.is-pulsing,
+  .contact-sent__check {
+    animation: none;
+  }
+  .contact-sent__check {
+    stroke-dashoffset: 0;
+  }
+}
+
+/* -- one-screen fit (desktop): the page is exactly a viewport tall and the
+   hero/form spacing scales with the viewport height. Short or narrow screens
+   fall back to the normal scrolling layout above. -- */
+@media (min-width: 1024px) and (min-height: 660px) {
+  .contact-page {
+    height: 100vh;
+    height: 100dvh;
+    min-height: 0;
+  }
+  .contact-page__inner {
+    height: 100%;
+    min-height: 0;
+  }
+  .contact-page__inner > header {
+    padding-top: clamp(0.75rem, 2vh, 2rem);
+    padding-bottom: clamp(0.75rem, 2vh, 2rem);
+  }
+  .contact-main {
+    flex: 1 1 0;
+    min-height: 0;
+    justify-content: center;
+    padding-top: 0;
+    padding-bottom: 0;
+  }
+  .contact-hero {
+    margin-bottom: clamp(1rem, 4vh, 3rem);
+  }
+  .contact-hero__eyebrow {
+    margin-bottom: clamp(0.5rem, 1.5vh, 1.25rem);
+  }
+  .contact-hero__title {
+    margin-bottom: clamp(0.5rem, 1.5vh, 1.25rem);
+    font-size: clamp(2.25rem, 7vh, 4.5rem);
+    line-height: 1;
+  }
+  .contact-hero__title br {
+    display: none;
+  }
+  .contact-hero__sub {
+    max-width: 44rem;
+    font-size: 0.875rem;
+    line-height: 1.5;
+  }
+  .contact-body {
+    gap: 4rem;
+  }
+  .contact-side__eyebrow {
+    margin-bottom: clamp(0.75rem, 2vh, 1.5rem);
+  }
+  .contact-row {
+    padding-top: clamp(0.75rem, 2.4vh, 1.5rem);
+    padding-bottom: clamp(0.75rem, 2.4vh, 1.5rem);
+  }
+  .contact-side__intake {
+    margin-top: clamp(0.75rem, 2vh, 2rem);
+  }
+  .contact-card {
+    padding: clamp(1rem, 3vh, 2.5rem) 2.5rem;
+  }
+  .contact-form__row {
+    margin-bottom: clamp(0.75rem, 2.4vh, 2rem);
+  }
+  .contact-field--gap {
+    margin-bottom: clamp(0.75rem, 2.4vh, 2rem);
+  }
+  .contact-label {
+    margin-bottom: clamp(0.4rem, 1.2vh, 0.75rem);
+  }
+  .contact-input {
+    padding: clamp(0.6rem, 1.6vh, 1rem);
+  }
+  .contact-topics {
+    flex-wrap: nowrap;
+    gap: 0.5rem;
+  }
+  .contact-topic {
+    padding: clamp(0.5rem, 1.2vh, 0.75rem) 0.75rem;
+  }
+  .contact-topic__box {
+    margin-right: 0.5rem;
+  }
+  .contact-topic__label {
+    font-size: 0.6875rem;
+    letter-spacing: 0.02em;
+  }
+  .contact-submit {
+    padding: clamp(0.85rem, 2vh, 1.25rem) 2.5rem;
+  }
+  .contact-input--area {
+    height: clamp(5rem, 20vh, 20rem);
+  }
+}
+
+/* Local Businesses closing statement (EngineeredTakeaway.tsx): a full-width
+   headline, then the copy flanked by two lists of the kinds of business it's
+   built for. On narrow screens the lists drop below the copy as wrapped
+   tags; from 1200px up they sit down either side of it. */
+.takeaway {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.takeaway__body {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.takeaway__center {
+  order: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.takeaway__center p + p {
+  margin-top: 1rem;
+}
+
+.takeaway__side {
+  order: 2;
+  width: 100%;
+  margin-top: 2rem;
+}
+
+.takeaway__eyebrow {
+  margin-bottom: 0.75rem;
+  opacity: 0.6;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+.takeaway__list {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.6rem;
+}
+
+/* Larger tags/eyebrow, scaling with the viewport so the side columns (which
+   get narrower toward 1200px) still hold them; long names wrap if they must. */
+.takeaway__list .pill-tag {
+  font-size: clamp(0.8rem, 0.65vw + 0.35rem, 1.05rem);
+  padding: 0.45rem 1rem;
+  white-space: normal;
+  text-align: left;
+}
+
+.takeaway__eyebrow {
+  font-size: clamp(0.85rem, 0.6vw + 0.4rem, 1.1rem);
+}
+
+@media (min-width: 1200px) {
+  .takeaway__body {
+    display: grid;
+    grid-template-columns: 1fr minmax(0, 760px) 1fr;
+    column-gap: 2rem;
+    align-items: start;
+  }
+
+  .takeaway__center,
+  .takeaway__side {
+    order: 0;
+  }
+
+  .takeaway__side {
+    margin-top: 0;
+  }
+
+  /* Vertically centered between the two industry lists. */
+  .takeaway__center {
+    align-self: center;
+  }
+
+  .takeaway__center p + p {
+    margin-top: 3.5rem;
+  }
+
+  .takeaway__side--right {
+    text-align: right;
+  }
+
+  .takeaway__list {
+    flex-direction: column;
+    flex-wrap: nowrap;
+    align-items: flex-start;
+    justify-content: flex-start;
+  }
+
+  .takeaway__side--right .takeaway__list {
+    align-items: flex-end;
+  }
+}
+
+/* Homepage business-type buttons (BusinessShowcase.tsx): a wrapped block of
+   tags that sits beside the device showcase's title. */
+.business-showcase {
+  flex: 1 1 560px;
+  max-width: 980px;
+}
+
+.business-showcase__eyebrow {
+  margin-bottom: 0.75rem;
+  opacity: 0.6;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+.business-showcase__list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+@media (max-width: 600px) {
+  .business-showcase__list .pill-tag {
+    padding: 0.25rem 0.55rem;
+    font-size: 0.6875rem;
+  }
+}
+
+@media (min-width: 1100px) {
+  .business-showcase {
+    max-width: none;
+    text-align: right;
+  }
+  .business-showcase__list {
+    justify-content: flex-end;
+  }
+}
+
+/* Startups scroll heroes (CylinderHero.tsx / SkyscraperHero.tsx): a tall
+   outer block whose sticky stage pins under the site header while the page
+   scrolls, driving a GSAP timeline. */
+.startup-hero {
+  position: relative;
+  width: 100%;
+  background: #000;
+}
+.startup-hero--cylinder {
+  height: 400svh;
+}
+.startup-hero--skyscraper {
+  height: 700svh;
+}
+
+.startup-hero__stage {
+  position: sticky;
+  top: var(--header-height);
+  width: 100%;
+  height: calc(100svh - var(--header-height));
+  overflow: hidden;
+  color: #fff;
+}
+
+.startup-hero__canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.startup-hero__texts {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 2;
+}
+
+.startup-hero__text {
+  position: absolute;
+  width: max-content;
+  max-width: 88%;
+}
+.startup-hero__text--light {
+  opacity: 0;
+}
+.startup-hero__text[data-position="top"] { top: 12%; left: 50%; transform: translateX(-50%); text-align: center; }
+.startup-hero__text[data-position="center"] { top: 50%; left: 50%; transform: translate(-50%, -50%); text-align: center; }
+.startup-hero__text[data-position="bottom"] { bottom: 14%; left: 50%; transform: translateX(-50%); text-align: center; }
+.startup-hero__text[data-position="left"] { top: 50%; left: 6%; transform: translateY(-50%); }
+.startup-hero__text[data-position="right"] { top: 50%; right: 6%; transform: translateY(-50%); text-align: right; }
+.startup-hero__text[data-position="top-left"] { top: 12%; left: 6%; }
+.startup-hero__text[data-position="top-right"] { top: 12%; right: 6%; text-align: right; }
+.startup-hero__text[data-position="bottom-left"] { bottom: 14%; left: 6%; }
+.startup-hero__text[data-position="bottom-right"] { bottom: 14%; right: 6%; text-align: right; }
+
+.startup-hero__title {
+  font-size: clamp(2rem, 5.5vw, 5rem);
+  font-weight: 300;
+  line-height: 1;
+  letter-spacing: -0.02em;
+  text-shadow: 0 2px 24px rgba(0, 0, 0, 0.5);
+}
+.startup-hero__title--bold {
+  font-weight: 700;
+  line-height: 1.1;
+}
+.startup-hero__subtitle {
+  margin-top: 0.75rem;
+  font-size: clamp(0.85rem, 1.6vw, 1.5rem);
+  font-weight: 300;
+  opacity: 0.7;
+  text-shadow: 0 2px 16px rgba(0, 0, 0, 0.5);
+}
+
+.startup-hero__hint {
+  position: absolute;
+  right: 2rem;
+  bottom: 1.5rem;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.25rem;
+  font-size: 0.75rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  opacity: 0.6;
+  pointer-events: none;
+}
+
+/* Portfolios & Personal Brands hero (VideoWallHero.tsx): a curved wall of
+   looping videos under a wordmark that tilts with the cursor. The white text
+   uses `difference` blending so it reads black on the white page and flips
+   light over dark video. */
+.video-wall {
+  position: relative;
+  width: 100%;
+  height: 72vh;
+  min-height: 560px;
+  overflow: hidden;
+  background-color: #fff;
+}
+
+.video-wall__canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.video-wall__header {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  color: #fff;
+  mix-blend-mode: difference;
+  pointer-events: none;
+  will-change: transform;
+  z-index: 2;
+}
+
+.video-wall__title {
+  font-size: clamp(4rem, 11vw, 10rem);
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  line-height: 1;
+  text-transform: uppercase;
+}
+
+.video-wall__tagline {
+  margin-top: 0.75rem;
+  font-size: clamp(0.75rem, 1.4vw, 1.25rem);
+  font-weight: 700;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+}
+
+/* Device showcase (DeviceShowcase.tsx / DeviceScene.tsx): a
+   caption strip, then a stage holding the 3D laptop + phone canvas. */
+.device-showcase__caption {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1.5rem 3rem;
+  padding-bottom: 0;
+}
+
+.device-showcase__text {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  flex: 0 1 auto;
+}
+
+@media (min-width: 1100px) {
+  /* Fixed columns, so the buttons keep their exact position and wrapping
+     whatever the (variable-length) title on the left says. */
+  .device-showcase__caption {
+    display: grid;
+    grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+    column-gap: 3rem;
+  }
+}
+
+.device-showcase__hint {
+  font-size: clamp(0.85rem, 1.2vw, 1.05rem);
+  opacity: 0.6;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+.device-showcase__title {
+  font-size: clamp(1.5rem, 3.5vw, 2.5rem);
+  font-weight: 700;
+  line-height: 1.1;
+}
+
+.device-showcase__stage {
+  position: relative;
+  width: 100%;
+  height: clamp(460px, 78vh, 820px);
+  overflow: hidden;
+  background-color: #fff;
+}
+
+.device-showcase__canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+  /* Vertical swipes still scroll the page on touch screens. */
+  touch-action: pan-y;
+}
+
+.device-showcase__loading {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  opacity: 0.6;
+  pointer-events: none;
+}
+
+/* ---- Why SIR — embedded 3D helmet scene (HelmetScene.tsx) ---- */
+.helmet-section {
+  position: relative;
+  width: 100%;
+  height: 80vh;
+  min-height: 520px;
+  background-color: #000;
+  overflow: hidden;
+}
+
+.helmet-scene {
+  position: absolute;
+  inset: 0;
+  isolation: isolate;
+  overflow: hidden;
+  background-color: #000;
+  cursor: none;
+  /* Vertical swipes still scroll the page on touch screens. */
+  touch-action: pan-y;
+}
+
+.helmet-scene > canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.helmet-scene__cursor {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 18px;
+  height: 18px;
+  border-radius: 9999px;
+  background: rgba(255, 255, 255, 0.9);
+  mix-blend-mode: difference;
+  pointer-events: none;
+  z-index: 30;
+  opacity: 0;
+  transition: opacity 150ms linear;
+  will-change: transform;
+}
+
+@media (hover: none) {
+  .helmet-scene {
+    cursor: auto;
+  }
+  .helmet-scene__cursor {
+    display: none;
+  }
+}
+
+/* /why-sir statement band under the helmet — sits a little lower on phones. */
+.pad-global.budget-statement {
+  padding-top: 1.25rem;
+}
+@media (max-width: 768px) {
+  .pad-global.budget-statement {
+    padding-top: 2.25rem;
+  }
+}
+
+/* Local Businesses "Built for" tags — fill navy on hover. */
+@media (hover: hover) {
+  .takeaway__list .filter-tag:hover {
+    background-color: var(--brand);
+    color: var(--bg);
+  }
+}
+
+/* Homepage "Select Service Area" heading — larger, with a bobbing down arrow. */
+.services-heading {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  font-size: clamp(1.1rem, 2.4vw, 1.75rem);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+.services-heading__arrow {
+  display: inline-block;
+  font-size: 1.15em;
+  line-height: 1;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .services-heading__arrow {
+    animation: services-arrow-bob 1.4s ease-in-out infinite;
+  }
+}
+
+@keyframes services-arrow-bob {
+  0%,
+  100% {
+    transform: translateY(-0.12em);
+  }
+  50% {
+    transform: translateY(0.2em);
+  }
+}
+
+/* "View All Work" pinned to the bottom-right of the device stage. */
+.btn-pill.device-showcase__cta {
+  position: absolute;
+  right: 3rem;
+  bottom: 3rem;
+  z-index: 5;
+  background: var(--bg);
+}
+
+.btn-pill.device-showcase__cta:hover {
+  background: var(--brand);
+}
+
+@media (max-width: 900px) {
+  .btn-pill.device-showcase__cta {
+    right: 1rem;
+    bottom: 1rem;
+    padding: 0.5rem 1.1rem;
+    font-size: 0.7rem;
+    white-space: nowrap;
+  }
+}
