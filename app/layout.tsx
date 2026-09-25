@@ -5,6 +5,14 @@ import { Analytics } from "@vercel/analytics/next";
 import SmoothScrollProvider from "@/app/components/providers/SmoothScrollProvider";
 import { PageTransitionProvider } from "@/app/components/providers/PageTransition";
 import "./globals.css";
+import {
+  defaultPreview,
+  previews,
+  sharePreviewMetadata,
+  siteDescription,
+  siteTitle,
+  siteUrl,
+} from "@/app/shareMeta";
 
 const spaceMono = Space_Mono({
   variable: "--font-space-mono",
@@ -42,54 +50,13 @@ const displayItalic = localFont({
   display: "swap",
 });
 
-// Absolute base for the share-preview image/video URLs. Vercel sets the
-// production hostname automatically; set NEXT_PUBLIC_SITE_URL once a custom
-// domain is connected.
-const siteUrl =
-  process.env.NEXT_PUBLIC_SITE_URL ??
-  (process.env.VERCEL_PROJECT_PRODUCTION_URL
-    ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`
-    : "http://localhost:3000");
-
-const siteTitle = "SIR_ Websites | Los Angeles";
-const siteDescription =
-  "Custom website design and development for business. No templates. Built directly with Sebastian Rocha in Los Angeles, CA.";
-
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
   title: siteTitle,
   description: siteDescription,
-  // Link preview (texts, chat apps, social): the homepage video, with a still of it for
-  // apps that only show an image.
-  openGraph: {
-    type: "website",
-    siteName: "SIR_ Websites",
-    title: siteTitle,
-    description: siteDescription,
-    images: [
-      {
-        url: "/og-image.jpg",
-        width: 1600,
-        height: 900,
-        alt: "SIR_ — All businesses. All budgets. Seriously_",
-      },
-    ],
-    videos: [
-      {
-        // Not resolved against metadataBase automatically, so made absolute here.
-        url: new URL("/textpre0.mp4", siteUrl).toString(),
-        width: 1920,
-        height: 1080,
-        type: "video/mp4",
-      },
-    ],
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: siteTitle,
-    description: siteDescription,
-    images: ["/og-image.jpg"],
-  },
+  // Link preview (texts, chat apps, social) — see app/shareMeta.ts, and
+  // app/share for the alternate `/share/<name>` links.
+  ...sharePreviewMetadata(previews[defaultPreview]),
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
