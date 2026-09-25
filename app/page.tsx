@@ -5,7 +5,7 @@ import ServicesList from "@/app/components/marketing/ServicesList";
 import WorkGrid from "@/app/components/marketing/WorkGrid";
 import LanguageToast from "@/app/components/marketing/LanguageToast";
 import SiteFooter from "@/app/components/marketing/SiteFooter";
-import ClosingCta from "@/app/components/marketing/ClosingCta";
+import BlueprintCta from "@/app/components/marketing/BlueprintCta";
 
 export default function Home() {
   return (
@@ -16,7 +16,7 @@ export default function Home() {
         <WorkGrid />
         <BusinessShowcase />
         <ServicesList />
-        <ClosingCta />
+        <BlueprintCta />
       </main>
       <SiteFooter />
       <LanguageToast />

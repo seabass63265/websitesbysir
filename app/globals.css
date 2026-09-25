@@ -4781,3 +4781,234 @@ a.contact-row:focus-visible {
     white-space: nowrap;
   }
 }
+
+/* ============================================================
+   Homepage closing block — BlueprintCta.tsx. A compact bordered
+   card (not full-screen): pitch + signature left, animated line
+   drawing right. Animations run once `.bp-visible` is added.
+   ============================================================ */
+.bp-wrap {
+  padding-top: 4rem;
+  padding-bottom: 4rem;
+  /* The tilted card's corners can poke past the edge on narrow screens. */
+  overflow-x: clip;
+}
+
+.bp {
+  --bp-ink-light: rgba(0, 49, 83, 0.4);
+  --bp-ease: cubic-bezier(0.2, 0.8, 0.2, 1);
+  display: grid;
+  grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr);
+  gap: 2rem;
+  align-items: center;
+  /* Postcard proportions: narrower and taller than a banner (about 8:5). */
+  max-width: 880px;
+  aspect-ratio: 8 / 5;
+  margin: 0 auto;
+  padding: 2.75rem 3rem;
+  border: var(--border);
+  overflow: hidden;
+  /* Slightly tilted, like a postcard set down on the page. */
+  transform: rotate(-1.2deg);
+  box-shadow: 0 10px 28px rgba(0, 49, 83, 0.1);
+}
+
+.bp__content {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.bp__content h2 {
+  font-size: clamp(1.25rem, 2.2vw, 1.85rem);
+  font-weight: 700;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  text-transform: uppercase;
+  margin-bottom: 1.1rem;
+  text-wrap: balance;
+}
+
+.bp__content p {
+  font-size: 0.88rem;
+  line-height: 1.6;
+  margin-bottom: 0.85rem;
+  opacity: 0.85;
+}
+
+.bp__signature {
+  margin: 1.75rem 0 1rem;
+}
+
+.bp__sig-name {
+  display: inline-block;
+  font-family: var(--font-knewave), system-ui, sans-serif;
+  font-size: 1.5rem;
+  line-height: 1.1;
+  transform: rotate(-3deg);
+  transform-origin: left center;
+  margin-bottom: 0.35rem;
+}
+
+.bp__sig-line {
+  display: block;
+  font-size: 0.65rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  opacity: 0.55;
+  margin-bottom: 0.15rem;
+}
+
+.bp__cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.7rem 1.4rem;
+  border: var(--border);
+  background: transparent;
+  color: var(--brand);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  transition: background-color 0.25s ease, color 0.25s ease;
+}
+
+.bp__cta:hover {
+  background: var(--brand);
+  color: var(--bg);
+}
+
+.bp__art svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  max-height: 300px;
+  overflow: visible;
+}
+
+.bp-line {
+  fill: none;
+  stroke: var(--brand);
+  stroke-width: 1.5;
+  stroke-linecap: square;
+  stroke-linejoin: miter;
+}
+.bp-line.bp-fill {
+  fill: var(--bg);
+}
+.bp-line-thin {
+  fill: none;
+  stroke: var(--brand);
+  stroke-width: 0.75;
+  stroke-dasharray: 4 4;
+}
+.bp-line-faint {
+  fill: none;
+  stroke: var(--bp-ink-light);
+  stroke-width: 0.5;
+}
+.bp-text {
+  font-family: var(--font-main);
+  font-size: 10px;
+  fill: var(--brand);
+  letter-spacing: 0.05em;
+}
+.bp-text-faint {
+  font-family: var(--font-main);
+  font-size: 8px;
+  fill: var(--bp-ink-light);
+}
+.bp-stamp {
+  transform-box: fill-box;
+  transform-origin: center;
+  font-family: var(--font-main);
+}
+.bp-stamp-circle {
+  fill: none;
+  stroke: var(--brand);
+  stroke-width: 2;
+}
+
+/* Start states (hidden / undrawn) — cleared by `.bp-visible`. Durations and
+   delays below are deliberately slow (about 2.5x the original). */
+.bp-anim-draw {
+  stroke-dasharray: 2000;
+  stroke-dashoffset: 2000;
+}
+.bp-anim-fade {
+  opacity: 0;
+  transform: translateY(10px);
+}
+.bp-anim-stamp {
+  opacity: 0;
+  transform: scale(2) rotate(20deg);
+}
+.bp-anim-content {
+  opacity: 0;
+  transform: translateX(-20px);
+}
+
+.bp-visible .bp-anim-draw {
+  stroke-dashoffset: 0;
+  transition: stroke-dashoffset 5s var(--bp-ease);
+}
+.bp-visible .bp-anim-fade {
+  opacity: 1;
+  transform: translateY(0);
+  transition: opacity 2.5s var(--bp-ease), transform 2.5s var(--bp-ease);
+}
+.bp-visible .bp-anim-stamp {
+  opacity: 1;
+  transform: scale(1) rotate(-15deg);
+  transition: opacity 1.25s ease-out,
+    transform 1.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+.bp-visible .bp-anim-content {
+  opacity: 1;
+  transform: translateX(0);
+  transition: opacity 2s var(--bp-ease), transform 2s var(--bp-ease);
+}
+
+.bp-visible .bp-d1 { transition-delay: 0.5s; }
+.bp-visible .bp-d2 { transition-delay: 1.5s; }
+.bp-visible .bp-d3 { transition-delay: 2.5s; }
+.bp-visible .bp-d4 { transition-delay: 3.75s; }
+.bp-visible .bp-draw2 { transition-delay: 1.25s; }
+.bp-visible .bp-c1 { transition-delay: 0.25s; }
+.bp-visible .bp-c2 { transition-delay: 0.75s; }
+.bp-visible .bp-c3 { transition-delay: 1.25s; }
+.bp-visible .bp-c4 { transition-delay: 1.75s; }
+/* The signature settles in slowest, after the paragraphs above it. */
+.bp-visible .bp__signature {
+  transition-duration: 4.5s;
+  transition-delay: 2s;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bp-anim-draw,
+  .bp-anim-fade,
+  .bp-anim-content {
+    transition: none !important;
+    stroke-dashoffset: 0 !important;
+    opacity: 1 !important;
+    transform: none !important;
+  }
+  .bp-anim-stamp {
+    transition: none !important;
+    opacity: 1 !important;
+    transform: rotate(-15deg) !important;
+  }
+}
+
+@media (max-width: 900px) {
+  .bp {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+    padding: 1.5rem;
+    aspect-ratio: auto;
+  }
+  .bp__art svg {
+    max-height: 280px;
+  }
+}
