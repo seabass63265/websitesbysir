@@ -44,3 +44,6 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# Unused 355 MB source video (site uses shpelmu.mp4); over GitHub's 100 MB limit
+public/shpelmu.mov
