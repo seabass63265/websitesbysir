@@ -4799,7 +4799,13 @@ a.contact-row:focus-visible {
   --bp-ease: cubic-bezier(0.2, 0.8, 0.2, 1);
   display: grid;
   grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr);
-  gap: 2rem;
+  /* Text and signature stack in the left column; the drawing fills the right. */
+  grid-template-areas:
+    "content art"
+    "signature art";
+  column-gap: 2rem;
+  row-gap: 0;
+  align-content: center;
   align-items: center;
   /* Postcard proportions: narrower and taller than a banner (about 8:5). */
   max-width: 880px;
@@ -4814,6 +4820,7 @@ a.contact-row:focus-visible {
 }
 
 .bp__content {
+  grid-area: content;
   display: flex;
   flex-direction: column;
   align-items: flex-start;
@@ -4837,7 +4844,9 @@ a.contact-row:focus-visible {
 }
 
 .bp__signature {
-  margin: 1.75rem 0 1rem;
+  grid-area: signature;
+  align-self: start;
+  margin: 1.75rem 0 0;
 }
 
 .bp__sig-name {
@@ -4877,6 +4886,10 @@ a.contact-row:focus-visible {
 .bp__cta:hover {
   background: var(--brand);
   color: var(--bg);
+}
+
+.bp__art {
+  grid-area: art;
 }
 
 .bp__art svg {
@@ -5002,11 +5015,19 @@ a.contact-row:focus-visible {
 }
 
 @media (max-width: 900px) {
+  /* Stacked: text, then the drawing, then the signature at the bottom. */
   .bp {
     grid-template-columns: 1fr;
-    gap: 2rem;
+    grid-template-areas:
+      "content"
+      "art"
+      "signature";
+    row-gap: 2rem;
     padding: 1.5rem;
     aspect-ratio: auto;
+  }
+  .bp__signature {
+    margin: 0;
   }
   .bp__art svg {
     max-height: 280px;

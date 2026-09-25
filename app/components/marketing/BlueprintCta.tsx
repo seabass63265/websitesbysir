@@ -51,12 +51,6 @@ export default function BlueprintCta() {
             figured out. Tell us about your business, and we will help you
             plan, design, build, and launch the right website.
           </p>
-
-          <div className="bp__signature bp-anim-content bp-c3">
-            <span className="bp__sig-name">Sebastian I. Rocha</span>
-            <span className="bp__sig-line">Founder &amp; Developer, SIR_</span>
-            <span className="bp__sig-line">Los Angeles, California</span>
-          </div>
         </div>
 
         <div className="bp__art" aria-hidden="true">
@@ -148,6 +142,12 @@ export default function BlueprintCta() {
             </g>
             </g>
           </svg>
+        </div>
+
+        <div className="bp__signature bp-anim-content bp-c3">
+          <span className="bp__sig-name">Sebastian I. Rocha</span>
+          <span className="bp__sig-line">Founder &amp; Developer, SIR_</span>
+          <span className="bp__sig-line">Los Angeles, California</span>
         </div>
       </div>
     </section>
