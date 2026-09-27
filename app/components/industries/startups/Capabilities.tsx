@@ -22,8 +22,8 @@ const capabilities = [
     body: "Traction, team, press, and pitch-friendly pages that make a strong first impression on investors, partners, and reporters.",
   },
   {
-    title: "Analytics & Growth",
-    body: "Connect analytics, event tracking, A/B testing, and SEO so you can see what is working and where visitors drop off.",
+    title: "Reviews & Social Proof",
+    body: "Showcase customer reviews, testimonials, early-user feedback, and success stories that build trust and give visitors confidence in your startup.",
   },
   {
     title: "And Much More",

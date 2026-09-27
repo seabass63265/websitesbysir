@@ -18,8 +18,8 @@ const capabilities = [
     body: "A design that looks and works beautifully on phones, tablets, and computers, tested on real devices before launch.",
   },
   {
-    title: "SEO & Discoverability",
-    body: "Clean structure, fast pages, and search setup so the right people can find your project and understand it quickly.",
+    title: "Accessibility & Usability",
+    body: "Clear navigation, readable content, accessible forms, and thoughtful interactions that make your website easier for everyone to understand and use.",
   },
   {
     title: "Ongoing Support",

@@ -17,7 +17,10 @@ type Tier = {
   buildItems: string[];
   monthlyItems?: string[];
   cta: string;
+  /** White card on the inverted section. */
   featured?: boolean;
+  /** Hides the "Most Common" badge on a featured card. */
+  hideBadge?: boolean;
   /** Overrides "One-time build includes:". */
   buildLabel?: string;
   /** Overrides "Monthly service includes:". */
@@ -26,97 +29,36 @@ type Tier = {
 
 const tiers: Tier[] = [
   {
-    level: "Tier 1",
-    name: "Essential",
-    blurb:
-      "For projects that need a clean, professional online home for their idea.",
-    price: "$1,300",
-    priceUnit: "one-time build",
-    monthlyPrice: "$250",
-    monthlyUnit: "per month after",
-    buildItems: [
-      "Up to 3 pages",
-      "Home page",
-      "About / Our Story page",
-      "Main info or offering page",
-      "Contact information and form",
-      "Social media links",
-      "Custom mobile-responsive design",
-      "Domain connection",
-      "Testing and publishing",
-      "Two revision rounds",
-    ],
-    monthlyItems: [
-      "Managed website hosting",
-      "SSL security and automated backups",
-      "Uptime and performance monitoring",
-      "Software and dependency maintenance",
-      "Technical troubleshooting and support",
-      "Page, content, and feature updates",
-      "Up to one hour of monthly development support",
-    ],
-    cta: "Request a Quote",
-  },
-  {
-    level: "Tier 2",
-    name: "Growth",
-    blurb:
-      "For projects that want their website to actively bring in sign-ups, donations, bookings, and inquiries.",
-    featured: true,
-    price: "$1,500",
-    priceUnit: "one-time build",
-    monthlyPrice: "$350",
-    monthlyUnit: "per month after",
-    buildItems: [
-      "Up to 6 pages",
-      "Home page",
-      "About / Our Story and team page",
-      "Info, programs, or offering pages",
-      "Photo or media gallery",
-      "Forms with email or CRM connection",
-      "Booking, event, or donation connection",
-      "Analytics and search setup",
-      "Social and community connections",
-      "Three revision rounds",
-    ],
-    monthlyItems: [
-      "Managed website hosting",
-      "SSL security and automated backups",
-      "Uptime and performance monitoring",
-      "Software and dependency maintenance",
-      "Technical troubleshooting and support",
-      "Page, content, and feature updates",
-      "Launch, event, and campaign updates",
-      "Priority technical support and faster response times",
-      "Up to two hours of monthly development support",
-    ],
-    cta: "Request a Quote",
-  },
-  {
-    level: "Tier 3",
+    level: "",
     name: "Tailored",
+    featured: true,
+    hideBadge: true,
     blurb: (
       <>
-        For <strong>projects that need</strong> something outside our
-        standard packages—whether that means a focused website on{" "}
-        <strong>
-          a smaller budget ($) OR a fully customized digital experience ($$$).
-        </strong>
+        For projects that don’t fit neatly into a standard package—whether that
+        means a focused website with a smaller scope or a fully customized
+        digital experience.
       </>
     ),
     price: "Custom Pricing",
-    caption: "Built around your goals, needs, and budget.",
+    caption:
+      "Every project is quoted individually based on its goals, required features, integrations, timeline, and level of ongoing support.",
     buildLabel: "Your custom build may include:",
     buildItems: [
       "A focused, essentials-only website",
-      "Custom page structure",
+      "A completely custom page structure",
       "Multiple programs, brands, or audiences",
+      "Custom calculators and interactive tools",
+      "Member areas or customer portals",
+      "Custom databases and content systems",
+      "Advanced forms and third-party integrations",
+      "Payment, booking, event, or donation workflows",
+      "English and Spanish website options",
       "Custom interactions and animations",
-      "Advanced forms and integrations",
-      "Content and copywriting support",
-      "Unique custom functionality",
+      "Copywriting and content support",
+      "Unique functionality built around your idea",
     ],
-    monthlyLabel: "Monthly service may include:",
+    monthlyLabel: "Hosting and maintenance may include:",
     monthlyItems: [
       "Managed website hosting",
       "SSL security and automated backups",
@@ -124,6 +66,7 @@ const tiers: Tier[] = [
       "Software and dependency maintenance",
       "Technical troubleshooting and support",
       "Page, content, and feature updates",
+      "Custom integration support",
       "Development support based on your selected plan",
       "Additional services tailored to your website",
     ],
@@ -154,7 +97,7 @@ export default function PricingSection() {
         </p>
       </div>
 
-      <div className="tier-grid">
+      <div className="tier-grid tier-grid--single">
         {tiers.map((tier) => (
           <div
             key={tier.name}
@@ -162,11 +105,13 @@ export default function PricingSection() {
               tier.featured ? "tier-card tier-card--featured" : "tier-card"
             }
           >
-            {tier.featured && (
+            {tier.featured && !tier.hideBadge && (
               <div className="tier-card__badge">Most Common</div>
             )}
 
-            <div className="pill-tag tier-card__level">{tier.level}</div>
+            {tier.level && (
+              <div className="pill-tag tier-card__level">{tier.level}</div>
+            )}
             <h3 className="text-lg">{tier.name}</h3>
             <p className="text-sm tier-card__blurb">{tier.blurb}</p>
 
@@ -176,9 +121,7 @@ export default function PricingSection() {
             <div className="tier-card__price-row">
               <span className="tier-card__price">{tier.price}</span>
               {tier.priceUnit && (
-                <span className="tier-card__price-unit">
-                  {tier.priceUnit}
-                </span>
+                <span className="tier-card__price-unit">{tier.priceUnit}</span>
               )}
             </div>
 
@@ -187,10 +130,8 @@ export default function PricingSection() {
                 <div className="tier-card__price-connector">
                   and after, just
                 </div>
-                <div className="tier-card__price-row">
-                  <span className="tier-card__price">
-                    {tier.monthlyPrice}
-                  </span>
+                <div className="tier-card__price-row tier-card__price-row--stacked">
+                  <span className="tier-card__price">{tier.monthlyPrice}</span>
                   {tier.monthlyUnit && (
                     <span className="tier-card__price-unit">
                       {tier.monthlyUnit}
@@ -250,18 +191,15 @@ export default function PricingSection() {
         <div className="tier-footnote__item">
           <div className="tier-footnote__label text-sm">Service Term</div>
           <p>
-            Both plans require an initial 12-month website service
-            agreement. After the initial term, service renews every 6
-            months.
+            Hosting and maintenance require an initial 12-month website service
+            agreement. After the initial term, service renews every 6 months.
           </p>
         </div>
         <div className="tier-footnote__item">
-          <div className="tier-footnote__label text-sm">
-            Third-Party Costs
-          </div>
+          <div className="tier-footnote__label text-sm">Third-Party Costs</div>
           <p>
-            Domain registration, payment and donation processing, email and
-            scheduling services, and other third-party subscriptions are
+            Domain registration, payment processing, email platforms, scheduling
+            services, premium software, and other third-party subscriptions are
             billed separately.
           </p>
         </div>

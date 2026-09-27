@@ -29,30 +29,35 @@ const tiers: Tier[] = [
     level: "Tier 1",
     name: "Essential",
     blurb:
-      "For nonprofits that need a simple, professional online home for their mission.",
-    price: "$1,300",
+      "For nonprofits and organizations that need a professional online home for their mission, programs, and community.",
+    price: "$1,500",
     priceUnit: "one-time build",
-    monthlyPrice: "$250",
-    monthlyUnit: "per month after",
+    monthlyPrice: "$120",
+    monthlyUnit: "per month\nfor hosting & maintenance",
     buildItems: [
-      "Up to 3 pages",
+      "Up to 4 pages",
       "Home page",
-      "Mission and programs pages",
-      "Donate button linked to your donation platform",
-      "Contact information",
+      "Mission and About page",
+      "Programs or services page",
+      "Contact information and inquiry form",
+      "Donation-platform connection",
+      "Social media links",
       "Custom mobile-responsive design",
       "Domain connection",
-      "Testing and publishing",
+      "Basic search-engine setup",
+      "Basic accessibility considerations",
       "Two revision rounds",
+      "Testing and publishing",
     ],
+    monthlyLabel: "Monthly website care includes:",
     monthlyItems: [
       "Managed website hosting",
       "SSL security and automated backups",
       "Uptime and performance monitoring",
       "Software and dependency maintenance",
       "Technical troubleshooting and support",
-      "Program, event, and content updates",
-      "Up to one hour of monthly development support",
+      "Program, staff, and content updates",
+      "Up to 30 minutes of website updates per month",
     ],
     cta: "Request a Quote",
   },
@@ -60,35 +65,37 @@ const tiers: Tier[] = [
     level: "Tier 2",
     name: "Growth",
     blurb:
-      "For nonprofits that want their website to actively support donations, volunteers, and community growth.",
+      "For nonprofits and organizations that want their website to actively support donations, volunteers, events, and community growth.",
     featured: true,
-    price: "$1,500",
+    price: "$2,250",
     priceUnit: "one-time build",
-    monthlyPrice: "$350",
-    monthlyUnit: "per month after",
+    monthlyPrice: "$180",
+    monthlyUnit: "per month\nfor hosting & maintenance",
     buildItems: [
-      "Up to 6 pages",
-      "Home page",
-      "Mission and programs pages",
-      "Our Story page",
-      "Photo gallery and impact highlights",
-      "Donation platform connection",
-      "Volunteer and event sign-up forms",
-      "Newsletter sign-up and email connection",
-      "Instagram and Facebook connections",
+      "Up to 7 pages",
+      "Everything included in Essential",
+      "Individual program or initiative pages",
+      "Donation-platform integration",
+      "Volunteer interest and registration forms",
+      "Events or community-calendar connection",
+      "Impact stories and testimonials",
+      "Leadership, staff, or board profiles",
+      "Newsletter sign-up integration",
+      "Resource and document sections",
       "English and Spanish website option",
       "Three revision rounds",
+      "Testing and publishing",
     ],
+    monthlyLabel: "Monthly website care includes:",
     monthlyItems: [
-      "Managed website hosting",
-      "SSL security and automated backups",
-      "Uptime and performance monitoring",
-      "Software and dependency maintenance",
-      "Technical troubleshooting and support",
-      "Program, event, and content updates",
-      "Fundraising campaign and event deployments",
-      "Priority technical support and faster response times",
-      "Up to two hours of monthly development support",
+      "Everything included in Essential website care",
+      "Program, event, staff, and resource updates",
+      "Donation-campaign and volunteer updates",
+      "Impact story and testimonial updates",
+      "Seasonal campaigns and announcements",
+      "Priority technical support",
+      "Faster response times",
+      "Up to one hour of website updates per month",
     ],
     cta: "Request a Quote",
   },
@@ -97,35 +104,43 @@ const tiers: Tier[] = [
     name: "Tailored",
     blurb: (
       <>
-        For <strong>organizations that need</strong> something outside our
-        standard packages—whether that means a focused website on{" "}
+        For <strong>nonprofits and organizations that need</strong> something
+        outside our standard packages—whether that means a focused website on{" "}
         <strong>
-          a smaller budget ($) OR a fully customized digital experience ($$$).
+          a smaller budget or a fully customized digital experience.
         </strong>
       </>
     ),
     price: "Custom Pricing",
-    caption: "Built around your goals, needs, and budget.",
+    caption:
+      "Built around your mission, community, required features, budget, and project scope.",
     buildLabel: "Your custom build may include:",
     buildItems: [
-      "A focused, essentials-only website",
-      "Custom page structure",
+      "A custom page structure",
       "Multiple programs, chapters, or locations",
+      "Advanced donation and fundraising connections",
+      "Volunteer registration and management workflows",
+      "Membership or community portals",
+      "Event registration and ticketing connections",
+      "Resource libraries and document collections",
+      "Impact reports and success stories",
+      "English and Spanish website options",
       "Custom interactions and animations",
-      "Advanced donation, membership, and grant forms",
-      "Content and copywriting support",
-      "Unique custom functionality",
+      "Copywriting and mission-storytelling support",
+      "Unique functionality built around your organization",
     ],
-    monthlyLabel: "Monthly service may include:",
+    monthlyLabel: "Monthly website care may include:",
     monthlyItems: [
       "Managed website hosting",
       "SSL security and automated backups",
       "Uptime and performance monitoring",
       "Software and dependency maintenance",
       "Technical troubleshooting and support",
-      "Program, event, and content updates",
+      "Program, event, staff, and content updates",
+      "Donation and volunteer campaign updates",
+      "Impact story, resource, and announcement updates",
       "Development support based on your selected plan",
-      "Additional services tailored to your website",
+      "Additional services tailored to your organization",
     ],
     cta: "Plan a Custom Project",
   },
@@ -163,7 +178,7 @@ export default function PricingSection() {
             }
           >
             {tier.featured && (
-              <div className="tier-card__badge">Most Common</div>
+              <div className="tier-card__badge">Most Popular</div>
             )}
 
             <div className="pill-tag tier-card__level">{tier.level}</div>
@@ -176,9 +191,7 @@ export default function PricingSection() {
             <div className="tier-card__price-row">
               <span className="tier-card__price">{tier.price}</span>
               {tier.priceUnit && (
-                <span className="tier-card__price-unit">
-                  {tier.priceUnit}
-                </span>
+                <span className="tier-card__price-unit">{tier.priceUnit}</span>
               )}
             </div>
 
@@ -187,10 +200,8 @@ export default function PricingSection() {
                 <div className="tier-card__price-connector">
                   and after, just
                 </div>
-                <div className="tier-card__price-row">
-                  <span className="tier-card__price">
-                    {tier.monthlyPrice}
-                  </span>
+                <div className="tier-card__price-row tier-card__price-row--stacked">
+                  <span className="tier-card__price">{tier.monthlyPrice}</span>
                   {tier.monthlyUnit && (
                     <span className="tier-card__price-unit">
                       {tier.monthlyUnit}
@@ -250,19 +261,16 @@ export default function PricingSection() {
         <div className="tier-footnote__item">
           <div className="tier-footnote__label text-sm">Service Term</div>
           <p>
-            Both plans require an initial 12-month website service
-            agreement. After the initial term, service renews every 6
-            months.
+            Both plans require an initial 12-month website service agreement.
+            After the initial term, service renews every 6 months.
           </p>
         </div>
         <div className="tier-footnote__item">
-          <div className="tier-footnote__label text-sm">
-            Third-Party Costs
-          </div>
+          <div className="tier-footnote__label text-sm">Third-Party Costs</div>
           <p>
-            Domain registration, donation and fundraising platforms,
-            payment processing fees, email and CRM systems, and other
-            third-party subscriptions are billed separately.
+            Domain registration, donation and fundraising platforms, payment
+            processing fees, email and CRM systems, and other third-party
+            subscriptions are billed separately.
           </p>
         </div>
       </div>

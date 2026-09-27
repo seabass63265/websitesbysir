@@ -2147,6 +2147,11 @@ select {
   padding: 3rem var(--pad) 0;
 }
 
+.tier-grid--single {
+  grid-template-columns: minmax(0, 760px);
+  justify-content: center;
+}
+
 .tier-card {
   position: relative;
   border: var(--border);
@@ -2280,6 +2285,19 @@ select {
   text-transform: uppercase;
   letter-spacing: 0.05em;
   opacity: 0.6;
+}
+
+.tier-card__price-row--stacked {
+  flex-wrap: wrap;
+  row-gap: 0.6rem;
+}
+
+.tier-card__price-row--stacked .tier-card__price-unit {
+  flex-basis: 100%;
+  font-size: 0.8rem;
+  letter-spacing: 0.09em;
+  line-height: 1.5;
+  white-space: pre-line;
 }
 
 .tier-card__caption {

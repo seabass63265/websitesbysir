@@ -29,31 +29,34 @@ const tiers: Tier[] = [
     level: "Tier 1",
     name: "Essential",
     blurb:
-      "For early-stage startups that need a sharp, credible home for their idea.",
-    price: "$1,300",
+      "For early-stage startups that need a sharp, credible website to introduce their idea and start building interest.",
+    price: "$1,500",
     priceUnit: "one-time build",
-    monthlyPrice: "$250",
-    monthlyUnit: "per month after",
+    monthlyPrice: "$140",
+    monthlyUnit: "per month\nfor hosting & maintenance",
     buildItems: [
       "Up to 3 pages",
-      "Home / landing page",
-      "Product or features page",
-      "About / Our Story page",
-      "Waitlist or sign-up form",
-      "Contact information",
+      "Home or product landing page",
+      "Product or service overview",
+      "About or team page",
+      "Contact or early-access form",
+      "Waitlist and email sign-up connection",
+      "Product screenshots or media",
       "Custom mobile-responsive design",
       "Domain connection",
-      "Testing and publishing",
+      "Basic search-engine setup",
       "Two revision rounds",
+      "Testing and publishing",
     ],
+    monthlyLabel: "Monthly website care includes:",
     monthlyItems: [
       "Managed website hosting",
       "SSL security and automated backups",
       "Uptime and performance monitoring",
       "Software and dependency maintenance",
       "Technical troubleshooting and support",
-      "Product, pricing, and content updates",
-      "Up to one hour of monthly development support",
+      "Product, team, and content updates",
+      "Up to 30 minutes of website updates per month",
     ],
     cta: "Request a Quote",
   },
@@ -61,35 +64,38 @@ const tiers: Tier[] = [
     level: "Tier 2",
     name: "Growth",
     blurb:
-      "For startups that want their website to actively drive sign-ups, demo bookings, and investor interest.",
+      "For startups that want their website to actively drive sign-ups, demo requests, customer trust, and investor interest.",
     featured: true,
-    price: "$1,500",
+    price: "$2,500",
     priceUnit: "one-time build",
-    monthlyPrice: "$350",
-    monthlyUnit: "per month after",
+    monthlyPrice: "$220",
+    monthlyUnit: "per month\nfor hosting & maintenance",
     buildItems: [
-      "Up to 6 pages",
-      "Home / landing page",
-      "Product and feature pages",
-      "Pricing page",
-      "Our Story and team page",
-      "Waitlist and email capture with CRM connection",
-      "Demo booking / scheduling connection",
-      "Analytics and conversion tracking",
-      "Investor or press page",
-      "Social and community connections",
+      "Up to 7 pages",
+      "Everything included in Essential",
+      "Individual product or feature pages",
+      "Pricing or business-model page",
+      "Customer reviews and social proof",
+      "Demo-booking integration",
+      "Waitlist or early-access workflow",
+      "Investor and press page",
+      "Team and advisor profiles",
+      "Newsletter or CRM connection",
+      "Product walkthroughs and media",
+      "Custom interactions and animations",
       "Three revision rounds",
+      "Testing and publishing",
     ],
+    monthlyLabel: "Monthly website care includes:",
     monthlyItems: [
-      "Managed website hosting",
-      "SSL security and automated backups",
-      "Uptime and performance monitoring",
-      "Software and dependency maintenance",
-      "Technical troubleshooting and support",
-      "Product, pricing, and content updates",
-      "Launch, feature, and campaign updates",
-      "Priority technical support and faster response times",
-      "Up to two hours of monthly development support",
+      "Everything included in Essential website care",
+      "Product, feature, pricing, and team updates",
+      "New customer reviews and success stories",
+      "Launch, funding, and press announcements",
+      "New landing pages for major campaigns",
+      "Priority technical support",
+      "Faster response times",
+      "Up to one hour of website updates per month",
     ],
     cta: "Request a Quote",
   },
@@ -98,33 +104,41 @@ const tiers: Tier[] = [
     name: "Tailored",
     blurb: (
       <>
-        For <strong>startups that need</strong> something outside our
-        standard packages—whether that means a focused website on{" "}
+        For <strong>startups that need</strong> something outside our standard
+        packages—whether that means a focused launch page on{" "}
         <strong>
-          a smaller budget ($) OR a fully customized digital experience ($$$).
+          a smaller budget or a fully customized digital experience.
         </strong>
       </>
     ),
     price: "Custom Pricing",
-    caption: "Built around your goals, needs, and budget.",
+    caption:
+      "Built around your startup, product, stage, required features, and project scope.",
     buildLabel: "Your custom build may include:",
     buildItems: [
-      "A focused, essentials-only launch page",
-      "Custom page structure",
-      "Multiple products or brands",
+      "A custom page structure",
+      "Multiple products or audience segments",
+      "Advanced waitlist and onboarding workflows",
+      "Interactive product demonstrations",
+      "User accounts or customer portals",
+      "Custom dashboards and data displays",
+      "Advanced CRM and email integrations",
+      "Investor, press, and fundraising pages",
+      "English and Spanish website options",
       "Custom interactions and animations",
-      "Advanced forms and integrations",
-      "Content and copywriting support",
-      "Unique custom functionality",
+      "Copywriting and product-messaging support",
+      "Unique functionality built around your startup",
     ],
-    monthlyLabel: "Monthly service may include:",
+    monthlyLabel: "Monthly website care may include:",
     monthlyItems: [
       "Managed website hosting",
       "SSL security and automated backups",
       "Uptime and performance monitoring",
       "Software and dependency maintenance",
       "Technical troubleshooting and support",
-      "Product, pricing, and content updates",
+      "Product, pricing, team, and content updates",
+      "Customer review and social-proof updates",
+      "Launch, funding, and press announcements",
       "Development support based on your selected plan",
       "Additional services tailored to your website",
     ],
@@ -164,7 +178,7 @@ export default function PricingSection() {
             }
           >
             {tier.featured && (
-              <div className="tier-card__badge">Most Common</div>
+              <div className="tier-card__badge">Most Popular</div>
             )}
 
             <div className="pill-tag tier-card__level">{tier.level}</div>
@@ -177,9 +191,7 @@ export default function PricingSection() {
             <div className="tier-card__price-row">
               <span className="tier-card__price">{tier.price}</span>
               {tier.priceUnit && (
-                <span className="tier-card__price-unit">
-                  {tier.priceUnit}
-                </span>
+                <span className="tier-card__price-unit">{tier.priceUnit}</span>
               )}
             </div>
 
@@ -188,10 +200,8 @@ export default function PricingSection() {
                 <div className="tier-card__price-connector">
                   and after, just
                 </div>
-                <div className="tier-card__price-row">
-                  <span className="tier-card__price">
-                    {tier.monthlyPrice}
-                  </span>
+                <div className="tier-card__price-row tier-card__price-row--stacked">
+                  <span className="tier-card__price">{tier.monthlyPrice}</span>
                   {tier.monthlyUnit && (
                     <span className="tier-card__price-unit">
                       {tier.monthlyUnit}
@@ -251,15 +261,12 @@ export default function PricingSection() {
         <div className="tier-footnote__item">
           <div className="tier-footnote__label text-sm">Service Term</div>
           <p>
-            Both plans require an initial 12-month website service
-            agreement. After the initial term, service renews every 6
-            months.
+            Both plans require an initial 12-month website service agreement.
+            After the initial term, service renews every 6 months.
           </p>
         </div>
         <div className="tier-footnote__item">
-          <div className="tier-footnote__label text-sm">
-            Third-Party Costs
-          </div>
+          <div className="tier-footnote__label text-sm">Third-Party Costs</div>
           <p>
             Domain registration, analytics and CRM platforms, email and
             scheduling services, payment processing, and other third-party

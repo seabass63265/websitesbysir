@@ -31,10 +31,10 @@ const tiers: Tier[] = [
     name: "Essential",
     blurb:
       "For restaurants and cafés that need a professional, easy-to-manage online presence.",
-    price: "$1,300",
+    price: "$1,500",
     priceUnit: "one-time build",
-    monthlyPrice: "$250",
-    monthlyUnit: "per month after",
+    monthlyPrice: "$140",
+    monthlyUnit: "per month\nfor hosting & maintenance",
     buildItems: [
       "Up to 3 pages",
       "Home page",
@@ -57,7 +57,7 @@ const tiers: Tier[] = [
       "Software and dependency maintenance",
       "Technical troubleshooting and support",
       "Menu, pricing, hours, and media updates",
-      "Up to one hour of monthly development support",
+      "Up to 30 minutes of website updates per month",
     ],
     cta: "Request a Quote",
   },
@@ -67,10 +67,10 @@ const tiers: Tier[] = [
     blurb:
       "For restaurants and cafés that want their website to actively support ordering, reservations, and customer growth.",
     featured: true,
-    price: "$1,500",
+    price: "$2,000",
     priceUnit: "one-time build",
-    monthlyPrice: "$350",
-    monthlyUnit: "per month after",
+    monthlyPrice: "$200",
+    monthlyUnit: "per month\nfor hosting & maintenance",
     buildItems: [
       "Up to 6 pages",
       "Home page",
@@ -97,7 +97,7 @@ const tiers: Tier[] = [
       "Promotional page sections and homepage announcements",
       "Website analytics and performance reporting",
       "Priority technical support and faster response times",
-      "Up to two hours of monthly development support",
+      "Up to one hour of website updates per month",
     ],
     cta: "Request a Quote",
   },
@@ -106,26 +106,29 @@ const tiers: Tier[] = [
     name: "Tailored",
     blurb: (
       <>
-        For <strong>businesses that need</strong> something outside our
-        standard packages—whether that means a focused website on{" "}
+        For <strong>businesses that need</strong> something outside our standard
+        packages—whether that means a focused website on{" "}
         <strong>
-          a smaller budget ($) OR a fully customized digital experience ($$$).
+          a smaller budget or a fully customized digital experience.
         </strong>
       </>
     ),
     price: "Custom Pricing",
-    caption: "Built around your goals, needs, and budget.",
+    caption:
+      "Built around the restaurant\u2019s goals, needs, budget, and project scope.",
     buildLabel: "Your custom build may include:",
     buildItems: [
-      "A focused, essentials-only website",
-      "Custom page structure",
+      "A custom page structure",
       "Multiple menus or locations",
+      "Digital menus and seasonal menu pages",
+      "Advanced ordering or reservation connections",
+      "Custom catering and private-event inquiry forms",
+      "English and Spanish website options",
       "Custom interactions and animations",
-      "Advanced forms and integrations",
-      "Content and copywriting support",
-      "Unique custom functionality",
+      "Copywriting and content support",
+      "Unique functionality built around your restaurant",
     ],
-    monthlyLabel: "Monthly service may include:",
+    monthlyLabel: "Monthly website care may include:",
     monthlyItems: [
       "Managed website hosting",
       "SSL security and automated backups",
@@ -133,6 +136,8 @@ const tiers: Tier[] = [
       "Software and dependency maintenance",
       "Technical troubleshooting and support",
       "Menu, pricing, hours, and media updates",
+      "Location updates",
+      "Seasonal menus, specials, and announcements",
       "Development support based on your selected plan",
       "Additional services tailored to your website",
     ],
@@ -166,7 +171,7 @@ export default function PricingSection() {
             }
           >
             {tier.featured && (
-              <div className="tier-card__badge">Most Common</div>
+              <div className="tier-card__badge">Most Popular</div>
             )}
 
             <div className="pill-tag tier-card__level">{tier.level}</div>
@@ -179,9 +184,7 @@ export default function PricingSection() {
             <div className="tier-card__price-row">
               <span className="tier-card__price">{tier.price}</span>
               {tier.priceUnit && (
-                <span className="tier-card__price-unit">
-                  {tier.priceUnit}
-                </span>
+                <span className="tier-card__price-unit">{tier.priceUnit}</span>
               )}
             </div>
 
@@ -190,10 +193,8 @@ export default function PricingSection() {
                 <div className="tier-card__price-connector">
                   and after, just
                 </div>
-                <div className="tier-card__price-row">
-                  <span className="tier-card__price">
-                    {tier.monthlyPrice}
-                  </span>
+                <div className="tier-card__price-row tier-card__price-row--stacked">
+                  <span className="tier-card__price">{tier.monthlyPrice}</span>
                   {tier.monthlyUnit && (
                     <span className="tier-card__price-unit">
                       {tier.monthlyUnit}
@@ -253,19 +254,16 @@ export default function PricingSection() {
         <div className="tier-footnote__item">
           <div className="tier-footnote__label text-sm">Service Term</div>
           <p>
-            Both plans require an initial 12-month website service
-            agreement. After the initial term, service renews every 6
-            months.
+            Both plans require an initial 12-month website service agreement.
+            After the initial term, service renews every 6 months.
           </p>
         </div>
         <div className="tier-footnote__item">
-          <div className="tier-footnote__label text-sm">
-            Third-Party Costs
-          </div>
+          <div className="tier-footnote__label text-sm">Third-Party Costs</div>
           <p>
             Domain registration, ordering platforms, reservation systems,
-            payment processing, and other third-party subscriptions are
-            billed separately.
+            payment processing, and other third-party subscriptions are billed
+            separately.
           </p>
         </div>
       </div>

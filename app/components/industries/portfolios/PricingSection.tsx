@@ -24,16 +24,49 @@ type Tier = {
   monthlyLabel?: string;
 };
 
+const careItems = [
+  "Managed website hosting",
+  "SSL security and automated backups",
+  "Uptime and performance monitoring",
+  "Software and dependency maintenance",
+  "Technical troubleshooting and support",
+];
+
 const tiers: Tier[] = [
   {
     level: "Tier 1",
     name: "Essential",
     blurb:
-      "For creators and professionals who need a clean, professional home for their work.",
-    price: "$1,300",
+      "For creators and professionals who need one polished page to get their work online.",
+    price: "$750",
     priceUnit: "one-time build",
-    monthlyPrice: "$250",
-    monthlyUnit: "per month after",
+    monthlyPrice: "$80",
+    monthlyUnit: "per month\nfor hosting & maintenance",
+    buildItems: [
+      "One-page website",
+      "Portfolio or work highlights",
+      "About / bio section",
+      "Contact information and inquiry form",
+      "Social media links",
+      "Custom mobile-responsive design",
+      "Domain connection",
+      "Testing and publishing",
+      "One revision round",
+    ],
+    monthlyLabel: "Monthly website care includes:",
+    monthlyItems: [...careItems, "Content updates to your page"],
+    cta: "Request a Quote",
+  },
+  {
+    level: "Tier 2",
+    name: "Growth",
+    blurb:
+      "For creators and professionals who need a clean, professional home for their work.",
+    featured: true,
+    price: "$1,250",
+    priceUnit: "one-time build",
+    monthlyPrice: "$120",
+    monthlyUnit: "per month\nfor hosting & maintenance",
     buildItems: [
       "Up to 3 pages",
       "Home page",
@@ -46,51 +79,8 @@ const tiers: Tier[] = [
       "Testing and publishing",
       "Two revision rounds",
     ],
-    monthlyItems: [
-      "Managed website hosting",
-      "SSL security and automated backups",
-      "Uptime and performance monitoring",
-      "Software and dependency maintenance",
-      "Technical troubleshooting and support",
-      "Portfolio, project, and content updates",
-      "Up to one hour of monthly development support",
-    ],
-    cta: "Request a Quote",
-  },
-  {
-    level: "Tier 2",
-    name: "Growth",
-    blurb:
-      "For creators and personal brands who want their website to actively bring in bookings, inquiries, and followers.",
-    featured: true,
-    price: "$1,500",
-    priceUnit: "one-time build",
-    monthlyPrice: "$350",
-    monthlyUnit: "per month after",
-    buildItems: [
-      "Up to 6 pages",
-      "Home page",
-      "Portfolio and project pages",
-      "About / Our Story page",
-      "Testimonials section",
-      "Online booking / scheduling connection",
-      "Inquiry or quote request forms",
-      "Social media connections",
-      "Newsletter sign-up connection",
-      "English and Spanish website option",
-      "Three revision rounds",
-    ],
-    monthlyItems: [
-      "Managed website hosting",
-      "SSL security and automated backups",
-      "Uptime and performance monitoring",
-      "Software and dependency maintenance",
-      "Technical troubleshooting and support",
-      "Portfolio, project, and content updates",
-      "New project and launch-announcement updates",
-      "Priority technical support and faster response times",
-      "Up to two hours of monthly development support",
-    ],
+    monthlyLabel: "Monthly website care includes:",
+    monthlyItems: [...careItems, "Portfolio, project, and content updates"],
     cta: "Request a Quote",
   },
   {
@@ -98,8 +88,8 @@ const tiers: Tier[] = [
     name: "Tailored",
     blurb: (
       <>
-        For <strong>creators that need</strong> something outside our
-        standard packages—whether that means a focused website on{" "}
+        For <strong>creators that need</strong> something outside our standard
+        packages—whether that means a focused website on{" "}
         <strong>
           a smaller budget ($) OR a fully customized digital experience ($$$).
         </strong>
@@ -109,15 +99,18 @@ const tiers: Tier[] = [
     caption: "Built around your goals, needs, and budget.",
     buildLabel: "Your custom build may include:",
     buildItems: [
-      "A focused, essentials-only website",
-      "Custom page structure",
-      "Multiple portfolios or brands",
+      "A custom page structure",
+      "Multiple portfolios or creative disciplines",
+      "Individual projects and case studies",
+      "Custom galleries and media experiences",
+      "Advanced booking and scheduling connections",
+      "Custom inquiry and collaboration forms",
+      "English and Spanish website options",
       "Custom interactions and animations",
-      "Advanced forms and integrations",
-      "Content and copywriting support",
-      "Unique custom functionality",
+      "Copywriting and personal-brand support",
+      "Unique functionality built around your work",
     ],
-    monthlyLabel: "Monthly service may include:",
+    monthlyLabel: "Monthly website care may include:",
     monthlyItems: [
       "Managed website hosting",
       "SSL security and automated backups",
@@ -125,6 +118,8 @@ const tiers: Tier[] = [
       "Software and dependency maintenance",
       "Technical troubleshooting and support",
       "Portfolio, project, and content updates",
+      "New work, case study, and media uploads",
+      "Launch announcements and featured-work updates",
       "Development support based on your selected plan",
       "Additional services tailored to your website",
     ],
@@ -164,7 +159,7 @@ export default function PricingSection() {
             }
           >
             {tier.featured && (
-              <div className="tier-card__badge">Most Common</div>
+              <div className="tier-card__badge">Most Popular</div>
             )}
 
             <div className="pill-tag tier-card__level">{tier.level}</div>
@@ -177,9 +172,7 @@ export default function PricingSection() {
             <div className="tier-card__price-row">
               <span className="tier-card__price">{tier.price}</span>
               {tier.priceUnit && (
-                <span className="tier-card__price-unit">
-                  {tier.priceUnit}
-                </span>
+                <span className="tier-card__price-unit">{tier.priceUnit}</span>
               )}
             </div>
 
@@ -188,10 +181,8 @@ export default function PricingSection() {
                 <div className="tier-card__price-connector">
                   and after, just
                 </div>
-                <div className="tier-card__price-row">
-                  <span className="tier-card__price">
-                    {tier.monthlyPrice}
-                  </span>
+                <div className="tier-card__price-row tier-card__price-row--stacked">
+                  <span className="tier-card__price">{tier.monthlyPrice}</span>
                   {tier.monthlyUnit && (
                     <span className="tier-card__price-unit">
                       {tier.monthlyUnit}
@@ -251,19 +242,16 @@ export default function PricingSection() {
         <div className="tier-footnote__item">
           <div className="tier-footnote__label text-sm">Service Term</div>
           <p>
-            Both plans require an initial 12-month website service
-            agreement. After the initial term, service renews every 6
-            months.
+            Both plans require an initial 12-month website service agreement.
+            After the initial term, service renews every 6 months.
           </p>
         </div>
         <div className="tier-footnote__item">
-          <div className="tier-footnote__label text-sm">
-            Third-Party Costs
-          </div>
+          <div className="tier-footnote__label text-sm">Third-Party Costs</div>
           <p>
-            Domain registration, booking platforms, newsletter and
-            email services, payment processing, and other third-party
-            subscriptions are billed separately.
+            Domain registration, booking platforms, newsletter and email
+            services, payment processing, and other third-party subscriptions
+            are billed separately.
           </p>
         </div>
       </div>
