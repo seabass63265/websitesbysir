@@ -4657,8 +4657,10 @@ a.contact-row:focus-visible {
   width: 100%;
   height: 100%;
   display: block;
-  /* Vertical swipes still scroll the page on touch screens. */
-  touch-action: pan-y;
+  /* Vertical swipes still scroll the page on touch screens. !important: the
+     3D viewer's picking/controls set an inline `touch-action: none` on the
+     canvas, which would otherwise swallow swipes and trap the page scroll. */
+  touch-action: pan-y !important;
 }
 
 .device-showcase__loading {
@@ -4741,7 +4743,7 @@ a.contact-row:focus-visible {
 
 @media (max-width: 768px) {
   .pad-global.budget-statement {
-    padding-top: 2.25rem;
+    padding-top: 0.5rem;
   }
   /* Phones: three big stacked lines instead of one tiny one. */
   .budget-statement .budget-statement__title {

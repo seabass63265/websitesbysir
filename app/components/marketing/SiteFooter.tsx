@@ -1,3 +1,4 @@
+import FounderHelmet from "@/app/components/marketing/FounderHelmet";
 import { TransitionLink } from "@/app/components/providers/PageTransition";
 
 /**
@@ -63,15 +64,9 @@ export default function SiteFooter() {
           </nav>
 
           <div className="flex flex-col items-center text-center px-4">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src="/helmet-mark.png"
-              width={45}
-              height={48}
-              alt=""
-              aria-hidden="true"
-              className="mb-5 h-12 w-auto rotate-[18deg]"
-            />
+            <div className="mb-3 flex h-40 w-40 flex-col">
+              <FounderHelmet />
+            </div>
             <TransitionLink href="/" className="inline-block p-1 -m-1 mb-2">
               <span className="text-xl font-bold tracking-tight">SIR_</span>
             </TransitionLink>
