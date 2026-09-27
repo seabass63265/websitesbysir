@@ -106,10 +106,10 @@ const tiers: Tier[] = [
     name: "Tailored",
     blurb: (
       <>
-        For <strong>businesses that need</strong> something outside our standard
-        packages—whether that means a focused website on{" "}
+        For <strong>restaurants and cafés that need</strong> something outside
+        our standard packages—whether that means a focused website on{" "}
         <strong>
-          a smaller budget or a fully customized digital experience.
+          a smaller budget ($) or a fully customized digital experience ($$$).
         </strong>
       </>
     ),

@@ -35,9 +35,11 @@ const tiers: Tier[] = [
     hideBadge: true,
     blurb: (
       <>
-        For projects that don’t fit neatly into a standard package—whether that
-        means a focused website with a smaller scope or a fully customized
-        digital experience.
+        For <strong>projects that need</strong> something outside our standard
+        packages—whether that means a focused website on{" "}
+        <strong>
+          a smaller budget ($) or a fully customized digital experience ($$$).
+        </strong>
       </>
     ),
     price: "Custom Pricing",

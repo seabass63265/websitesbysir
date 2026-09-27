@@ -30,7 +30,7 @@ const tiers = [
     level: "Tier 3",
     name: "Tailored",
     price: "Custom Pricing",
-    unit: "built around your goals, needs, and budget",
+    unit: "For businesses that need something outside our standard packages—whether that means a focused website on a smaller budget ($) or a fully customized digital experience ($$$).",
     monthly: null,
     monthlyUnit: null,
   },

@@ -105,9 +105,9 @@ const tiers: Tier[] = [
     blurb: (
       <>
         For <strong>startups that need</strong> something outside our standard
-        packages—whether that means a focused launch page on{" "}
+        packages—whether that means a focused website on{" "}
         <strong>
-          a smaller budget or a fully customized digital experience.
+          a smaller budget ($) or a fully customized digital experience ($$$).
         </strong>
       </>
     ),
