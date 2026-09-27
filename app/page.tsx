@@ -3,6 +3,7 @@ import Hero from "@/app/components/marketing/Hero";
 import BusinessShowcase from "@/app/components/marketing/BusinessShowcase";
 import ServicesList from "@/app/components/marketing/ServicesList";
 import WorkGrid from "@/app/components/marketing/WorkGrid";
+import EveryBudget from "@/app/components/marketing/EveryBudget";
 import LanguageToast from "@/app/components/marketing/LanguageToast";
 import SiteFooter from "@/app/components/marketing/SiteFooter";
 import BlueprintCta from "@/app/components/marketing/BlueprintCta";
@@ -14,6 +15,7 @@ export default function Home() {
       <main className="grid-container">
         <Hero />
         <WorkGrid />
+        <EveryBudget />
         <BusinessShowcase />
         <ServicesList />
         <BlueprintCta />

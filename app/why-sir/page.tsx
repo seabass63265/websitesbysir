@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import WhySirHeader from "@/app/components/marketing/WhySirHeader";
 import AboutStudio from "@/app/components/marketing/AboutStudio";
-import WhyWorkWithMe from "@/app/components/marketing/WhyWorkWithMe";
 import HelmetSection from "@/app/components/marketing/HelmetSection";
 import BudgetStatement from "@/app/components/marketing/BudgetStatement";
 
@@ -19,7 +18,6 @@ export default function WhySirPage() {
         <HelmetSection />
         <BudgetStatement />
         <AboutStudio />
-        <WhyWorkWithMe />
       </main>
     </>
   );
