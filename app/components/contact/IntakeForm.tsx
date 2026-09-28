@@ -1740,6 +1740,7 @@ function IntakeSteps({
         if (!confirmed || submitting) return;
         const payload = {
           source: "intake" as const,
+          industry: pricing?.label ?? "General",
           projectType,
           businessName: businessName.trim(),
           name: firstName.trim(),
