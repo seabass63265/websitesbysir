@@ -6,9 +6,9 @@ const TOPICS = ["General Question", "Support", "Press & Partnerships"];
 
 /**
  * The general contact form. Same behaviour as the design: name, email and a
- * message are required, the topic is optional, and a successful send swaps the
- * form for a "message sent" panel. There's no endpoint yet, so the payload is
- * just logged (like the intake).
+ * message are required, the topic is optional, and a successful send swaps
+ * the form for a "message sent" panel. Posts to /api/contact, which emails
+ * the submission and (if configured) logs it to a Google Sheet.
  */
 export default function ContactForm() {
   const [name, setName] = useState("");
@@ -17,11 +17,16 @@ export default function ContactForm() {
   const [message, setMessage] = useState("");
   const [showError, setShowError] = useState(false);
   const [pulse, setPulse] = useState(false);
+  const [sending, setSending] = useState(false);
+  const [sendError, setSendError] = useState(false);
   const [sent, setSent] = useState(false);
 
-  const clearError = () => setShowError(false);
+  const clearError = () => {
+    setShowError(false);
+    setSendError(false);
+  };
 
-  function submit(event: React.FormEvent<HTMLFormElement>) {
+  async function submit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
     if (!name.trim() || !email.trim() || !message.trim()) {
       setShowError(true);
@@ -30,14 +35,29 @@ export default function ContactForm() {
       return;
     }
     setShowError(false);
-    console.log("Contact Form Payload:", {
-      name: name.trim(),
-      email: email.trim(),
-      topic: topic || "None specified",
-      message: message.trim(),
-      timestamp: new Date().toISOString(),
-    });
-    setSent(true);
+    setSendError(false);
+    setSending(true);
+    try {
+      const res = await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          source: "contact",
+          name: name.trim(),
+          email: email.trim(),
+          topic: topic || "None specified",
+          message: message.trim(),
+        }),
+      });
+      if (!res.ok) throw new Error("Request failed");
+      setSent(true);
+    } catch {
+      setSendError(true);
+      setPulse(true);
+      window.setTimeout(() => setPulse(false), 300);
+    } finally {
+      setSending(false);
+    }
   }
 
   function reset() {
@@ -160,9 +180,14 @@ export default function ContactForm() {
           Fill in your name, email, and a message to send.
         </div>
       )}
+      {sendError && (
+        <div role="alert" className="contact-error">
+          Something went wrong sending your message — please try again.
+        </div>
+      )}
 
-      <button type="submit" className="contact-submit">
-        <span>Send message</span>
+      <button type="submit" className="contact-submit" disabled={sending}>
+        <span>{sending ? "Sending…" : "Send message"}</span>
         <span className="contact-submit__arrow" aria-hidden="true">→</span>
       </button>
     </form>

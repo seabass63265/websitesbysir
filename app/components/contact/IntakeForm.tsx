@@ -271,6 +271,7 @@ function IntakeSteps({
   const [showMoreStyles, setShowMoreStyles] = useState(false);
   const [styleError, setStyleError] = useState(false);
   const [confirmed, setConfirmed] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
   const [submittedAt, setSubmittedAt] = useState("");
   // Answers are saved to localStorage so a refresh picks up where you left
   // off. `restored` gates both the first save (so defaults never overwrite
@@ -1733,14 +1734,15 @@ function IntakeSteps({
       style={hiddenUntilRestored}
       noValidate
       data-fit-off
-      onSubmit={(event) => {
+      onSubmit={async (event) => {
         event.preventDefault();
         // Continue only appears once the box is ticked; this is just a guard.
-        if (!confirmed) return;
-        console.log("Intake Summary Confirmed:", {
+        if (!confirmed || submitting) return;
+        const payload = {
+          source: "intake" as const,
           projectType,
           businessName: businessName.trim(),
-          firstName: firstName.trim(),
+          name: firstName.trim(),
           email: email.trim(),
           phone: phone.trim(),
           businessType: typeText,
@@ -1759,13 +1761,26 @@ function IntakeSteps({
           inspirationLink: inspirationLink.trim(),
           inspirationNotes: inspirationNotes.trim(),
           notes: notes.trim(),
-        });
-        const now = new Date();
-        const time = now.toLocaleTimeString("en-US", { hour12: false, hour: "2-digit", minute: "2-digit" });
-        const date = now.toLocaleDateString("en-US", { month: "2-digit", day: "2-digit", year: "2-digit" });
-        setSubmittedAt(`${time} ${date}`);
-        goToStep(10);
-        savedScroll.current = 0;
+        };
+        setSubmitting(true);
+        try {
+          const res = await fetch("/api/contact", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(payload),
+          });
+          if (!res.ok) throw new Error("Request failed");
+          const now = new Date();
+          const time = now.toLocaleTimeString("en-US", { hour12: false, hour: "2-digit", minute: "2-digit" });
+          const date = now.toLocaleDateString("en-US", { month: "2-digit", day: "2-digit", year: "2-digit" });
+          setSubmittedAt(`${time} ${date}`);
+          goToStep(10);
+          savedScroll.current = 0;
+        } catch {
+          notify("Something went wrong sending your project — please try again.");
+        } finally {
+          setSubmitting(false);
+        }
       }}
     >
       <div ref={gridRef} className="mb-10">
@@ -1821,12 +1836,12 @@ function IntakeSteps({
 
         <button
           type="submit"
-          disabled={!confirmed}
+          disabled={!confirmed || submitting}
           // Hidden (not removed) until confirmed, so the row doesn't change height.
           style={{ visibility: confirmed ? "visible" : "hidden" }}
-          className="max-sm:w-full cursor-pointer bg-[var(--intake-fg)] text-[var(--intake-bg)] font-bold text-[1.125rem] leading-7 tracking-[0.15em] uppercase py-4 px-8 border border-[var(--intake-fg)] hover:bg-transparent hover:text-[var(--intake-fg)] focus:outline-none focus:ring-2 focus:ring-[var(--intake-fg)] focus:ring-offset-2 focus:ring-offset-[var(--intake-bg)] transition-colors duration-150 rounded-none"
+          className="max-sm:w-full cursor-pointer bg-[var(--intake-fg)] text-[var(--intake-bg)] font-bold text-[1.125rem] leading-7 tracking-[0.15em] uppercase py-4 px-8 border border-[var(--intake-fg)] hover:bg-transparent hover:text-[var(--intake-fg)] focus:outline-none focus:ring-2 focus:ring-[var(--intake-fg)] focus:ring-offset-2 focus:ring-offset-[var(--intake-bg)] transition-colors duration-150 rounded-none disabled:opacity-60 disabled:cursor-not-allowed"
         >
-          Submit for a quote
+          {submitting ? "Sending…" : "Submit for a quote"}
         </button>
       </div>
     </form>
