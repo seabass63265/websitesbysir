@@ -14,7 +14,16 @@ import { headerHeight, type TextPosition } from "@/app/components/industries/her
  * "cinematic scroll animations" demo 1 (OGL + GSAP), sized to its own stage
  * instead of the window and driven by the page's native scroll.
  */
-const IMAGES = Array.from({ length: 12 }, (_, i) => `/startup-hero/img/img${i + 1}.webp`);
+// Neutral abstract renders (no people) — a stopgap until real startup
+// photography is supplied; repeated to keep the same wrap density as the
+// original 12-image set.
+const BASE_IMAGES = [
+  "/circular-gallery/img1.jpg",
+  "/circular-gallery/img2.jpg",
+  "/circular-gallery/img9.jpg",
+  "/circular-gallery/img11.jpg",
+];
+const IMAGES = Array.from({ length: 12 }, (_, i) => BASE_IMAGES[i % BASE_IMAGES.length]);
 
 const PERSPECTIVES: { title: string; description?: string; position: TextPosition }[] = [
   { title: "From idea to launch", description: "Where every startup begins", position: "top" },
