@@ -12,6 +12,7 @@ import {
   ALL_BUSINESSES_SLUG,
   businessCategories,
 } from "@/app/components/work/businessCategories";
+import { useT } from "@/app/components/providers/LanguageProvider";
 
 /** How long the outgoing slider fades before the next one mounts. */
 const LEAVE_MS = 350;
@@ -44,6 +45,7 @@ const LEAVE_MS = 350;
  * Business selections remain local until media is assigned business types.
  */
 export default function WorkShowcase() {
+  const t = useT();
   const [browseBy, setBrowseBy] = useState<"category" | "business">("category");
   const [activeSlug, setActiveSlug] = useState(workCategories[0].slug);
   const [activeBusinessSlug, setActiveBusinessSlug] = useState(
@@ -97,12 +99,13 @@ export default function WorkShowcase() {
   const activeBusiness = businessCategories.find(
     (category) => category.slug === activeBusinessSlug
   );
+  const allBusinessesLabel = t("All Businesses", "Todos los Negocios");
   const currentLabel =
     browseBy === "category"
-      ? active.title
+      ? t(active.title, active.titleEs)
       : activeBusinessSlug === ALL_BUSINESSES_SLUG
-      ? "All Businesses"
-      : activeBusiness?.label ?? "All Businesses";
+      ? allBusinessesLabel
+      : (activeBusiness && t(activeBusiness.label, activeBusiness.labelEs)) ?? allBusinessesLabel;
 
   return (
     <section className="border-b work-showcase">
@@ -118,7 +121,7 @@ export default function WorkShowcase() {
           aria-expanded={filtersOpen}
         >
           <span className="text-sm demo-filter-overlay__label">
-            Browse By
+            {t("Browse By", "Explorar Por")}
           </span>
           <span className="text-sm demo-filter-overlay__current">
             {currentLabel}
@@ -143,12 +146,12 @@ export default function WorkShowcase() {
 
         <div className="demo-filter-overlay__body">
           <div className="demo-filter-overlay__body-inner">
-            <div className="demo-filter-toggle" role="group" aria-label="Browse by">
+            <div className="demo-filter-toggle" role="group" aria-label={t("Browse by", "Explorar por")}>
               <button type="button" className={`pill-tag filter-tag${browseBy === "category" ? " is-selected" : ""}`} aria-pressed={browseBy === "category"} onClick={() => setBrowseBy("category")}>
-                Website Feature
+                {t("Website Feature", "Función del Sitio Web")}
               </button>
               <button type="button" className={`pill-tag filter-tag${browseBy === "business" ? " is-selected" : ""}`} aria-pressed={browseBy === "business"} onClick={() => setBrowseBy("business")}>
-                Business Type
+                {t("Business Type", "Tipo de Negocio")}
               </button>
             </div>
             {browseBy === "category" ? <div className="filter-bar">
@@ -164,7 +167,7 @@ export default function WorkShowcase() {
                   }
                   aria-pressed={category.slug === activeSlug}
                 >
-                  {category.number} &mdash; {category.title}
+                  {category.number} &mdash; {t(category.title, category.titleEs)}
                 </button>
               ))}
             </div> : <div className="filter-bar">
@@ -181,7 +184,7 @@ export default function WorkShowcase() {
                 }
                 aria-pressed={activeBusinessSlug === ALL_BUSINESSES_SLUG}
               >
-                All Businesses
+                {allBusinessesLabel}
               </button>
               {businessCategories.map((category) => (
                 <button
@@ -198,7 +201,7 @@ export default function WorkShowcase() {
                   }
                   aria-pressed={category.slug === activeBusinessSlug}
                 >
-                  {category.number} &mdash; {category.label}
+                  {category.number} &mdash; {t(category.label, category.labelEs)}
                 </button>
               ))}
             </div>}
@@ -215,7 +218,7 @@ export default function WorkShowcase() {
         ) : (categoryMedia[shown.slug]?.length ?? 0) > 0 ? (
           <WorkSlider slides={categoryMedia[shown.slug]} glideIn={switched} />
         ) : (
-          <PlaceholderDemo title={shown.title} />
+          <PlaceholderDemo title={t(shown.title, shown.titleEs)} />
         )}
       </div>
     </section>

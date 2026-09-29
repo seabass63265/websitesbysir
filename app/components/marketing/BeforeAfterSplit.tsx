@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
+import { useT } from "@/app/components/providers/LanguageProvider";
 
 /**
  * "The Difference" — drag-to-compare of an off-the-shelf template vs. a build
@@ -9,6 +10,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
  * and restyled to the SIR_ system: navy on white, square edges, 1px rules.
  */
 export default function BeforeAfterSplit() {
+  const t = useT();
   const containerRef = useRef<HTMLDivElement>(null);
   const draggingRef = useRef(false);
   const [pos, setPos] = useState(55); // % of the "before" side revealed
@@ -64,11 +66,12 @@ export default function BeforeAfterSplit() {
   return (
     <section id="difference" className="pad-global border-b">
       <div className="info-block" style={{ paddingBottom: "2rem" }}>
-        <div className="text-sm">03 / The Difference</div>
+        <div className="text-sm">{t("03 / The Difference", "03 / La Diferencia")}</div>
         <div className="text-md">
-          Most businesses launch on the same handful of templates. Drag the
-          handle to see what a site built only for you looks like next to one
-          that wasn&rsquo;t.
+          {t(
+            "Most businesses launch on the same handful of templates. Drag the handle to see what a site built only for you looks like next to one that wasn't.",
+            "La mayoría de los negocios lanzan con las mismas plantillas. Arrastra la manija para ver cómo se ve un sitio hecho solo para ti al lado de uno que no lo fue."
+          )}
         </div>
       </div>
 
@@ -82,7 +85,7 @@ export default function BeforeAfterSplit() {
         <div className="compare__panel">
           <MockAfter />
           <div className="pill-tag compare__tag compare__tag--after">
-            After / Custom Build
+            {t("After / Custom Build", "Después / Diseño Personalizado")}
           </div>
         </div>
 
@@ -94,7 +97,7 @@ export default function BeforeAfterSplit() {
           >
             <MockBefore />
             <div className="pill-tag compare__tag compare__tag--before">
-              Before / Template
+              {t("Before / Template", "Antes / Plantilla")}
             </div>
           </div>
         </div>
@@ -104,7 +107,10 @@ export default function BeforeAfterSplit() {
           <button
             type="button"
             className="compare__handle"
-            aria-label="Drag to compare template versus custom build"
+            aria-label={t(
+              "Drag to compare template versus custom build",
+              "Arrastra para comparar plantilla contra diseño personalizado"
+            )}
             role="slider"
             aria-valuemin={0}
             aria-valuemax={100}

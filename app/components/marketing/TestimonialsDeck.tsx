@@ -2,6 +2,7 @@
 
 import { useEffect, useRef } from "react";
 import Core, { type Viewport } from "smooothy";
+import { useT } from "@/app/components/providers/LanguageProvider";
 
 type Testimonial = {
   quote: string;
@@ -10,72 +11,88 @@ type Testimonial = {
   tone: "light" | "dark";
 };
 
-// Placeholder testimonials — swap in real client quotes.
-const testimonials: Testimonial[] = [
-  {
-    quote:
-      "Sebastian rebuilt our whole ordering flow in three weeks. Online orders are up and I stopped fielding phone calls during the dinner rush.",
-    name: "Marisol R.",
-    detail: "Owner, El Norteño",
-    tone: "dark",
-  },
-  {
-    quote:
-      "He translated the entire site into Spanish without me having to chase him for it. Our regulars finally use it.",
-    name: "Danny T.",
-    detail: "Barbershop, Highland Park",
-    tone: "light",
-  },
-  {
-    quote:
-      "No agency runaround. I emailed one person and got answers the same day, every time.",
-    name: "Priya M.",
-    detail: "Founder, Loop Studio",
-    tone: "dark",
-  },
-  {
-    quote:
-      "The booking system just works. We went from a shared inbox to actual appointments overnight.",
-    name: "Chris A.",
-    detail: "Dental practice, Culver City",
-    tone: "light",
-  },
-  {
-    quote:
-      "Fast, clean, and it still feels fast a year later. The monthly plan means I never think about hosting.",
-    name: "Renée O.",
-    detail: "Ceramicist",
-    tone: "dark",
-  },
-  {
-    quote:
-      "We launched the donation page a week before our gala and raised more online than the room did.",
-    name: "Marcus D.",
-    detail: "Nonprofit director",
-    tone: "light",
-  },
-  {
-    quote:
-      "He showed me the site in staging every few days. There was never a moment where I didn't know what was happening.",
-    name: "Aisha K.",
-    detail: "Bakery owner",
-    tone: "dark",
-  },
-  {
-    quote:
-      "Checkout, shipping, inventory — all handled. I just add products now.",
-    name: "Tomás L.",
-    detail: "Online shop",
-    tone: "light",
-  },
-];
-
 /**
  * Client testimonials as a draggable card deck with an overlapping-stack effect:
  * as a card scrolls past the left edge it rotates, scales down and stacks.
  * Ported from the "overlapping swiper" (smooothy virtual scroll + drag momentum).
  */
 export default function TestimonialsDeck() {
+  const t = useT();
+  // Placeholder testimonials — swap in real client quotes.
+  const testimonials: Testimonial[] = [
+    {
+      quote: t(
+        "Sebastian rebuilt our whole ordering flow in three weeks. Online orders are up and I stopped fielding phone calls during the dinner rush.",
+        "Sebastian reconstruyó todo nuestro flujo de pedidos en tres semanas. Los pedidos en línea aumentaron y dejé de recibir llamadas durante la hora pico de la cena."
+      ),
+      name: "Marisol R.",
+      detail: t("Owner, El Norteño", "Dueña, El Norteño"),
+      tone: "dark",
+    },
+    {
+      quote: t(
+        "He translated the entire site into Spanish without me having to chase him for it. Our regulars finally use it.",
+        "Tradujo todo el sitio al español sin que yo tuviera que insistirle. Nuestros clientes habituales finalmente lo usan."
+      ),
+      name: "Danny T.",
+      detail: t("Barbershop, Highland Park", "Barbería, Highland Park"),
+      tone: "light",
+    },
+    {
+      quote: t(
+        "No agency runaround. I emailed one person and got answers the same day, every time.",
+        "Sin rodeos de agencia. Le escribí a una sola persona y obtuve respuestas el mismo día, siempre."
+      ),
+      name: "Priya M.",
+      detail: t("Founder, Loop Studio", "Fundadora, Loop Studio"),
+      tone: "dark",
+    },
+    {
+      quote: t(
+        "The booking system just works. We went from a shared inbox to actual appointments overnight.",
+        "El sistema de reservas simplemente funciona. Pasamos de una bandeja de entrada compartida a citas reales de la noche a la mañana."
+      ),
+      name: "Chris A.",
+      detail: t("Dental practice, Culver City", "Consultorio dental, Culver City"),
+      tone: "light",
+    },
+    {
+      quote: t(
+        "Fast, clean, and it still feels fast a year later. The monthly plan means I never think about hosting.",
+        "Rápido, limpio, y sigue sintiéndose rápido un año después. El plan mensual significa que nunca pienso en el hosting."
+      ),
+      name: "Renée O.",
+      detail: t("Ceramicist", "Ceramista"),
+      tone: "dark",
+    },
+    {
+      quote: t(
+        "We launched the donation page a week before our gala and raised more online than the room did.",
+        "Lanzamos la página de donaciones una semana antes de nuestra gala y recaudamos más en línea que en el evento."
+      ),
+      name: "Marcus D.",
+      detail: t("Nonprofit director", "Director de organización sin fines de lucro"),
+      tone: "light",
+    },
+    {
+      quote: t(
+        "He showed me the site in staging every few days. There was never a moment where I didn't know what was happening.",
+        "Me mostró el sitio en preproducción cada pocos días. Nunca hubo un momento en que no supiera qué estaba pasando."
+      ),
+      name: "Aisha K.",
+      detail: t("Bakery owner", "Dueña de panadería"),
+      tone: "dark",
+    },
+    {
+      quote: t(
+        "Checkout, shipping, inventory — all handled. I just add products now.",
+        "Pago, envío, inventario — todo resuelto. Ahora solo agrego productos."
+      ),
+      name: "Tomás L.",
+      detail: t("Online shop", "Tienda en línea"),
+      tone: "light",
+    },
+  ];
   const trackRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -167,15 +184,17 @@ export default function TestimonialsDeck() {
   return (
     <section className="deck border-b">
       <div className="deck-intro pad-global border-r">
-        <div className="text-sm">04 / In Their Words</div>
+        <div className="text-sm">{t("04 / In Their Words", "04 / En Sus Palabras")}</div>
         <h2 className="text-huge">
-          Kind
+          {t("Kind", "Buenas")}
           <br />
-          Words
+          {t("Words", "Palabras")}
         </h2>
         <p className="text-md deck-intro__copy">
-          A few notes from people who now run their business on a site I built.
-          Drag through.
+          {t(
+            "A few notes from people who now run their business on a site I built. Drag through.",
+            "Algunas notas de personas que ahora manejan su negocio en un sitio que construí. Arrastra para ver más."
+          )}
         </p>
       </div>
 

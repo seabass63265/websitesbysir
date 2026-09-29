@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { TransitionLink } from "@/app/components/providers/PageTransition";
+import { useT } from "@/app/components/providers/LanguageProvider";
 
 const STORAGE_KEY = "sir_intake";
 
@@ -69,6 +70,7 @@ function Field({
  * (`sir_intake`) on each Continue; nothing is sent anywhere yet.
  */
 export default function IntakeFlow() {
+  const t = useT();
   const [stepIndex, setStepIndex] = useState(0);
   const [answers, setAnswers] = useState<Answers>(EMPTY);
   const [businessName, setBusinessName] = useState("");
@@ -143,23 +145,25 @@ export default function IntakeFlow() {
             </TransitionLink>
             {step !== "done" && (
               <span className="intake__step">
-                Step {String(FIRST_STEP_NUMBER + stepIndex).padStart(2, "0")}
+                {t("Step", "Paso")} {String(FIRST_STEP_NUMBER + stepIndex).padStart(2, "0")}
               </span>
             )}
           </div>
 
           {step === "contact" && (
             <>
-              <span className="intake__eyebrow">Your website details.</span>
+              <span className="intake__eyebrow">{t("Your website details.", "Los detalles de tu sitio web.")}</span>
               <h1 className="intake__title">
-                Great! Where
-                <br className="intake__br" /> should we
-                <br className="intake__br" /> send your
-                <br className="intake__br" /> website details?
+                {t("Great! Where", "¡Perfecto! ¿A dónde")}
+                <br className="intake__br" /> {t("should we", "deberíamos")}
+                <br className="intake__br" /> {t("send your", "enviarte los")}
+                <br className="intake__br" /> {t("website details?", "detalles del sitio web?")}
               </h1>
               <p className="intake__lead">
-                This is how we reach you with updates and your project portal.
-                Nothing else.
+                {t(
+                  "This is how we reach you with updates and your project portal. Nothing else.",
+                  "Así es como te contactaremos con actualizaciones y tu portal del proyecto. Nada más."
+                )}
               </p>
             </>
           )}
@@ -168,24 +172,27 @@ export default function IntakeFlow() {
             <>
               <span className="intake__eyebrow">
                 {businessName
-                  ? `A little about ${businessName}.`
-                  : "A little about your business."}
+                  ? t(`A little about ${businessName}.`, `Un poco sobre ${businessName}.`)
+                  : t("A little about your business.", "Un poco sobre tu negocio.")}
               </span>
               <h1 className="intake__title">
-                What type
-                <br className="intake__br" /> of business
-                <br className="intake__br" /> do you own?
+                {t("What type", "¿Qué tipo")}
+                <br className="intake__br" /> {t("of business", "de negocio")}
+                <br className="intake__br" /> {t("do you own?", "tienes?")}
               </h1>
-              <p className="intake__lead">Describe it in a few words.</p>
+              <p className="intake__lead">{t("Describe it in a few words.", "Descríbelo en pocas palabras.")}</p>
             </>
           )}
 
           {step === "done" && (
             <>
-              <span className="intake__eyebrow">All set for now.</span>
-              <h1 className="intake__title">Thanks!</h1>
+              <span className="intake__eyebrow">{t("All set for now.", "Todo listo por ahora.")}</span>
+              <h1 className="intake__title">{t("Thanks!", "¡Gracias!")}</h1>
               <p className="intake__lead">
-                We have what we need so far. More steps are coming soon.
+                {t(
+                  "We have what we need so far. More steps are coming soon.",
+                  "Tenemos lo que necesitamos por ahora. Más pasos llegarán pronto."
+                )}
               </p>
             </>
           )}
@@ -198,9 +205,9 @@ export default function IntakeFlow() {
                 <div className="intake__fields">
                   <Field
                     id="first_name"
-                    label="First name"
+                    label={t("First name", "Nombre")}
                     value={answers.firstName}
-                    placeholder="e.g. Maria"
+                    placeholder={t("e.g. Maria", "ej. Maria")}
                     autoComplete="given-name"
                     required
                     inputRef={firstNameRef}
@@ -208,7 +215,7 @@ export default function IntakeFlow() {
                   />
                   <Field
                     id="email"
-                    label="Email"
+                    label={t("Email", "Correo Electrónico")}
                     type="email"
                     value={answers.email}
                     placeholder="e.g. maria@business.com"
@@ -221,7 +228,7 @@ export default function IntakeFlow() {
                     id="phone"
                     label={
                       <>
-                        Phone <span className="intake__optional">(Optional)</span>
+                        {t("Phone", "Teléfono")} <span className="intake__optional">({t("Optional", "Opcional")})</span>
                       </>
                     }
                     type="tel"
@@ -232,7 +239,7 @@ export default function IntakeFlow() {
                   />
                 </div>
                 <p className="intake__note intake__note--spaced">
-                  We never share your information.
+                  {t("We never share your information.", "Nunca compartimos tu información.")}
                 </p>
               </>
             )}
@@ -241,24 +248,24 @@ export default function IntakeFlow() {
               <div className="intake__single">
                 <Field
                   id="business_type"
-                  label="Your answer"
+                  label={t("Your answer", "Tu respuesta")}
                   value={answers.businessType}
-                  placeholder="e.g. florist, fitness studio, or auto repair"
+                  placeholder={t("e.g. florist, fitness studio, or auto repair", "ej. florería, estudio de fitness, o taller mecánico")}
                   autoComplete="off"
                   required
                   inputRef={businessTypeRef}
                   onChange={(value) => update("businessType", value)}
                 />
-                <p className="intake__note">A few words are enough.</p>
+                <p className="intake__note">{t("A few words are enough.", "Unas pocas palabras son suficientes.")}</p>
               </div>
             )}
 
             <div className="intake__actions">
               <button type="button" className="intake__back" onClick={goBack}>
-                <span aria-hidden="true">&larr;</span> Back
+                <span aria-hidden="true">&larr;</span> {t("Back", "Atrás")}
               </button>
               <button type="submit" className="intake__continue">
-                Continue
+                {t("Continue", "Continuar")}
               </button>
             </div>
           </form>

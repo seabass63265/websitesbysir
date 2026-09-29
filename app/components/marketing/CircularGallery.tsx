@@ -4,6 +4,7 @@ import { useEffect, useRef } from "react";
 import gsap from "gsap";
 import { TransitionLink } from "@/app/components/providers/PageTransition";
 import { GALLERY_VIDEOS as VIDEOS } from "./galleryVideos";
+import { useT } from "@/app/components/providers/LanguageProvider";
 
 /**
  * Circular image gallery — ported from the standalone
@@ -51,7 +52,7 @@ export default function CircularGallery({
   tagline,
   children,
   ctaHref = "/work",
-  ctaLabel = "View All Work",
+  ctaLabel,
   hideCta = false,
   hideOnMobile = false,
   ovalWidthRatio = config.ovalWidthRatio,
@@ -80,6 +81,8 @@ export default function CircularGallery({
    * so the ring keeps its pixel height. */
   fieldHeight?: string;
 }) {
+  const t = useT();
+  const resolvedCtaLabel = ctaLabel ?? t("View All Work", "Ver todo el trabajo");
   const galleryRef = useRef<HTMLDivElement>(null);
   const wrapperRefs = useRef<(HTMLDivElement | null)[]>([]);
   const frameRefs = useRef<(HTMLDivElement | null)[]>([]);
@@ -275,11 +278,11 @@ export default function CircularGallery({
         </div>
         {hideCta ? null : ctaHref.startsWith("#") ? (
           <a href={ctaHref} className="btn-pill circular-gallery__cta">
-            {ctaLabel} <span aria-hidden="true">&nbsp;&rarr;</span>
+            {resolvedCtaLabel} <span aria-hidden="true">&nbsp;&rarr;</span>
           </a>
         ) : (
           <TransitionLink href={ctaHref} className="btn-pill circular-gallery__cta">
-            {ctaLabel} <span aria-hidden="true">&nbsp;&rarr;</span>
+            {resolvedCtaLabel} <span aria-hidden="true">&nbsp;&rarr;</span>
           </TransitionLink>
         )}
         {Array.from({ length: TOTAL_IMAGES }, (_, index) => (

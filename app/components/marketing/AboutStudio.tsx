@@ -1,54 +1,18 @@
+"use client";
+
 import { TransitionLink } from "@/app/components/providers/PageTransition";
 import FounderHelmet from "@/app/components/marketing/FounderHelmet";
+import { useT } from "@/app/components/providers/LanguageProvider";
 
 /**
  * "About the studio" block on /why-sir, directly under the budget statement
  * (ported from the standalone About mockup, re-themed to the site's white
- * ground / navy ink). Server component.
+ * ground / navy ink).
  *
  * Note: this project's global `.text-lg/.text-sm/.text-xs/.border-t/.border-b`
  * classes shadow Tailwind's same-named utilities (see WhyWorkWithMe), so those
  * sizes/borders are written as arbitrary values here.
  */
-const principles = [
-  {
-    title: "Strategic Direction",
-    body: "Building a clear roadmap for your digital presence before design even begins, ensuring your website aligns perfectly with your business goals.",
-    icon: (
-      <>
-        <circle cx="12" cy="12" r="10" />
-        <polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76" />
-      </>
-    ),
-  },
-  {
-    title: "Custom Design",
-    body: "Crafting tailored visual identities and interfaces that communicate your business's true value, without relying on generic templates.",
-    icon: (
-      <>
-        <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z" />
-        <circle cx="12" cy="12" r="3" />
-      </>
-    ),
-  },
-  {
-    title: "Reliable Delivery",
-    body: "Providing transparent timelines and consistent updates so you never have to wonder when your project will be ready for launch.",
-    icon: (
-      <>
-        <circle cx="12" cy="12" r="10" />
-        <polyline points="12 6 12 12 16 14" />
-      </>
-    ),
-  },
-];
-
-const stats = [
-  { title: "100% Custom", label: "Designed around your business" },
-  { title: "2–3 Business Days", label: "Typical response time" },
-  { title: "Built to Stand Out", label: "Professional, clean, and distinct" },
-];
-
 const buttonBase =
   "group inline-flex items-center justify-center gap-3 border border-brand px-8 py-4 font-bold uppercase tracking-wider text-[0.875rem] transition-colors";
 
@@ -71,6 +35,56 @@ function IndustryLink({
 }
 
 export default function AboutStudio() {
+  const t = useT();
+
+  const principles = [
+    {
+      title: t("Strategic Direction", "Dirección Estratégica"),
+      body: t(
+        "Building a clear roadmap for your digital presence before design even begins, ensuring your website aligns perfectly with your business goals.",
+        "Construyendo una hoja de ruta clara para tu presencia digital antes de que empiece el diseño, asegurando que tu sitio web se alinee perfectamente con las metas de tu negocio."
+      ),
+      icon: (
+        <>
+          <circle cx="12" cy="12" r="10" />
+          <polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76" />
+        </>
+      ),
+    },
+    {
+      title: t("Custom Design", "Diseño Personalizado"),
+      body: t(
+        "Crafting tailored visual identities and interfaces that communicate your business's true value, without relying on generic templates.",
+        "Creando identidades visuales e interfaces a la medida que comunican el verdadero valor de tu negocio, sin depender de plantillas genéricas."
+      ),
+      icon: (
+        <>
+          <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z" />
+          <circle cx="12" cy="12" r="3" />
+        </>
+      ),
+    },
+    {
+      title: t("Reliable Delivery", "Entrega Confiable"),
+      body: t(
+        "Providing transparent timelines and consistent updates so you never have to wonder when your project will be ready for launch.",
+        "Ofreciendo plazos transparentes y actualizaciones constantes para que nunca te preguntes cuándo estará listo tu proyecto para lanzarse."
+      ),
+      icon: (
+        <>
+          <circle cx="12" cy="12" r="10" />
+          <polyline points="12 6 12 12 16 14" />
+        </>
+      ),
+    },
+  ];
+
+  const stats = [
+    { title: t("100% Custom", "100% Personalizado"), label: t("Designed around your business", "Diseñado alrededor de tu negocio") },
+    { title: t("2–3 Business Days", "2–3 Días Hábiles"), label: t("Typical response time", "Tiempo de respuesta típico") },
+    { title: t("Built to Stand Out", "Hecho para Destacar"), label: t("Professional, clean, and distinct", "Profesional, limpio, y distintivo") },
+  ];
+
   return (
     <section className="border-b-[1px]">
       <div className="max-w-[1152px] mx-auto px-6 py-20 md:py-24 flex flex-col gap-24 md:gap-32">
@@ -78,24 +92,24 @@ export default function AboutStudio() {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-12 items-center">
           <div className="flex flex-col items-start w-full">
             <span className="text-brand/50 text-[0.75rem] md:text-[0.875rem] uppercase tracking-widest mb-6">
-              The studio behind the work.
+              {t("The studio behind the work.", "El estudio detrás del trabajo.")}
             </span>
             <h2 className="text-5xl md:text-7xl font-bold uppercase leading-[1.1] mb-8">
-              Websites for
+              {t("Websites for", "Sitios web para")}
               <br />
-              <span className="italic">businesses.</span>
+              <span className="italic">{t("businesses.", "negocios.")}</span>
             </h2>
             <p className="text-brand/70 text-[1.125rem] md:text-[1.25rem] leading-relaxed max-w-3xl">
-              SIR_ is a Los Angeles-based web design and engineering studio. We
-              manage the entire website process—from structure to design,
-              development, launch, and ongoing support—giving every project a
-              clear and dependable path from idea to online.
+              {t(
+                "SIR_ is a Los Angeles-based web design and engineering studio. We manage the entire website process—from structure to design, development, launch, and ongoing support—giving every project a clear and dependable path from idea to online.",
+                "SIR_ es un estudio de diseño e ingeniería web con sede en Los Ángeles. Manejamos todo el proceso del sitio web—desde la estructura hasta el diseño, desarrollo, lanzamiento, y soporte continuo—dándole a cada proyecto un camino claro y confiable desde la idea hasta estar en línea."
+              )}
             </p>
 
             {/* Stats band */}
             <div className="w-full mt-12 border border-brand">
               <div className="bg-brand text-bg py-4 px-4 text-center font-bold uppercase text-[0.8125rem] md:text-[0.875rem] tracking-widest w-full">
-                Built for businesses at every stage
+                {t("Built for businesses at every stage", "Hecho para negocios en cada etapa")}
               </div>
               <div className="grid grid-cols-1 md:grid-cols-3">
                 {stats.map((stat, index) => (
@@ -121,7 +135,7 @@ export default function AboutStudio() {
             {/* How we work */}
             <div className="w-full mt-12">
               <div className="text-[0.75rem] text-brand/50 uppercase tracking-widest mb-8">
-                How we work
+                {t("How we work", "Cómo trabajamos")}
               </div>
               <div className="flex flex-col border-t-[1px]">
                 {principles.map((item) => (
@@ -165,60 +179,60 @@ export default function AboutStudio() {
             </div>
 
             <div className="text-[0.75rem] text-brand/50 uppercase tracking-widest mb-3">
-              Founder
+              {t("Founder", "Fundador")}
             </div>
             <h3 className="text-3xl md:text-4xl font-bold mb-6">
               Sebastian I. Rocha
             </h3>
             <div className="flex flex-col gap-5 max-w-2xl mb-10 text-brand/70 leading-relaxed text-[0.875rem] md:text-base">
               <p>
-                Sebastian founded SIR_ to close the gap between inexpensive
-                template websites and high-priced agency work.
+                {t(
+                  "Sebastian founded SIR_ to close the gap between inexpensive template websites and high-priced agency work.",
+                  "Sebastian fundó SIR_ para cerrar la brecha entre los sitios web económicos de plantilla y el trabajo costoso de agencias."
+                )}
               </p>
               <p>
-                With a background in computer science, product development, and
-                entrepreneurship, he leads SIR_ with an engineering and design
-                approach focused on creating websites that look professional,
-                communicate clearly, and help every client stand apart from
-                competitors.
+                {t(
+                  "With a background in computer science, product development, and entrepreneurship, he leads SIR_ with an engineering and design approach focused on creating websites that look professional, communicate clearly, and help every client stand apart from competitors.",
+                  "Con experiencia en ciencias de la computación, desarrollo de productos, y emprendimiento, dirige SIR_ con un enfoque de ingeniería y diseño centrado en crear sitios web que se vean profesionales, comuniquen con claridad, y ayuden a cada cliente a destacar frente a la competencia."
+                )}
               </p>
               <p className="leading-[2.3]">
-                Together, the SIR_ team brings technical expertise, strategy,
-                and creativity to{" "}
+                {t("Together, the SIR_ team brings technical expertise, strategy, and creativity to", "Juntos, el equipo de SIR_ aporta experiencia técnica, estrategia, y creatividad a")}{" "}
                 <IndustryLink href="/industries/restaurants-and-cafes">
-                  restaurants and cafés
+                  {t("restaurants and cafés", "restaurantes y cafés")}
                 </IndustryLink>
                 ,{" "}
                 <IndustryLink href="/industries/local-businesses">
-                  local businesses
+                  {t("local businesses", "negocios locales")}
                 </IndustryLink>
                 ,{" "}
                 <IndustryLink href="/industries/portfolios-and-personal-brands">
-                  creators and personal brands
+                  {t("creators and personal brands", "creadores y marcas personales")}
                 </IndustryLink>
                 ,{" "}
                 <IndustryLink href="/industries/startups">
-                  startups
+                  {t("startups", "startups")}
                 </IndustryLink>
                 ,{" "}
                 <IndustryLink href="/industries/nonprofits">
-                  nonprofits
+                  {t("nonprofits", "organizaciones sin fines de lucro")}
                 </IndustryLink>
                 ,{" "}
                 <IndustryLink href="/industries/nonprofits">
-                  organizations
+                  {t("organizations", "organizaciones")}
                 </IndustryLink>
-                , and{" "}
+                , {t("and", "y")}{" "}
                 <IndustryLink href="/industries/something-else">
-                  custom projects
+                  {t("custom projects", "proyectos personalizados")}
                 </IndustryLink>
-                —all at a more accessible starting point.
+                —{t("all at a more accessible starting point.", "todo desde un punto de partida más accesible.")}
               </p>
             </div>
 
             <div className="flex flex-wrap justify-center gap-4">
               <div className="border border-brand/30 px-4 py-2 text-[0.75rem] text-brand/70 uppercase tracking-wider">
-                Est. Los Angeles, CA
+                {t("Est. Los Angeles, CA", "Fundado en Los Ángeles, CA")}
               </div>
             </div>
           </div>
@@ -228,7 +242,7 @@ export default function AboutStudio() {
         <div className="w-full max-w-[880px] mx-auto flex flex-col items-start gap-8">
           <div className="flex flex-col gap-4">
             <h3 className="text-3xl md:text-4xl font-bold">
-              Ready to put your business online?
+              {t("Ready to put your business online?", "¿Listo para poner tu negocio en línea?")}
             </h3>
           </div>
           <div className="flex flex-col sm:flex-row gap-4 w-full sm:w-auto mt-2">
@@ -236,7 +250,7 @@ export default function AboutStudio() {
               href="/#services"
               className={`${buttonBase} bg-brand text-bg! hover:bg-transparent hover:text-brand!`}
             >
-              Select a service
+              {t("Select a service", "Selecciona un servicio")}
               <span
                 className="transition-transform duration-300 group-hover:translate-x-1"
                 aria-hidden="true"
@@ -248,7 +262,7 @@ export default function AboutStudio() {
               href="/work"
               className={`${buttonBase} bg-transparent text-brand! hover:bg-brand hover:text-bg!`}
             >
-              View all work
+              {t("View all work", "Ver todo el trabajo")}
               <span
                 className="transition-transform duration-300 group-hover:translate-x-1"
                 aria-hidden="true"

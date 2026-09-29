@@ -2,6 +2,7 @@
 
 import dynamic from "next/dynamic";
 import { useEffect, useRef, useState } from "react";
+import { useT } from "@/app/components/providers/LanguageProvider";
 
 const HelmetScene = dynamic(() => import("./HelmetScene"), { ssr: false });
 
@@ -11,6 +12,7 @@ const HelmetScene = dynamic(() => import("./HelmetScene"), { ssr: false });
  * is about to scroll into view.
  */
 export default function HelmetSection() {
+  const t = useT();
   const ref = useRef<HTMLElement>(null);
   const [near, setNear] = useState(false);
 
@@ -31,7 +33,7 @@ export default function HelmetSection() {
   }, []);
 
   return (
-    <section ref={ref} className="helmet-section border-b" aria-label="3D helmet showcase">
+    <section ref={ref} className="helmet-section border-b" aria-label={t("3D helmet showcase", "Muestra del casco 3D")}>
       {near && <HelmetScene />}
     </section>
   );
