@@ -1,5 +1,8 @@
+"use client";
+
 import { TransitionLink } from "@/app/components/providers/PageTransition";
 import { startupTypes } from "@/app/components/industries/startups/startupTypes";
+import { useT } from "@/app/components/providers/LanguageProvider";
 
 /**
  * Closing statement — "Websites For Every Startup And Every Stage." Sits
@@ -21,6 +24,7 @@ function SideList({
   items: typeof startupTypes;
   align: "left" | "right";
 }) {
+  const t = useT();
   return (
     <aside
       className={`takeaway__side takeaway__side--${align}`}
@@ -31,7 +35,7 @@ function SideList({
         {items.map((item) => (
           <li key={item.slug}>
             <span className="pill-tag">
-              {item.number} &mdash; {item.label}
+              {item.number} &mdash; {t(item.label, item.labelEs)}
             </span>
           </li>
         ))}
@@ -41,6 +45,7 @@ function SideList({
 }
 
 export default function StartupTakeaway() {
+  const t = useT();
   return (
     <section className="pad-global border-b takeaway">
       <h3
@@ -50,36 +55,37 @@ export default function StartupTakeaway() {
           marginBottom: "1.5rem",
         }}
       >
-        Websites For Every Startup
+        {t("Websites For Every Startup", "Sitios Web Para Todo Startup")}
         <br />
-        And Every Stage.
+        {t("And Every Stage.", "Y Toda Etapa.")}
       </h3>
 
       <div className="takeaway__body">
-        <SideList eyebrow="Built for" items={leftList} align="left" />
+        <SideList eyebrow={t("Built for", "Hecho para")} items={leftList} align="left" />
 
         <div className="takeaway__center">
           <p className="text-md" style={{ maxWidth: 760 }}>
-            Whether you&rsquo;re validating an idea, launching your first
-            product, or scaling after a round, I offer flexible website
-            options built around your product, goals, and budget.
+            {t(
+              "Whether you're validating an idea, launching your first product, or scaling after a round, I offer flexible website options built around your product, goals, and budget.",
+              "Ya sea que estés validando una idea, lanzando tu primer producto, o escalando después de una ronda de inversión, ofrezco opciones de sitios web flexibles construidas alrededor de tu producto, metas, y presupuesto."
+            )}
           </p>
           <p className="text-md" style={{ maxWidth: 760 }}>
-            Whatever you&rsquo;re building, I&rsquo;ll create a website that
-            explains what you do in seconds, builds credibility with users
-            and investors, and makes it easy to join the waitlist, book a
-            demo, or sign up.
+            {t(
+              "Whatever you're building, I'll create a website that explains what you do in seconds, builds credibility with users and investors, and makes it easy to join the waitlist, book a demo, or sign up.",
+              "Sea lo que estés construyendo, crearé un sitio web que explique lo que haces en segundos, genere credibilidad con usuarios e inversionistas, y facilite unirse a la lista de espera, reservar una demo, o registrarse."
+            )}
           </p>
           <TransitionLink
             href="/work"
             className="btn-pill"
             style={{ marginTop: "2rem" }}
           >
-            View All Work <span aria-hidden="true">&nbsp;&rarr;</span>
+            {t("View All Work", "Ver Todo el Trabajo")} <span aria-hidden="true">&nbsp;&rarr;</span>
           </TransitionLink>
         </div>
 
-        <SideList eyebrow="…and more" items={rightList} align="right" />
+        <SideList eyebrow={t("…and more", "…y más")} items={rightList} align="right" />
       </div>
     </section>
   );

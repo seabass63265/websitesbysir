@@ -6,6 +6,7 @@ import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { CustomEase } from "gsap/CustomEase";
 import { headerHeight, type TextPosition } from "@/app/components/industries/heroConfig";
+import { useT } from "@/app/components/providers/LanguageProvider";
 
 /**
  * Startups hero, option 1 — a cylinder of images that the camera flies around
@@ -24,13 +25,6 @@ const BASE_IMAGES = [
   "/circular-gallery/img11.jpg",
 ];
 const IMAGES = Array.from({ length: 12 }, (_, i) => BASE_IMAGES[i % BASE_IMAGES.length]);
-
-const PERSPECTIVES: { title: string; description?: string; position: TextPosition }[] = [
-  { title: "From idea to launch", description: "Where every startup begins", position: "top" },
-  { title: "Built to convert", description: "Sign-ups, demos, and traction", position: "center" },
-  { title: "Ready for investors", description: "A story that earns the meeting", position: "center" },
-  { title: "Puts your startup online.", position: "bottom" },
-];
 
 const IMAGE = { width: 1024, height: 1024 };
 const PARTICLES = { count: 12, radius: 3.3, segments: 20, angleSpan: 0.3 };
@@ -108,6 +102,13 @@ function drawImageCover(
 }
 
 export default function CylinderHero() {
+  const t = useT();
+  const PERSPECTIVES: { title: string; description?: string; position: TextPosition }[] = [
+    { title: t("From idea to launch", "De la idea al lanzamiento"), description: t("Where every startup begins", "Donde empieza todo startup"), position: "top" },
+    { title: t("Built to convert", "Hecho para convertir"), description: t("Sign-ups, demos, and traction", "Registros, demos, y tracción"), position: "center" },
+    { title: t("Ready for investors", "Listo para inversionistas"), description: t("A story that earns the meeting", "Una historia que se gana la reunión"), position: "center" },
+    { title: t("Puts your startup online.", "Pone tu startup en línea."), position: "bottom" },
+  ];
   const outerRef = useRef<HTMLDivElement>(null);
   const stageRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
