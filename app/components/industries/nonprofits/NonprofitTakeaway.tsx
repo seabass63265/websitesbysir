@@ -1,5 +1,8 @@
+"use client";
+
 import { TransitionLink } from "@/app/components/providers/PageTransition";
 import { nonprofitTypes } from "@/app/components/industries/nonprofits/nonprofitTypes";
+import { useT } from "@/app/components/providers/LanguageProvider";
 
 /**
  * Closing statement — "Websites For Every Mission And Every Budget." Sits
@@ -21,6 +24,7 @@ function SideList({
   items: typeof nonprofitTypes;
   align: "left" | "right";
 }) {
+  const t = useT();
   return (
     <aside
       className={`takeaway__side takeaway__side--${align}`}
@@ -31,7 +35,7 @@ function SideList({
         {items.map((item) => (
           <li key={item.slug}>
             <span className="pill-tag">
-              {item.number} &mdash; {item.label}
+              {item.number} &mdash; {t(item.label, item.labelEs)}
             </span>
           </li>
         ))}
@@ -41,6 +45,7 @@ function SideList({
 }
 
 export default function NonprofitTakeaway() {
+  const t = useT();
   return (
     <section className="pad-global border-b takeaway">
       <h3
@@ -50,36 +55,37 @@ export default function NonprofitTakeaway() {
           marginBottom: "1.5rem",
         }}
       >
-        Websites For Every Mission
+        {t("Websites For Every Mission", "Sitios Web Para Toda Misión")}
         <br />
-        And Every Budget.
+        {t("And Every Budget.", "Y Todo Presupuesto.")}
       </h3>
 
       <div className="takeaway__body">
-        <SideList eyebrow="Built for" items={leftList} align="left" />
+        <SideList eyebrow={t("Built for", "Hecho para")} items={leftList} align="left" />
 
         <div className="takeaway__center">
           <p className="text-md" style={{ maxWidth: 760 }}>
-            Whether you&rsquo;re a volunteer-run group just getting started,
-            a growing organization, or an established nonprofit ready for
-            something fully custom, I offer flexible website options built
-            around your mission, goals, and budget.
+            {t(
+              "Whether you're a volunteer-run group just getting started, a growing organization, or an established nonprofit ready for something fully custom, I offer flexible website options built around your mission, goals, and budget.",
+              "Ya sea que seas un grupo dirigido por voluntarios que apenas empieza, una organización en crecimiento, o una organización sin fines de lucro establecida lista para algo totalmente personalizado, ofrezco opciones de sitios web flexibles construidas alrededor de tu misión, metas, y presupuesto."
+            )}
           </p>
           <p className="text-md" style={{ maxWidth: 760 }}>
-            Whatever cause you serve, I&rsquo;ll create a website that
-            clearly tells your story, builds trust with your community, and
-            makes it easy to donate, volunteer, or get involved.
+            {t(
+              "Whatever cause you serve, I'll create a website that clearly tells your story, builds trust with your community, and makes it easy to donate, volunteer, or get involved.",
+              "Sea cual sea la causa que sirvas, crearé un sitio web que cuente claramente tu historia, genere confianza con tu comunidad, y facilite donar, ser voluntario, o involucrarse."
+            )}
           </p>
           <TransitionLink
             href="/work"
             className="btn-pill"
             style={{ marginTop: "2rem" }}
           >
-            View All Work <span aria-hidden="true">&nbsp;&rarr;</span>
+            {t("View All Work", "Ver Todo el Trabajo")} <span aria-hidden="true">&nbsp;&rarr;</span>
           </TransitionLink>
         </div>
 
-        <SideList eyebrow="…and more" items={rightList} align="right" />
+        <SideList eyebrow={t("…and more", "…y más")} items={rightList} align="right" />
       </div>
     </section>
   );
