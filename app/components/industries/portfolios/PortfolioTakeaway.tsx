@@ -1,5 +1,8 @@
+"use client";
+
 import { TransitionLink } from "@/app/components/providers/PageTransition";
 import { personalBrandTypes } from "@/app/components/industries/portfolios/personalBrandTypes";
+import { useT } from "@/app/components/providers/LanguageProvider";
 
 /**
  * Closing statement — "Portfolios For Every Talent And Every Budget." Sits
@@ -21,6 +24,7 @@ function SideList({
   items: typeof personalBrandTypes;
   align: "left" | "right";
 }) {
+  const t = useT();
   return (
     <aside
       className={`takeaway__side takeaway__side--${align}`}
@@ -31,7 +35,7 @@ function SideList({
         {items.map((item) => (
           <li key={item.slug}>
             <span className="pill-tag">
-              {item.number} &mdash; {item.label}
+              {item.number} &mdash; {t(item.label, item.labelEs)}
             </span>
           </li>
         ))}
@@ -41,6 +45,7 @@ function SideList({
 }
 
 export default function PortfolioTakeaway() {
+  const t = useT();
   return (
     <section className="pad-global border-b takeaway">
       <h3
@@ -50,35 +55,37 @@ export default function PortfolioTakeaway() {
           marginBottom: "1.5rem",
         }}
       >
-        Portfolios For Every Talent
+        {t("Portfolios For Every Talent", "Portafolios Para Todo Talento")}
         <br />
-        And Every Budget.
+        {t("And Every Budget.", "Y Todo Presupuesto.")}
       </h3>
 
       <div className="takeaway__body">
-        <SideList eyebrow="Built for" items={leftList} align="left" />
+        <SideList eyebrow={t("Built for", "Hecho para")} items={leftList} align="left" />
 
         <div className="takeaway__center">
           <p className="text-md" style={{ maxWidth: 760 }}>
-            Whether you&rsquo;re just starting out, building your name, or
-            ready for a fully custom personal brand, I offer flexible website
-            options built around your work, goals, and budget.
+            {t(
+              "Whether you're just starting out, building your name, or ready for a fully custom personal brand, I offer flexible website options built around your work, goals, and budget.",
+              "Ya sea que estés empezando, construyendo tu nombre, o listo para una marca personal totalmente personalizada, ofrezco opciones de sitios web flexibles construidas alrededor de tu trabajo, metas, y presupuesto."
+            )}
           </p>
           <p className="text-md" style={{ maxWidth: 760 }}>
-            Whatever you create, I&rsquo;ll build a website that shows off
-            your work, tells your story, builds trust, and makes it easy for
-            people to book you, hire you, or follow along.
+            {t(
+              "Whatever you create, I'll build a website that shows off your work, tells your story, builds trust, and makes it easy for people to book you, hire you, or follow along.",
+              "Sea lo que crees, construiré un sitio web que muestre tu trabajo, cuente tu historia, genere confianza, y facilite que la gente te reserve, te contrate, o te siga."
+            )}
           </p>
           <TransitionLink
             href="/work"
             className="btn-pill"
             style={{ marginTop: "2rem" }}
           >
-            View All Work <span aria-hidden="true">&nbsp;&rarr;</span>
+            {t("View All Work", "Ver Todo el Trabajo")} <span aria-hidden="true">&nbsp;&rarr;</span>
           </TransitionLink>
         </div>
 
-        <SideList eyebrow="…and more" items={rightList} align="right" />
+        <SideList eyebrow={t("…and more", "…y más")} items={rightList} align="right" />
       </div>
     </section>
   );

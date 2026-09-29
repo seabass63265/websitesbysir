@@ -1,4 +1,7 @@
+"use client";
+
 import NumberedSection from "@/app/components/industries/NumberedSection";
+import { useT } from "@/app/components/providers/LanguageProvider";
 
 /**
  * "Choose Your Starting Point" — pricing cards for Portfolios & Personal
@@ -24,129 +27,141 @@ type Tier = {
   monthlyLabel?: string;
 };
 
-const careItems = [
-  "Managed website hosting",
-  "SSL security and automated backups",
-  "Uptime and performance monitoring",
-  "Software and dependency maintenance",
-  "Technical troubleshooting and support",
-];
-
-const tiers: Tier[] = [
-  {
-    level: "Tier 1",
-    name: "Essential",
-    blurb:
-      "For creators and professionals who need one polished page to get their work online.",
-    price: "$750",
-    priceUnit: "one-time build",
-    monthlyPrice: "$80",
-    monthlyUnit: "per month\nfor hosting & maintenance",
-    buildItems: [
-      "One-page website",
-      "Portfolio or work highlights",
-      "About / bio section",
-      "Contact information and inquiry form",
-      "Social media links",
-      "Custom mobile-responsive design",
-      "Domain connection",
-      "Testing and publishing",
-      "One revision round",
-    ],
-    monthlyLabel: "Monthly website care includes:",
-    monthlyItems: [...careItems, "Content updates to your page"],
-    cta: "Request a Quote",
-  },
-  {
-    level: "Tier 2",
-    name: "Growth",
-    blurb:
-      "For creators and professionals who need a clean, professional home for their work.",
-    featured: true,
-    price: "$1,250",
-    priceUnit: "one-time build",
-    monthlyPrice: "$120",
-    monthlyUnit: "per month\nfor hosting & maintenance",
-    buildItems: [
-      "Up to 3 pages",
-      "Home page",
-      "Portfolio or work gallery",
-      "About / Our Story page",
-      "Contact information and inquiry form",
-      "Social media links",
-      "Custom mobile-responsive design",
-      "Domain connection",
-      "Testing and publishing",
-      "Two revision rounds",
-    ],
-    monthlyLabel: "Monthly website care includes:",
-    monthlyItems: [...careItems, "Portfolio, project, and content updates"],
-    cta: "Request a Quote",
-  },
-  {
-    level: "Tier 3",
-    name: "Tailored",
-    blurb: (
-      <>
-        For <strong>creators and personal brands that need</strong> something
-        outside our standard packages—whether that means a focused website on{" "}
-        <strong>
-          a smaller budget ($) or a fully customized digital experience ($$$).
-        </strong>
-      </>
-    ),
-    price: "Custom Pricing",
-    caption: "Built around your goals, needs, and budget.",
-    buildLabel: "Your custom build may include:",
-    buildItems: [
-      "A custom page structure",
-      "Multiple portfolios or creative disciplines",
-      "Individual projects and case studies",
-      "Custom galleries and media experiences",
-      "Advanced booking and scheduling connections",
-      "Custom inquiry and collaboration forms",
-      "English and Spanish website options",
-      "Custom interactions and animations",
-      "Copywriting and personal-brand support",
-      "Unique functionality built around your work",
-    ],
-    monthlyLabel: "Monthly website care may include:",
-    monthlyItems: [
-      "Managed website hosting",
-      "SSL security and automated backups",
-      "Uptime and performance monitoring",
-      "Software and dependency maintenance",
-      "Technical troubleshooting and support",
-      "Portfolio, project, and content updates",
-      "New work, case study, and media uploads",
-      "Launch announcements and featured-work updates",
-      "Development support based on your selected plan",
-      "Additional services tailored to your website",
-    ],
-    cta: "Plan a Custom Project",
-  },
-];
-
 export default function PricingSection() {
+  const t = useT();
+  const careItems = [
+    t("Managed website hosting", "Hosting administrado del sitio web"),
+    t("SSL security and automated backups", "Seguridad SSL y respaldos automáticos"),
+    t("Uptime and performance monitoring", "Monitoreo de tiempo activo y rendimiento"),
+    t("Software and dependency maintenance", "Mantenimiento de software y dependencias"),
+    t("Technical troubleshooting and support", "Soporte y resolución de problemas técnicos"),
+  ];
+
+  const tiers: Tier[] = [
+    {
+      level: t("Tier 1", "Nivel 1"),
+      name: t("Essential", "Esencial"),
+      blurb: t(
+        "For creators and professionals who need one polished page to get their work online.",
+        "Para creadores y profesionales que necesitan una página pulida para poner su trabajo en línea."
+      ),
+      price: "$750",
+      priceUnit: t("one-time build", "pago único de desarrollo"),
+      monthlyPrice: "$80",
+      monthlyUnit: t("per month\nfor hosting & maintenance", "al mes\npor hosting y mantenimiento"),
+      buildItems: [
+        t("One-page website", "Sitio web de una página"),
+        t("Portfolio or work highlights", "Portafolio o trabajos destacados"),
+        t("About / bio section", "Sección Acerca de / biografía"),
+        t("Contact information and inquiry form", "Información de contacto y formulario de consulta"),
+        t("Social media links", "Enlaces a redes sociales"),
+        t("Custom mobile-responsive design", "Diseño personalizado adaptado a móviles"),
+        t("Domain connection", "Conexión de dominio"),
+        t("Testing and publishing", "Pruebas y publicación"),
+        t("One revision round", "Una ronda de revisión"),
+      ],
+      monthlyLabel: t("Monthly website care includes:", "El cuidado mensual del sitio web incluye:"),
+      monthlyItems: [...careItems, t("Content updates to your page", "Actualizaciones de contenido en tu página")],
+      cta: t("Request a Quote", "Solicitar una Cotización"),
+    },
+    {
+      level: t("Tier 2", "Nivel 2"),
+      name: t("Growth", "Crecimiento"),
+      blurb: t(
+        "For creators and professionals who need a clean, professional home for their work.",
+        "Para creadores y profesionales que necesitan un hogar limpio y profesional para su trabajo."
+      ),
+      featured: true,
+      price: "$1,250",
+      priceUnit: t("one-time build", "pago único de desarrollo"),
+      monthlyPrice: "$120",
+      monthlyUnit: t("per month\nfor hosting & maintenance", "al mes\npor hosting y mantenimiento"),
+      buildItems: [
+        t("Up to 3 pages", "Hasta 3 páginas"),
+        t("Home page", "Página de inicio"),
+        t("Portfolio or work gallery", "Portafolio o galería de trabajo"),
+        t("About / Our Story page", "Página Acerca de / Nuestra Historia"),
+        t("Contact information and inquiry form", "Información de contacto y formulario de consulta"),
+        t("Social media links", "Enlaces a redes sociales"),
+        t("Custom mobile-responsive design", "Diseño personalizado adaptado a móviles"),
+        t("Domain connection", "Conexión de dominio"),
+        t("Testing and publishing", "Pruebas y publicación"),
+        t("Two revision rounds", "Dos rondas de revisión"),
+      ],
+      monthlyLabel: t("Monthly website care includes:", "El cuidado mensual del sitio web incluye:"),
+      monthlyItems: [...careItems, t("Portfolio, project, and content updates", "Actualizaciones de portafolio, proyectos, y contenido")],
+      cta: t("Request a Quote", "Solicitar una Cotización"),
+    },
+    {
+      level: t("Tier 3", "Nivel 3"),
+      name: t("Tailored", "A la medida"),
+      blurb: (
+        <>
+          {t("For", "Para")} <strong>{t("creators and personal brands that need", "creadores y marcas personales que necesiten")}</strong>{" "}
+          {t(
+            "something outside our standard packages—whether that means a focused website on",
+            "algo fuera de nuestros paquetes estándar—ya sea un sitio web enfocado con"
+          )}{" "}
+          <strong>
+            {t(
+              "a smaller budget ($) or a fully customized digital experience ($$$).",
+              "un presupuesto menor ($) o una experiencia digital totalmente personalizada ($$$)."
+            )}
+          </strong>
+        </>
+      ),
+      price: t("Custom Pricing", "Precio Personalizado"),
+      caption: t("Built around your goals, needs, and budget.", "Construido alrededor de tus metas, necesidades, y presupuesto."),
+      buildLabel: t("Your custom build may include:", "Tu desarrollo personalizado puede incluir:"),
+      buildItems: [
+        t("A custom page structure", "Una estructura de páginas personalizada"),
+        t("Multiple portfolios or creative disciplines", "Múltiples portafolios o disciplinas creativas"),
+        t("Individual projects and case studies", "Proyectos individuales y casos de estudio"),
+        t("Custom galleries and media experiences", "Galerías personalizadas y experiencias multimedia"),
+        t("Advanced booking and scheduling connections", "Conexiones avanzadas de reservas y programación"),
+        t("Custom inquiry and collaboration forms", "Formularios personalizados de consulta y colaboración"),
+        t("English and Spanish website options", "Opciones de sitio web en inglés y español"),
+        t("Custom interactions and animations", "Interacciones y animaciones personalizadas"),
+        t("Copywriting and personal-brand support", "Apoyo en redacción y marca personal"),
+        t("Unique functionality built around your work", "Funcionalidad única construida alrededor de tu trabajo"),
+      ],
+      monthlyLabel: t("Monthly website care may include:", "El cuidado mensual del sitio web puede incluir:"),
+      monthlyItems: [
+        t("Managed website hosting", "Hosting administrado del sitio web"),
+        t("SSL security and automated backups", "Seguridad SSL y respaldos automáticos"),
+        t("Uptime and performance monitoring", "Monitoreo de tiempo activo y rendimiento"),
+        t("Software and dependency maintenance", "Mantenimiento de software y dependencias"),
+        t("Technical troubleshooting and support", "Soporte y resolución de problemas técnicos"),
+        t("Portfolio, project, and content updates", "Actualizaciones de portafolio, proyectos, y contenido"),
+        t("New work, case study, and media uploads", "Nuevos trabajos, casos de estudio, y subidas de medios"),
+        t("Launch announcements and featured-work updates", "Anuncios de lanzamiento y actualizaciones de trabajo destacado"),
+        t("Development support based on your selected plan", "Soporte de desarrollo según tu plan seleccionado"),
+        t("Additional services tailored to your website", "Servicios adicionales a la medida de tu sitio web"),
+      ],
+      cta: t("Plan a Custom Project", "Planea un Proyecto Personalizado"),
+    },
+  ];
+
   return (
     <NumberedSection
       n="04"
-      label="Pricing"
+      label={t("Pricing", "Precios")}
       id="pricing"
       className="inverted"
-      tag="04 / PRICING"
+      tag={t("04 / PRICING", "04 / PRECIOS")}
     >
       <div className="pad-global border-b">
         <div className="text-sm" style={{ marginBottom: "0.5rem" }}>
-          Portfolios & Personal Brands Pricing
+          {t("Portfolios & Personal Brands Pricing", "Precios para Portafolios y Marcas Personales")}
         </div>
         <h2 className="text-lg" style={{ marginBottom: "1rem" }}>
-          Choose Your Starting Point
+          {t("Choose Your Starting Point", "Elige tu Punto de Partida")}
         </h2>
         <p className="text-md">
-          A one-time flat fee covers the design, development, and launch. A
-          monthly service fee covers hosting, maintenance, updates, and
-          technical support. No hidden fees.
+          {t(
+            "A one-time flat fee covers the design, development, and launch. A monthly service fee covers hosting, maintenance, updates, and technical support. No hidden fees.",
+            "Una cuota única cubre el diseño, desarrollo, y lanzamiento. Una tarifa de servicio mensual cubre hosting, mantenimiento, actualizaciones, y soporte técnico. Sin costos ocultos."
+          )}
         </p>
       </div>
 
@@ -159,7 +174,7 @@ export default function PricingSection() {
             }
           >
             {tier.featured && (
-              <div className="tier-card__badge">Most Popular</div>
+              <div className="tier-card__badge">{t("Most Popular", "Más Popular")}</div>
             )}
 
             <div className="pill-tag tier-card__level">{tier.level}</div>
@@ -167,7 +182,7 @@ export default function PricingSection() {
             <p className="text-sm tier-card__blurb">{tier.blurb}</p>
 
             {tier.priceUnit && (
-              <div className="tier-card__price-lead">Starting at</div>
+              <div className="tier-card__price-lead">{t("Starting at", "Desde")}</div>
             )}
             <div className="tier-card__price-row">
               <span className="tier-card__price">{tier.price}</span>
@@ -179,7 +194,7 @@ export default function PricingSection() {
             {tier.monthlyPrice ? (
               <div className="tier-card__monthly">
                 <div className="tier-card__price-connector">
-                  and after, just
+                  {t("and after, just", "y después, solo")}
                 </div>
                 <div className="tier-card__price-row tier-card__price-row--stacked">
                   <span className="tier-card__price">{tier.monthlyPrice}</span>
@@ -201,7 +216,7 @@ export default function PricingSection() {
             </a>
 
             <div className="tier-list__group-label text-sm">
-              {tier.buildLabel ?? "One-time build includes:"}
+              {tier.buildLabel ?? t("One-time build includes:", "El desarrollo único incluye:")}
             </div>
             <ul className="tier-list text-xs">
               {tier.buildItems.map((label) => (
@@ -220,7 +235,7 @@ export default function PricingSection() {
                   className="tier-list__group-label text-sm"
                   style={{ marginTop: "1.5rem" }}
                 >
-                  {tier.monthlyLabel ?? "Monthly service includes:"}
+                  {tier.monthlyLabel ?? t("Monthly service includes:", "El servicio mensual incluye:")}
                 </div>
                 <ul className="tier-list text-xs">
                   {tier.monthlyItems.map((label) => (
@@ -240,18 +255,21 @@ export default function PricingSection() {
 
       <div className="tier-footnote">
         <div className="tier-footnote__item">
-          <div className="tier-footnote__label text-sm">Service Term</div>
+          <div className="tier-footnote__label text-sm">{t("Service Term", "Plazo de Servicio")}</div>
           <p>
-            Both plans require an initial 12-month website service agreement.
-            After the initial term, service renews every 6 months.
+            {t(
+              "Both plans require an initial 12-month website service agreement. After the initial term, service renews every 6 months.",
+              "Ambos planes requieren un contrato inicial de servicio de sitio web de 12 meses. Después del plazo inicial, el servicio se renueva cada 6 meses."
+            )}
           </p>
         </div>
         <div className="tier-footnote__item">
-          <div className="tier-footnote__label text-sm">Third-Party Costs</div>
+          <div className="tier-footnote__label text-sm">{t("Third-Party Costs", "Costos de Terceros")}</div>
           <p>
-            Domain registration, booking platforms, newsletter and email
-            services, payment processing, and other third-party subscriptions
-            are billed separately.
+            {t(
+              "Domain registration, booking platforms, newsletter and email services, payment processing, and other third-party subscriptions are billed separately.",
+              "El registro de dominio, plataformas de reservas, servicios de boletines y correo, procesamiento de pagos, y otras suscripciones de terceros se facturan por separado."
+            )}
           </p>
         </div>
       </div>

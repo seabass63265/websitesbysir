@@ -1,4 +1,7 @@
+"use client";
+
 import NumberedSection from "@/app/components/industries/NumberedSection";
+import { useT } from "@/app/components/providers/LanguageProvider";
 
 /**
  * "Built Around the Tools You Already Use" — the booking, social, email,
@@ -6,59 +9,61 @@ import NumberedSection from "@/app/components/industries/NumberedSection";
  * grouped by job.
  * Same layout as the Restaurants page's tools section.
  */
-const categories = [
-  {
-    name: "Booking & Scheduling",
-    tools: ["Calendly", "Cal.com", "Google Calendar", "Square Appointments"],
-  },
-  {
-    name: "Social Media",
-    tools: [
-      "Instagram",
-      "TikTok",
-      "YouTube",
-      "Facebook",
-      "LinkedIn",
-      "Twitter/X",
-      "Pinterest",
-    ],
-  },
-  {
-    name: "Newsletters & Email",
-    tools: ["Mailchimp", "Substack", "Beehiiv", "Kit", "Brevo"],
-  },
-  {
-    name: "Portfolio, Media & Payments",
-    tools: [
-      "Behance",
-      "Dribbble",
-      "Vimeo",
-      "SoundCloud",
-      "Spotify",
-      "Stripe",
-      "PayPal",
-      "Venmo",
-    ],
-  },
-];
-
-
 export default function PlatformConnections() {
+  const t = useT();
+  const categories = [
+    {
+      name: t("Booking & Scheduling", "Reservas y Programación"),
+      tools: ["Calendly", "Cal.com", "Google Calendar", "Square Appointments"],
+    },
+    {
+      name: t("Social Media", "Redes Sociales"),
+      tools: [
+        "Instagram",
+        "TikTok",
+        "YouTube",
+        "Facebook",
+        "LinkedIn",
+        "Twitter/X",
+        "Pinterest",
+      ],
+    },
+    {
+      name: t("Newsletters & Email", "Boletines y Correo"),
+      tools: ["Mailchimp", "Substack", "Beehiiv", "Kit", "Brevo"],
+    },
+    {
+      name: t("Portfolio, Media & Payments", "Portafolio, Medios y Pagos"),
+      tools: [
+        "Behance",
+        "Dribbble",
+        "Vimeo",
+        "SoundCloud",
+        "Spotify",
+        "Stripe",
+        "PayPal",
+        "Venmo",
+      ],
+    },
+  ];
+
   return (
     <NumberedSection
       n="03"
-      label="Built Around the Tools You Already Use"
+      label={t("Built Around the Tools You Already Use", "Construido Alrededor de las Herramientas que Ya Usas")}
       id="platforms"
-      tag="03 / CONNECT YOUR TOOLS"
+      tag={t("03 / CONNECT YOUR TOOLS", "03 / CONECTA TUS HERRAMIENTAS")}
     >
       <div className="pad-global border-b">
-        <h2 className="text-lg">Your platforms, connected.</h2>
+        <h2 className="text-lg">{t("Your platforms, connected.", "Tus plataformas, conectadas.")}</h2>
       </div>
 
       <div className="pad-global">
         <p className="text-md" style={{ marginBottom: "2.5rem" }}>
-          Your website can connect with the booking, social, newsletter, media,
-          and payment platforms you already use.
+          {t(
+            "Your website can connect with the booking, social, newsletter, media, and payment platforms you already use.",
+            "Tu sitio web puede conectarse con las plataformas de reservas, redes sociales, boletines, medios, y pagos que ya usas."
+          )}
         </p>
 
         {categories.map((category, index) => (
@@ -87,11 +92,13 @@ export default function PlatformConnections() {
             fontWeight: 700,
           }}
         >
-          Don&rsquo;t see the system you use? Just let us know &mdash; we can
-          likely connect it.
+          {t(
+            "Don't see the system you use? Just let us know — we can likely connect it.",
+            "¿No ves el sistema que usas? Solo avísanos — probablemente podamos conectarlo."
+          )}
         </p>
         <p className="text-xs" style={{ opacity: 0.7 }}>
-          Available integrations. Not official partnerships.
+          {t("Available integrations. Not official partnerships.", "Integraciones disponibles. No son alianzas oficiales.")}
         </p>
       </div>
     </NumberedSection>
