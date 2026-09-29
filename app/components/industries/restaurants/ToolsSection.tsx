@@ -1,46 +1,52 @@
+"use client";
+
 import NumberedSection from "@/app/components/industries/NumberedSection";
+import { useT } from "@/app/components/providers/LanguageProvider";
 
 /**
  * "Built Around the Tools You Already Use" — the ordering, reservation,
  * and discovery platforms a restaurant already runs on, grouped by job.
  */
-const categories = [
-  {
-    name: "Ordering",
-    tools: ["Toast", "DoorDash", "Grubhub", "Uber Eats", "ChowNow"],
-  },
-  {
-    name: "Reservations",
-    tools: ["OpenTable", "Resy", "Yelp Reservations"],
-  },
-  {
-    name: "Discovery",
-    tools: [
-      "Google Maps",
-      "Yelp",
-      "Instagram",
-      "Facebook",
-      "TikTok",
-      "Twitter/X",
-    ],
-  },
-];
-
 export default function ToolsSection() {
+  const t = useT();
+  const categories = [
+    {
+      name: t("Ordering", "Pedidos"),
+      tools: ["Toast", "DoorDash", "Grubhub", "Uber Eats", "ChowNow"],
+    },
+    {
+      name: t("Reservations", "Reservaciones"),
+      tools: ["OpenTable", "Resy", "Yelp Reservations"],
+    },
+    {
+      name: t("Discovery", "Descubrimiento"),
+      tools: [
+        "Google Maps",
+        "Yelp",
+        "Instagram",
+        "Facebook",
+        "TikTok",
+        "Twitter/X",
+      ],
+    },
+  ];
+
   return (
     <NumberedSection
       n="03"
-      label="Built Around the Tools You Already Use"
+      label={t("Built Around the Tools You Already Use", "Construido Alrededor de las Herramientas que Ya Usas")}
       id="tools"
       className="inverted"
       bodyClassName="pad-global"
     >
       <h2 className="text-lg" style={{ marginBottom: "1rem" }}>
-        Your systems, connected.
+        {t("Your systems, connected.", "Tus sistemas, conectados.")}
       </h2>
       <p className="text-md" style={{ marginBottom: "2.5rem" }}>
-        Your website can connect with the ordering, reservation, review,
-        mapping, and social platforms your restaurant already uses.
+        {t(
+          "Your website can connect with the ordering, reservation, review, mapping, and social platforms your restaurant already uses.",
+          "Tu sitio web puede conectarse con las plataformas de pedidos, reservaciones, reseñas, mapas, y redes sociales que tu restaurante ya usa."
+        )}
       </p>
 
       {categories.map((category, index) => (
