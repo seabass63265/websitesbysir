@@ -14,6 +14,7 @@
  */
 
 import { useEffect, useRef, useState } from "react";
+import { useT } from "@/app/components/providers/LanguageProvider";
 import {
   CameraViewPlugin,
   CanvasTexture,
@@ -54,7 +55,7 @@ type Controller = {
 };
 
 /** "Coming soon" screen for a side that has no recording yet. */
-function placeholderTexture(label: string, aspect: number, font: string) {
+function placeholderTexture(label: string, aspect: number, font: string, comingSoonText: string) {
   const width = aspect > 1 ? 1280 : 560;
   const height = Math.round(width / aspect);
   const canvas = document.createElement("canvas");
@@ -82,7 +83,7 @@ function placeholderTexture(label: string, aspect: number, font: string) {
   ctx.fillStyle = "#ffffff";
   const big = Math.round(width / 16);
   ctx.font = `700 ${big}px ${font}`;
-  ctx.fillText("DEMO COMING SOON", width / 2, height / 2);
+  ctx.fillText(comingSoonText, width / 2, height / 2);
   ctx.fillStyle = "rgba(255,255,255,0.6)";
   ctx.font = `400 ${Math.round(big * 0.6)}px ${font}`;
   ctx.fillText(label.toUpperCase(), width / 2, height / 2 + big * 1.4, width * 0.9);
@@ -98,6 +99,8 @@ export default function DeviceScene({
   selection: SceneSelection;
   onFocusChange?: (focus: Device | null) => void;
 }) {
+  const t = useT();
+  const comingSoonText = t("DEMO COMING SOON", "DEMO PRÓXIMAMENTE");
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const controllerRef = useRef<Controller | null>(null);
   const [ready, setReady] = useState(false);
@@ -202,7 +205,7 @@ export default function DeviceScene({
         screenAspect: number
       ): ITexture {
         if (!src) {
-          const texture = placeholderTexture(label, screenAspect, font) as unknown as ITexture;
+          const texture = placeholderTexture(label, screenAspect, font, comingSoonText) as unknown as ITexture;
           screenTextures.push(texture);
           return texture;
         }
