@@ -1,4 +1,7 @@
+"use client";
+
 import NumberedSection from "@/app/components/industries/NumberedSection";
+import { useT } from "@/app/components/providers/LanguageProvider";
 
 /**
  * "Choose Your Starting Point" — pricing cards for Something Else. Same
@@ -27,75 +30,85 @@ type Tier = {
   monthlyLabel?: string;
 };
 
-const tiers: Tier[] = [
-  {
-    level: "",
-    name: "Tailored",
-    featured: true,
-    hideBadge: true,
-    blurb: (
-      <>
-        For <strong>projects that need</strong> something outside our standard
-        packages—whether that means a focused website on{" "}
-        <strong>
-          a smaller budget ($) or a fully customized digital experience ($$$).
-        </strong>
-      </>
-    ),
-    price: "Custom Pricing",
-    caption:
-      "Every project is quoted individually based on its goals, required features, integrations, timeline, and level of ongoing support.",
-    buildLabel: "Your custom build may include:",
-    buildItems: [
-      "A focused, essentials-only website",
-      "A completely custom page structure",
-      "Multiple programs, brands, or audiences",
-      "Custom calculators and interactive tools",
-      "Member areas or customer portals",
-      "Custom databases and content systems",
-      "Advanced forms and third-party integrations",
-      "Payment, booking, event, or donation workflows",
-      "English and Spanish website options",
-      "Custom interactions and animations",
-      "Copywriting and content support",
-      "Unique functionality built around your idea",
-    ],
-    monthlyLabel: "Hosting and maintenance may include:",
-    monthlyItems: [
-      "Managed website hosting",
-      "SSL security and automated backups",
-      "Uptime and performance monitoring",
-      "Software and dependency maintenance",
-      "Technical troubleshooting and support",
-      "Page, content, and feature updates",
-      "Custom integration support",
-      "Development support based on your selected plan",
-      "Additional services tailored to your website",
-    ],
-    cta: "Plan a Custom Project",
-  },
-];
-
 export default function PricingSection() {
+  const t = useT();
+  const tiers: Tier[] = [
+    {
+      level: "",
+      name: t("Tailored", "A la medida"),
+      featured: true,
+      hideBadge: true,
+      blurb: (
+        <>
+          {t("For", "Para")} <strong>{t("projects that need", "proyectos que necesiten")}</strong>{" "}
+          {t(
+            "something outside our standard packages—whether that means a focused website on",
+            "algo fuera de nuestros paquetes estándar—ya sea un sitio web enfocado con"
+          )}{" "}
+          <strong>
+            {t(
+              "a smaller budget ($) or a fully customized digital experience ($$$).",
+              "un presupuesto menor ($) o una experiencia digital totalmente personalizada ($$$)."
+            )}
+          </strong>
+        </>
+      ),
+      price: t("Custom Pricing", "Precio Personalizado"),
+      caption: t(
+        "Every project is quoted individually based on its goals, required features, integrations, timeline, and level of ongoing support.",
+        "Cada proyecto se cotiza individualmente según sus metas, características requeridas, integraciones, plazo, y nivel de soporte continuo."
+      ),
+      buildLabel: t("Your custom build may include:", "Tu desarrollo personalizado puede incluir:"),
+      buildItems: [
+        t("A focused, essentials-only website", "Un sitio web enfocado, solo lo esencial"),
+        t("A completely custom page structure", "Una estructura de páginas completamente personalizada"),
+        t("Multiple programs, brands, or audiences", "Múltiples programas, marcas, o audiencias"),
+        t("Custom calculators and interactive tools", "Calculadoras personalizadas y herramientas interactivas"),
+        t("Member areas or customer portals", "Áreas de miembros o portales de clientes"),
+        t("Custom databases and content systems", "Bases de datos personalizadas y sistemas de contenido"),
+        t("Advanced forms and third-party integrations", "Formularios avanzados e integraciones con terceros"),
+        t("Payment, booking, event, or donation workflows", "Flujos de pagos, reservas, eventos, o donaciones"),
+        t("English and Spanish website options", "Opciones de sitio web en inglés y español"),
+        t("Custom interactions and animations", "Interacciones y animaciones personalizadas"),
+        t("Copywriting and content support", "Apoyo en redacción y contenido"),
+        t("Unique functionality built around your idea", "Funcionalidad única construida alrededor de tu idea"),
+      ],
+      monthlyLabel: t("Hosting and maintenance may include:", "El hosting y mantenimiento puede incluir:"),
+      monthlyItems: [
+        t("Managed website hosting", "Hosting administrado del sitio web"),
+        t("SSL security and automated backups", "Seguridad SSL y respaldos automáticos"),
+        t("Uptime and performance monitoring", "Monitoreo de tiempo activo y rendimiento"),
+        t("Software and dependency maintenance", "Mantenimiento de software y dependencias"),
+        t("Technical troubleshooting and support", "Soporte y resolución de problemas técnicos"),
+        t("Page, content, and feature updates", "Actualizaciones de páginas, contenido, y funciones"),
+        t("Custom integration support", "Soporte de integración personalizada"),
+        t("Development support based on your selected plan", "Soporte de desarrollo según tu plan seleccionado"),
+        t("Additional services tailored to your website", "Servicios adicionales a la medida de tu sitio web"),
+      ],
+      cta: t("Plan a Custom Project", "Planea un Proyecto Personalizado"),
+    },
+  ];
+
   return (
     <NumberedSection
       n="04"
-      label="Pricing"
+      label={t("Pricing", "Precios")}
       id="pricing"
       className="inverted"
-      tag="04 / PRICING"
+      tag={t("04 / PRICING", "04 / PRECIOS")}
     >
       <div className="pad-global border-b">
         <div className="text-sm" style={{ marginBottom: "0.5rem" }}>
-          Something Else Pricing
+          {t("Something Else Pricing", "Precios para Algo Más")}
         </div>
         <h2 className="text-lg" style={{ marginBottom: "1rem" }}>
-          Choose Your Starting Point
+          {t("Choose Your Starting Point", "Elige tu Punto de Partida")}
         </h2>
         <p className="text-md">
-          A one-time flat fee covers the design, development, and launch. A
-          monthly service fee covers hosting, maintenance, updates, and
-          technical support. No hidden fees.
+          {t(
+            "A one-time flat fee covers the design, development, and launch. A monthly service fee covers hosting, maintenance, updates, and technical support. No hidden fees.",
+            "Una cuota única cubre el diseño, desarrollo, y lanzamiento. Una tarifa de servicio mensual cubre hosting, mantenimiento, actualizaciones, y soporte técnico. Sin costos ocultos."
+          )}
         </p>
       </div>
 
@@ -108,7 +121,7 @@ export default function PricingSection() {
             }
           >
             {tier.featured && !tier.hideBadge && (
-              <div className="tier-card__badge">Most Common</div>
+              <div className="tier-card__badge">{t("Most Common", "Más Común")}</div>
             )}
 
             {tier.level && (
@@ -118,7 +131,7 @@ export default function PricingSection() {
             <p className="text-sm tier-card__blurb">{tier.blurb}</p>
 
             {tier.priceUnit && (
-              <div className="tier-card__price-lead">Starting at</div>
+              <div className="tier-card__price-lead">{t("Starting at", "Desde")}</div>
             )}
             <div className="tier-card__price-row">
               <span className="tier-card__price">{tier.price}</span>
@@ -130,7 +143,7 @@ export default function PricingSection() {
             {tier.monthlyPrice ? (
               <div className="tier-card__monthly">
                 <div className="tier-card__price-connector">
-                  and after, just
+                  {t("and after, just", "y después, solo")}
                 </div>
                 <div className="tier-card__price-row tier-card__price-row--stacked">
                   <span className="tier-card__price">{tier.monthlyPrice}</span>
@@ -152,7 +165,7 @@ export default function PricingSection() {
             </a>
 
             <div className="tier-list__group-label text-sm">
-              {tier.buildLabel ?? "One-time build includes:"}
+              {tier.buildLabel ?? t("One-time build includes:", "El desarrollo único incluye:")}
             </div>
             <ul className="tier-list text-xs">
               {tier.buildItems.map((label) => (
@@ -171,7 +184,7 @@ export default function PricingSection() {
                   className="tier-list__group-label text-sm"
                   style={{ marginTop: "1.5rem" }}
                 >
-                  {tier.monthlyLabel ?? "Monthly service includes:"}
+                  {tier.monthlyLabel ?? t("Monthly service includes:", "El servicio mensual incluye:")}
                 </div>
                 <ul className="tier-list text-xs">
                   {tier.monthlyItems.map((label) => (
@@ -191,18 +204,21 @@ export default function PricingSection() {
 
       <div className="tier-footnote">
         <div className="tier-footnote__item">
-          <div className="tier-footnote__label text-sm">Service Term</div>
+          <div className="tier-footnote__label text-sm">{t("Service Term", "Plazo de Servicio")}</div>
           <p>
-            Hosting and maintenance require an initial 12-month website service
-            agreement. After the initial term, service renews every 6 months.
+            {t(
+              "Hosting and maintenance require an initial 12-month website service agreement. After the initial term, service renews every 6 months.",
+              "El hosting y mantenimiento requieren un contrato inicial de servicio de sitio web de 12 meses. Después del plazo inicial, el servicio se renueva cada 6 meses."
+            )}
           </p>
         </div>
         <div className="tier-footnote__item">
-          <div className="tier-footnote__label text-sm">Third-Party Costs</div>
+          <div className="tier-footnote__label text-sm">{t("Third-Party Costs", "Costos de Terceros")}</div>
           <p>
-            Domain registration, payment processing, email platforms, scheduling
-            services, premium software, and other third-party subscriptions are
-            billed separately.
+            {t(
+              "Domain registration, payment processing, email platforms, scheduling services, premium software, and other third-party subscriptions are billed separately.",
+              "El registro de dominio, procesamiento de pagos, plataformas de correo, servicios de programación, software premium, y otras suscripciones de terceros se facturan por separado."
+            )}
           </p>
         </div>
       </div>

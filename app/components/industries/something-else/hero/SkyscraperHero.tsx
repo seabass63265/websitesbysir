@@ -8,7 +8,8 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { SplitText } from "gsap/SplitText";
 import * as THREE from "three";
 import { headerHeight } from "@/app/components/industries/heroConfig";
-import { skyscraperScenes } from "@/app/components/industries/something-else/hero/skyscraperScenes";
+import { buildSkyscraperScenes } from "@/app/components/industries/something-else/hero/skyscraperScenes";
+import { useT } from "@/app/components/providers/LanguageProvider";
 
 /**
  * Something Else hero — a cyberpunk skyscraper the camera flies around
@@ -64,6 +65,8 @@ function Scene({ cameraRef, targetRef }: { cameraRef: React.RefObject<Vec>; targ
 }
 
 export default function SkyscraperHero() {
+  const t = useT();
+  const skyscraperScenes = buildSkyscraperScenes(t);
   const outerRef = useRef<HTMLDivElement>(null);
   const stageRef = useRef<HTMLDivElement>(null);
   const textRefs = useRef<(HTMLDivElement | null)[]>([]);
