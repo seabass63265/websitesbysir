@@ -1,5 +1,8 @@
+"use client";
+
 import { TransitionLink } from "@/app/components/providers/PageTransition";
 import { businessCategories } from "@/app/components/work/businessCategories";
+import { useT } from "@/app/components/providers/LanguageProvider";
 
 /**
  * Closing statement — "Websites For Every Business And Every Budget." Sits
@@ -21,6 +24,7 @@ function SideList({
   items: typeof businessCategories;
   align: "left" | "right";
 }) {
+  const t = useT();
   return (
     <aside
       className={`takeaway__side takeaway__side--${align}`}
@@ -31,7 +35,7 @@ function SideList({
         {items.map((item) => (
           <li key={item.slug}>
             <span className="pill-tag">
-              {item.number} &mdash; {item.label}
+              {item.number} &mdash; {t(item.label, item.labelEs)}
             </span>
           </li>
         ))}
@@ -41,6 +45,7 @@ function SideList({
 }
 
 export default function EngineeredTakeaway() {
+  const t = useT();
   return (
     <section className="pad-global border-b takeaway">
       <h3
@@ -50,35 +55,37 @@ export default function EngineeredTakeaway() {
           marginBottom: "1.5rem",
         }}
       >
-        Websites For Every Business
+        {t("Websites For Every Business", "Sitios Web Para Todo Negocio")}
         <br />
-        And Every Budget.
+        {t("And Every Budget.", "Y Todo Presupuesto.")}
       </h3>
 
       <div className="takeaway__body">
-        <SideList eyebrow="Built for" items={leftList} align="left" />
+        <SideList eyebrow={t("Built for", "Hecho para")} items={leftList} align="left" />
 
         <div className="takeaway__center">
           <p className="text-md" style={{ maxWidth: 760 }}>
-            Whether you&rsquo;re a family-run business starting small,
-            growing, or ready for something fully custom, I offer flexible
-            website options built around your needs, goals, and budget.
+            {t(
+              "Whether you're a family-run business starting small, growing, or ready for something fully custom, I offer flexible website options built around your needs, goals, and budget.",
+              "Ya sea que seas un negocio familiar que empieza pequeño, está creciendo, o está listo para algo totalmente personalizado, ofrezco opciones de sitios web flexibles construidas alrededor de tus necesidades, metas, y presupuesto."
+            )}
           </p>
           <p className="text-md" style={{ maxWidth: 760 }}>
-            Whatever you do, I&rsquo;ll create a website that clearly explains
-            your business, builds trust, and helps customers take the next
-            step.
+            {t(
+              "Whatever you do, I'll create a website that clearly explains your business, builds trust, and helps customers take the next step.",
+              "Sea lo que hagas, crearé un sitio web que explique claramente tu negocio, genere confianza, y ayude a los clientes a dar el siguiente paso."
+            )}
           </p>
           <TransitionLink
             href="/work"
             className="btn-pill"
             style={{ marginTop: "2rem" }}
           >
-            View All Work <span aria-hidden="true">&nbsp;&rarr;</span>
+            {t("View All Work", "Ver Todo el Trabajo")} <span aria-hidden="true">&nbsp;&rarr;</span>
           </TransitionLink>
         </div>
 
-        <SideList eyebrow="…and more" items={rightList} align="right" />
+        <SideList eyebrow={t("…and more", "…y más")} items={rightList} align="right" />
       </div>
     </section>
   );
