@@ -2,9 +2,9 @@
 
 import { useEffect, useRef, useState } from "react";
 import { useSmoothScroll } from "@/app/components/providers/SmoothScrollProvider";
+import { useLanguage, type Lang } from "@/app/components/providers/LanguageProvider";
 
 const STORAGE_KEY = "sir_lang";
-type Lang = "en" | "es";
 
 type ChipMessage = "saved" | "arrived";
 
@@ -30,22 +30,15 @@ function readStored(): string | null {
   }
 }
 
-function store(value: string) {
-  try {
-    localStorage.setItem(STORAGE_KEY, value);
-  } catch {
-    // Storage blocked (private mode etc.) — the prompt just shows again next visit.
-  }
-}
-
 /**
  * First-visit language prompt: the page behind is blurred and locked while
  * a toast slides up from the bottom, until the visitor picks English or
  * Español. The choice is saved to localStorage so it never reappears, and
- * a small confirmation chip follows. The choice is only stored for now —
- * nothing on the site switches language from it yet.
+ * a small confirmation chip follows. Picking Español also flips the whole
+ * site's copy live via LanguageProvider — see useT()/useLanguage().
  */
 export default function LanguageToast() {
+  const { setLang } = useLanguage();
   const [open, setOpen] = useState(false);
   const [chipLang, setChipLang] = useState<Lang>("en");
   const [chipMessage, setChipMessage] = useState<ChipMessage>("saved");
@@ -145,7 +138,7 @@ export default function LanguageToast() {
   }, [open, lenis]);
 
   function choose(lang: Lang) {
-    store(lang);
+    setLang(lang);
     setOpen(false);
     later(() => {
       setChipLang(lang);

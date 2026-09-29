@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { useT } from "@/app/components/providers/LanguageProvider";
 
 /**
  * Budget scale on /why-sir: a marker slides from "Simple & focused" to
@@ -9,33 +10,6 @@ import { useEffect, useRef, useState } from "react";
  * lowest, Startups tops out highest), so keep them in sync with those
  * PricingSection files.
  */
-const tiers = [
-  {
-    level: "Tier 1",
-    name: "Essential",
-    price: "$750 – $1,500",
-    unit: "one-time build",
-    monthly: "$80 – $140",
-    monthlyUnit: "per month for hosting & maintenance",
-  },
-  {
-    level: "Tier 2",
-    name: "Growth",
-    price: "$1,250 – $2,500",
-    unit: "one-time build",
-    monthly: "$120 – $220",
-    monthlyUnit: "per month for hosting & maintenance",
-  },
-  {
-    level: "Tier 3",
-    name: "Tailored",
-    price: "Custom Pricing",
-    unit: "For businesses that need something outside our standard packages—whether that means a focused website on a smaller budget ($) or a fully customized digital experience ($$$).",
-    monthly: null,
-    monthlyUnit: null,
-  },
-];
-
 const stops = [0, 0.5, 1];
 
 function nearestStop(p: number) {
@@ -47,8 +21,45 @@ function nearestStop(p: number) {
 }
 
 export default function BudgetScale() {
+  const t = useT();
   const boxRef = useRef<HTMLDivElement>(null);
   const [active, setActive] = useState(0);
+
+  const tiers = [
+    {
+      level: t("Tier 1", "Nivel 1"),
+      name: t("Essential", "Esencial"),
+      price: "$750 – $1,500",
+      unit: t("one-time build", "pago único de desarrollo"),
+      monthly: "$80 – $140",
+      monthlyUnit: t(
+        "per month for hosting & maintenance",
+        "al mes por hosting y mantenimiento"
+      ),
+    },
+    {
+      level: t("Tier 2", "Nivel 2"),
+      name: t("Growth", "Crecimiento"),
+      price: "$1,250 – $2,500",
+      unit: t("one-time build", "pago único de desarrollo"),
+      monthly: "$120 – $220",
+      monthlyUnit: t(
+        "per month for hosting & maintenance",
+        "al mes por hosting y mantenimiento"
+      ),
+    },
+    {
+      level: t("Tier 3", "Nivel 3"),
+      name: t("Tailored", "A la medida"),
+      price: t("Custom Pricing", "Precio personalizado"),
+      unit: t(
+        "For businesses that need something outside our standard packages—whether that means a focused website on a smaller budget ($) or a fully customized digital experience ($$$).",
+        "Para negocios que necesitan algo fuera de nuestros paquetes estándar—ya sea un sitio web enfocado con un presupuesto menor ($) o una experiencia digital totalmente personalizada ($$$)."
+      ),
+      monthly: null,
+      monthlyUnit: null,
+    },
+  ];
 
   useEffect(() => {
     const box = boxRef.current;
@@ -88,7 +99,7 @@ export default function BudgetScale() {
     >
       <div className="flex flex-col md:flex-row items-center justify-between gap-6">
         <div className="border border-brand/30 px-4 py-2 text-[0.75rem] uppercase tracking-widest shrink-0 whitespace-nowrap">
-          Simple &amp; focused
+          {t("Simple & focused", "Simple y enfocado")}
         </div>
 
         <div
@@ -107,7 +118,7 @@ export default function BudgetScale() {
         </div>
 
         <div className="border border-brand/30 px-4 py-2 text-[0.75rem] uppercase tracking-widest shrink-0 whitespace-nowrap">
-          Fully custom builds
+          {t("Fully custom builds", "Totalmente personalizado")}
         </div>
       </div>
 
@@ -145,12 +156,15 @@ export default function BudgetScale() {
       </div>
 
       <p className="text-brand/50 text-[0.75rem]">
-        Starting prices vary by industry. Each industry page lists its exact
-        pricing.
+        {t(
+          "Starting prices vary by industry. Each industry page lists its exact pricing.",
+          "Los precios iniciales varían según la industria. Cada página de industria detalla su precio exacto."
+        )}
       </p>
 
       <a href="#services" className="btn-pill self-start">
-        Select Service Area <span aria-hidden="true">&nbsp;&darr;</span>
+        {t("Select Service Area", "Selecciona tu área de servicio")}{" "}
+        <span aria-hidden="true">&nbsp;&darr;</span>
       </a>
     </div>
   );

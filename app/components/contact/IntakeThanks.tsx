@@ -1,34 +1,7 @@
-import { TransitionLink } from "@/app/components/providers/PageTransition";
+"use client";
 
-const nextSteps = [
-  {
-    label: "We review your answers",
-    icon: (
-      <>
-        <path d="M3 6L12 13L21 6" />
-        <rect x="3" y="6" width="18" height="12" />
-      </>
-    ),
-  },
-  {
-    label: "We reach out within 2–3 business days",
-    icon: (
-      <>
-        <path d="M2 12C2 12 5.5 5 12 5C18.5 5 22 12 22 12C22 12 18.5 19 12 19C5.5 19 2 12 2 12Z" />
-        <circle cx="12" cy="12" r="3" />
-      </>
-    ),
-  },
-  {
-    label: "We build your website together",
-    icon: (
-      <>
-        <rect x="6" y="2" width="12" height="20" />
-        <path d="M12 18H12.01" />
-      </>
-    ),
-  },
-];
+import { TransitionLink } from "@/app/components/providers/PageTransition";
+import { useT } from "@/app/components/providers/LanguageProvider";
 
 /** The intake's closing screen: confirms the quote request by business name. */
 export default function IntakeThanks({
@@ -44,7 +17,37 @@ export default function IntakeThanks({
   /** Clears every answer and returns to the first question. */
   onStartOver: () => void;
 }) {
-  const name = businessName.trim().toUpperCase() || `YOUR ${businessLabel.toUpperCase()}`;
+  const t = useT();
+  const nextSteps = [
+    {
+      label: t("We review your answers", "Revisamos tus respuestas"),
+      icon: (
+        <>
+          <path d="M3 6L12 13L21 6" />
+          <rect x="3" y="6" width="18" height="12" />
+        </>
+      ),
+    },
+    {
+      label: t("We reach out within 2–3 business days", "Te contactamos dentro de 2 a 3 días hábiles"),
+      icon: (
+        <>
+          <path d="M2 12C2 12 5.5 5 12 5C18.5 5 22 12 22 12C22 12 18.5 19 12 19C5.5 19 2 12 2 12Z" />
+          <circle cx="12" cy="12" r="3" />
+        </>
+      ),
+    },
+    {
+      label: t("We build your website together", "Construimos tu sitio web juntos"),
+      icon: (
+        <>
+          <rect x="6" y="2" width="12" height="20" />
+          <path d="M12 18H12.01" />
+        </>
+      ),
+    },
+  ];
+  const name = businessName.trim().toUpperCase() || t(`YOUR ${businessLabel.toUpperCase()}`, `TU ${businessLabel.toUpperCase()}`);
   // "INC." already ends in a full stop; the sentences below add their own.
   const sentenceName = name.replace(/\.+$/, "");
 
@@ -65,41 +68,41 @@ export default function IntakeThanks({
         </div>
 
         <span className="block text-[0.875rem] leading-5 tracking-[0.15em] uppercase mb-6 intake-t-dim font-bold">
-          Quote request received.
+          {t("Quote request received.", "Solicitud de cotización recibida.")}
         </span>
 
         <h1
           className="text-4xl md:text-5xl lg:text-[56px] leading-[1.1] font-bold uppercase mb-8"
           style={{ letterSpacing: "-0.025em", overflowWrap: "anywhere" }}
         >
-          Thank you,
+          {t("Thank you,", "Gracias,")}
           <br />
           <span className="italic">{sentenceName}.</span>
         </h1>
 
         <div className="intake-t-dim space-y-3 mb-10 text-base sm:text-lg leading-relaxed">
           <p>
-            We’ve got your quote request for{" "}
+            {t("We've got your quote request for", "Ya tenemos tu solicitud de cotización para")}{" "}
             <span className="font-bold text-[var(--intake-fg)]" style={{ overflowWrap: "anywhere" }}>
               {sentenceName}
             </span>
-            . We will get back to you within{" "}
-            <span className="font-bold text-[var(--intake-fg)]">2–3 business days</span>.
+            . {t("We will get back to you within", "Te responderemos dentro de")}{" "}
+            <span className="font-bold text-[var(--intake-fg)]">{t("2–3 business days", "2 a 3 días hábiles")}</span>.
           </p>
-          <p>Keep an eye on your inbox for our reply.</p>
+          <p>{t("Keep an eye on your inbox for our reply.", "Mantente pendiente de tu bandeja de entrada para nuestra respuesta.")}</p>
         </div>
 
         <div
           className="border border-[var(--border-med)] px-5 py-2 text-[0.75rem] sm:text-[0.875rem] leading-5 uppercase tracking-[0.1em] intake-t-dim max-w-full"
           style={{ overflowWrap: "anywhere" }}
         >
-          Reference: {name} — {reference}
+          {t("Reference:", "Referencia:")} {name} — {reference}
         </div>
       </div>
 
       <div className="w-full max-w-2xl mx-auto mb-12">
         <span className="block text-[0.75rem] leading-4 tracking-[0.2em] uppercase mb-6 font-bold intake-t-dim">
-          What happens next
+          {t("What happens next", "Qué sigue")}
         </span>
         <div className="border-t-[1px] intake-b-med flex flex-col">
           {nextSteps.map((item) => (
@@ -136,14 +139,14 @@ export default function IntakeThanks({
           className="group cursor-pointer flex items-center gap-3 text-[0.875rem] leading-5 font-bold tracking-[0.15em] uppercase intake-t-dim hover:text-[var(--intake-fg)] transition-colors focus:outline-none focus:ring-2 focus:ring-[var(--intake-fg)] focus:ring-offset-2 focus:ring-offset-[var(--intake-bg)] p-2 -ml-2"
         >
           <span className="group-hover:-translate-x-1 transition-transform duration-200">←</span>{" "}
-          Start another website
+          {t("Start another website", "Iniciar otro sitio web")}
         </button>
 
         <TransitionLink
           href="/"
           className="intake-cta max-sm:w-full text-center bg-[var(--intake-fg)] font-bold text-[1.125rem] leading-7 tracking-[0.15em] uppercase py-4 px-8 border border-[var(--intake-fg)] hover:bg-transparent focus:outline-none focus:ring-2 focus:ring-[var(--intake-fg)] focus:ring-offset-2 focus:ring-offset-[var(--intake-bg)] transition-colors duration-150 rounded-none"
         >
-          Back to home
+          {t("Back to home", "Volver al inicio")}
         </TransitionLink>
       </div>
     </div>

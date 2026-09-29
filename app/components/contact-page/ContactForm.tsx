@@ -1,8 +1,7 @@
 "use client";
 
 import { useState } from "react";
-
-const TOPICS = ["General Question", "Support", "Press & Partnerships"];
+import { useT } from "@/app/components/providers/LanguageProvider";
 
 /**
  * The general contact form. Same behaviour as the design: name, email and a
@@ -11,6 +10,12 @@ const TOPICS = ["General Question", "Support", "Press & Partnerships"];
  * the submission and (if configured) logs it to a Google Sheet.
  */
 export default function ContactForm() {
+  const t = useT();
+  const TOPICS = [
+    t("General Question", "Pregunta General"),
+    t("Support", "Soporte"),
+    t("Press & Partnerships", "Prensa y Alianzas"),
+  ];
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [topic, setTopic] = useState("");
@@ -83,10 +88,15 @@ export default function ContactForm() {
             />
           </svg>
         </div>
-        <h2 className="contact-sent__title">Message sent.</h2>
-        <p className="contact-sent__text">We will get back to you within 2–3 business days.</p>
+        <h2 className="contact-sent__title">{t("Message sent.", "Mensaje enviado.")}</h2>
+        <p className="contact-sent__text">
+          {t(
+            "We will get back to you within 2–3 business days.",
+            "Te responderemos dentro de 2 a 3 días hábiles."
+          )}
+        </p>
         <button type="button" className="contact-sent__reset" onClick={reset}>
-          Send another message
+          {t("Send another message", "Enviar otro mensaje")}
         </button>
       </div>
     );
@@ -100,14 +110,14 @@ export default function ContactForm() {
     >
       <div className="contact-form__row">
         <div className="contact-field">
-          <label htmlFor="contact-name" className="contact-label">Full Name</label>
+          <label htmlFor="contact-name" className="contact-label">{t("Full Name", "Nombre Completo")}</label>
           <input
             type="text"
             id="contact-name"
             name="name"
             required
             className="contact-input"
-            placeholder="JANE DOE"
+            placeholder={t("JANE DOE", "JUANA PÉREZ")}
             autoComplete="name"
             value={name}
             onChange={(e) => {
@@ -117,7 +127,7 @@ export default function ContactForm() {
           />
         </div>
         <div className="contact-field">
-          <label htmlFor="contact-email" className="contact-label">Email Address</label>
+          <label htmlFor="contact-email" className="contact-label">{t("Email Address", "Correo Electrónico")}</label>
           <input
             type="email"
             id="contact-email"
@@ -136,7 +146,7 @@ export default function ContactForm() {
       </div>
 
       <fieldset className="contact-field contact-field--gap">
-        <legend className="contact-label">Topic</legend>
+        <legend className="contact-label">{t("Topic", "Tema")}</legend>
         <div className="contact-topics">
           {TOPICS.map((option) => (
             <label key={option} className="contact-topic">
@@ -159,14 +169,14 @@ export default function ContactForm() {
       </fieldset>
 
       <div className="contact-field contact-field--gap">
-        <label htmlFor="contact-message" className="contact-label">Message</label>
+        <label htmlFor="contact-message" className="contact-label">{t("Message", "Mensaje")}</label>
         <textarea
           id="contact-message"
           name="message"
           rows={3}
           required
           className="contact-input contact-input--area"
-          placeholder="TYPE YOUR MESSAGE HERE..."
+          placeholder={t("TYPE YOUR MESSAGE HERE...", "ESCRIBE TU MENSAJE AQUÍ...")}
           value={message}
           onChange={(e) => {
             setMessage(e.target.value);
@@ -177,17 +187,23 @@ export default function ContactForm() {
 
       {showError && (
         <div role="alert" className="contact-error">
-          Fill in your name, email, and a message to send.
+          {t(
+            "Fill in your name, email, and a message to send.",
+            "Completa tu nombre, correo y un mensaje para enviar."
+          )}
         </div>
       )}
       {sendError && (
         <div role="alert" className="contact-error">
-          Something went wrong sending your message — please try again.
+          {t(
+            "Something went wrong sending your message — please try again.",
+            "Algo salió mal al enviar tu mensaje — por favor intenta de nuevo."
+          )}
         </div>
       )}
 
       <button type="submit" className="contact-submit" disabled={sending}>
-        <span>{sending ? "Sending…" : "Send message"}</span>
+        <span>{sending ? t("Sending…", "Enviando…") : t("Send message", "Enviar mensaje")}</span>
         <span className="contact-submit__arrow" aria-hidden="true">→</span>
       </button>
     </form>

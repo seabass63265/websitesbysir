@@ -1,10 +1,12 @@
+"use client";
+
 import { TransitionLink } from "@/app/components/providers/PageTransition";
+import { useT } from "@/app/components/providers/LanguageProvider";
 
 /**
  * "Why a Website" — a compact figure/caption block, not a full section:
  * a small bordered card floating on a blueprint field, three short reasons
- * inside. Server component — the pulsing nodes and hover states are pure
- * CSS.
+ * inside. The pulsing nodes and hover states are pure CSS.
  */
 type Reason = {
   number: string;
@@ -13,32 +15,6 @@ type Reason = {
   points: string[];
   graphic: "found" | "convert" | "trust";
 };
-
-const reasons: Reason[] = [
-  {
-    number: "01",
-    title: "Get Found",
-    tagline:
-      "Be visible at the exact moment people search for your services online.",
-    points: ["Local Search", "New Customers"],
-    graphic: "found",
-  },
-  {
-    number: "02",
-    title: "Convert Visitors",
-    tagline: "Guide prospects seamlessly to book, order, or call instead of leaving.",
-    points: ["More Calls", "Generate Leads"],
-    graphic: "convert",
-  },
-  {
-    number: "03",
-    title: "Build Trust",
-    tagline:
-      "Look established and credible to become the first choice, not a backup.",
-    points: ["Credibility", "Professional"],
-    graphic: "trust",
-  },
-];
 
 /* ---------- small blueprint diagrams — pulsing nodes, scale on hover ---------- */
 
@@ -141,19 +117,62 @@ function ReasonCard({ reason }: { reason: Reason }) {
 }
 
 export default function WorkGrid() {
+  const t = useT();
+
+  const reasons: Reason[] = [
+    {
+      number: "01",
+      title: t("Get Found", "Que te encuentren"),
+      tagline: t(
+        "Be visible at the exact moment people search for your services online.",
+        "Sé visible en el momento exacto en que buscan tus servicios en línea."
+      ),
+      points: [t("Local Search", "Búsqueda local"), t("New Customers", "Nuevos clientes")],
+      graphic: "found",
+    },
+    {
+      number: "02",
+      title: t("Convert Visitors", "Convierte visitantes"),
+      tagline: t(
+        "Guide prospects seamlessly to book, order, or call instead of leaving.",
+        "Guía a tus prospectos para que reserven, ordenen o llamen, en lugar de irse."
+      ),
+      points: [t("More Calls", "Más llamadas"), t("Generate Leads", "Genera clientes potenciales")],
+      graphic: "convert",
+    },
+    {
+      number: "03",
+      title: t("Build Trust", "Genera confianza"),
+      tagline: t(
+        "Look established and credible to become the first choice, not a backup.",
+        "Luce establecido y confiable para ser la primera opción, no un respaldo."
+      ),
+      points: [t("Credibility", "Credibilidad"), t("Professional", "Profesional")],
+      graphic: "trust",
+    },
+  ];
+
   return (
     <section id="work" className="border-t border-b work-field">
       <h2 className="work-field__title">
         <span>
-          “Don’t put your business online,”
+          {t("“Don't put your business online,”", "“No pongas tu negocio en línea,”")}
           <br className="work-field__title-break" />
-          {" "}our parents said.
+          {" "}
+          {t("our parents said.", "decían nuestros padres.")}
         </span>
-        <span>We made a business out of doing exactly that.</span>
+        <span>
+          {t(
+            "We made a business out of doing exactly that.",
+            "Hicimos un negocio de hacer justamente eso."
+          )}
+        </span>
       </h2>
       <div className="work-card-frame">
         <div className="work-card-frame__header border-b">
-          <span className="work-card-frame__label">Why You Need A Website</span>
+          <span className="work-card-frame__label">
+            {t("Why You Need A Website", "Por qué necesitas un sitio web")}
+          </span>
           <span className="pill-tag">Fig. 1</span>
         </div>
 
@@ -164,7 +183,7 @@ export default function WorkGrid() {
         </div>
       </div>
       <TransitionLink href="/why-sir" className="btn-pill">
-        Why SIR_? <span aria-hidden="true">&nbsp;&rarr;</span>
+        {t("Why SIR_?", "¿Por qué SIR_?")} <span aria-hidden="true">&nbsp;&rarr;</span>
       </TransitionLink>
     </section>
   );

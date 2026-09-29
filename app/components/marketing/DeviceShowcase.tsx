@@ -4,6 +4,7 @@ import dynamic from "next/dynamic";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { TransitionLink } from "@/app/components/providers/PageTransition";
 import { businessShowcase } from "@/app/components/marketing/showcaseMedia";
+import { useT } from "@/app/components/providers/LanguageProvider";
 
 const DeviceScene = dynamic(
   () => import("@/app/components/marketing/DeviceScene"),
@@ -22,10 +23,11 @@ export default function DeviceShowcase({
   selected,
   filters,
 }: {
-  selected: { slug: string; number: string; label: string } | null;
+  selected: { slug: string; number: string; label: string; labelEs?: string } | null;
   /** The business-type buttons, shown beside the title. */
   filters?: React.ReactNode;
 }) {
+  const t = useT();
   const ref = useRef<HTMLElement>(null);
   const [near, setNear] = useState(false);
   const [focus, setFocus] = useState<string | null>(null);
@@ -92,21 +94,33 @@ export default function DeviceShowcase({
       ref={ref}
       id="showcase"
       className="device-showcase border-b"
-      aria-label="Website showcase on desktop and mobile"
+      aria-label={t(
+        "Website showcase on desktop and mobile",
+        "Muestra del sitio web en escritorio y móvil"
+      )}
     >
       <div className="device-showcase__caption pad-global">
         <div className="device-showcase__text">
           <div className="device-showcase__title">
-            Take a sneak peek.
+            {t("Take a sneak peek.", "Échale un vistazo.")}
           </div>
           <div className="text-xs device-showcase__hint">
             {selected
-              ? `${selected.label}. ${
+              ? `${t(selected.label, selected.labelEs ?? selected.label)}. ${
                   focus
-                    ? "Tap the background to zoom back out."
-                    : "Tap the laptop or phone to zoom in."
+                    ? t(
+                        "Tap the background to zoom back out.",
+                        "Toca el fondo para alejar."
+                      )
+                    : t(
+                        "Tap the laptop or phone to zoom in.",
+                        "Toca la laptop o el teléfono para acercar."
+                      )
                 }`
-              : "Choose one and its website opens here, on desktop and on mobile."}
+              : t(
+                  "Choose one and its website opens here, on desktop and on mobile.",
+                  "Elige uno y su sitio web se abre aquí, en escritorio y en móvil."
+                )}
           </div>
         </div>
         {filters}
@@ -114,7 +128,7 @@ export default function DeviceShowcase({
       <div id="showcase-stage" className="device-showcase__stage">
         {mount && <DeviceScene selection={selection} onFocusChange={setFocus} />}
         <TransitionLink href="/work" className="btn-pill device-showcase__cta">
-          View All Work <span aria-hidden="true">&nbsp;&rarr;</span>
+          {t("View All Work", "Ver todo el trabajo")} <span aria-hidden="true">&nbsp;&rarr;</span>
         </TransitionLink>
       </div>
     </section>

@@ -4,26 +4,10 @@ import { useEffect, useRef, useState } from "react";
 import gsap from "gsap";
 import { useSmoothScroll } from "@/app/components/providers/SmoothScrollProvider";
 import { usePageTransition } from "@/app/components/providers/PageTransition";
+import { useT } from "@/app/components/providers/LanguageProvider";
 
 type PrimaryLink = { num: string; label: string; href: string; offset?: boolean };
 type SecondaryLink = { label: string; href: string };
-
-const defaultPrimaryLinks: PrimaryLink[] = [
-  { num: "I", label: "Home", href: "/", offset: true },
-  { num: "II", label: "Works", href: "/work", offset: false },
-  { num: "III", label: "Why SIR_", href: "/why-sir", offset: true },
-  { num: "IV", label: "Contact", href: "/contact", offset: false },
-];
-
-const defaultSecondaryTop: SecondaryLink[] = [
-  { label: "You Get Found", href: "#work" },
-  { label: "You Convert Visitors", href: "#work" },
-  { label: "You Build Trust", href: "#work" },
-];
-
-const defaultSecondaryBottom: SecondaryLink[] = [
-  { label: "Start a Project", href: "/intake" },
-];
 
 /**
  * Fullscreen navigation — a morphing blob toggle drives one paused GSAP
@@ -35,9 +19,9 @@ const defaultSecondaryBottom: SecondaryLink[] = [
  * column by passing empty arrays for `secondaryTop`/`secondaryBottom`.
  */
 export default function NavMenu({
-  primaryLinks = defaultPrimaryLinks,
-  secondaryTop = defaultSecondaryTop,
-  secondaryBottom = defaultSecondaryBottom,
+  primaryLinks,
+  secondaryTop,
+  secondaryBottom,
   compact = false,
 }: {
   primaryLinks?: PrimaryLink[];
@@ -47,7 +31,26 @@ export default function NavMenu({
    * the default size crowded the page content. */
   compact?: boolean;
 }) {
-  const hasSecondary = secondaryTop.length > 0 || secondaryBottom.length > 0;
+  const t = useT();
+  const resolvedPrimary =
+    primaryLinks ?? [
+      { num: "I", label: t("Home", "Inicio"), href: "/", offset: true },
+      { num: "II", label: t("Works", "Trabajos"), href: "/work", offset: false },
+      { num: "III", label: "Why SIR_", href: "/why-sir", offset: true },
+      { num: "IV", label: t("Contact", "Contacto"), href: "/contact", offset: false },
+    ];
+  const resolvedSecondaryTop =
+    secondaryTop ?? [
+      { label: t("You Get Found", "Te encuentran"), href: "#work" },
+      { label: t("You Convert Visitors", "Conviertes visitantes"), href: "#work" },
+      { label: t("You Build Trust", "Generas confianza"), href: "#work" },
+    ];
+  const resolvedSecondaryBottom =
+    secondaryBottom ?? [
+      { label: t("Start a Project", "Inicia un proyecto"), href: "/intake" },
+    ];
+  const hasSecondary =
+    resolvedSecondaryTop.length > 0 || resolvedSecondaryBottom.length > 0;
   const [open, setOpen] = useState(false);
   const rootRef = useRef<HTMLDivElement>(null);
   const overlayRef = useRef<HTMLDivElement>(null);
@@ -149,7 +152,7 @@ export default function NavMenu({
         ]
           .filter(Boolean)
           .join(" ")}
-        aria-label={open ? "Close navigation" : "Open navigation"}
+        aria-label={open ? t("Close navigation", "Cerrar navegación") : t("Open navigation", "Abrir navegación")}
         aria-expanded={open}
         aria-controls="site-menu"
         onClick={() => setOpen((value) => !value)}
@@ -183,7 +186,7 @@ export default function NavMenu({
       >
         <div className="menu__col menu__col--primary">
           <ul className="menu__list">
-            {primaryLinks.map((link) => (
+            {resolvedPrimary.map((link) => (
               <li
                 key={link.label}
                 className={
@@ -207,7 +210,7 @@ export default function NavMenu({
         {hasSecondary && (
           <div className="menu__col menu__col--secondary">
             <ul className="menu__list menu__list--top">
-              {secondaryTop.map((link) => (
+              {resolvedSecondaryTop.map((link) => (
                 <li key={link.label} className="menu-item">
                   <a
                     className="menu-link menu-link--secondary"
@@ -221,7 +224,7 @@ export default function NavMenu({
               ))}
             </ul>
             <ul className="menu__list menu__list--bottom">
-              {secondaryBottom.map((link) => (
+              {resolvedSecondaryBottom.map((link) => (
                 <li key={link.label} className="menu-item">
                   <a
                     className="menu-link menu-link--secondary"

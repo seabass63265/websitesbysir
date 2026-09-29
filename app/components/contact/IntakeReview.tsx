@@ -1,3 +1,5 @@
+"use client";
+
 /**
  * The intake's summary card — what we've collected, grouped as Business /
  * Goals / What you have / Style, each with its own hairline-boxed rows,
@@ -6,6 +8,7 @@
  */
 import { useLayoutEffect, useRef } from "react";
 import { DOMAIN_STEP_ENABLED } from "@/app/components/contact/IntakeProgress";
+import { useT } from "@/app/components/providers/LanguageProvider";
 
 const icons = {
   store:
@@ -19,8 +22,14 @@ const icons = {
 };
 
 function goalIcon(goal: string): keyof typeof icons {
-  if (goal === "Book an appointment") return "calendar";
-  if (goal === "Call me" || goal === "Send me a message") return "phone";
+  if (goal === "Book an appointment" || goal === "Reservar una cita") return "calendar";
+  if (
+    goal === "Call me" ||
+    goal === "Send me a message" ||
+    goal === "Llamarme" ||
+    goal === "Enviarme un mensaje"
+  )
+    return "phone";
   return "eye";
 }
 
@@ -51,6 +60,7 @@ function EditButton({
   /** For use on the navy section bars: light text instead of dim navy. */
   onDark?: boolean;
 }) {
+  const t = useT();
   const tone = onDark
     ? "text-[var(--intake-bg)]/70 hover:text-[var(--intake-bg)] focus:ring-[var(--intake-bg)] focus:ring-offset-[var(--intake-fg)]"
     : "intake-t-dim hover:text-[var(--intake-fg)] focus:ring-[var(--intake-fg)] focus:ring-offset-[var(--intake-bg)]";
@@ -58,10 +68,10 @@ function EditButton({
     <button
       type="button"
       onClick={onEdit}
-      aria-label={`Edit ${section}`}
+      aria-label={t(`Edit ${section}`, `Editar ${section}`)}
       className={`cursor-pointer text-[0.9rem] leading-5 uppercase tracking-widest underline underline-offset-4 transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 ${tone} ${className}`}
     >
-      ✎ Edit
+      ✎ {t("Edit", "Editar")}
     </button>
   );
 }
@@ -128,6 +138,7 @@ export default function IntakeReview({
   onNotesChange: (value: string) => void;
   businessLabel?: string;
 }) {
+  const t = useT();
   // The notes box grows with what's typed (and re-fits when the width changes
   // how the text wraps) instead of scrolling inside a fixed-height box.
   const notesRef = useRef<HTMLTextAreaElement>(null);
@@ -152,12 +163,12 @@ export default function IntakeReview({
               <Icon name="store" className="w-12 h-12" />
             </div>
             <span className="text-[1rem] leading-6 tracking-widest intake-t-dim uppercase mb-3 block font-bold">
-              {businessLabel} Name
+              {t(`${businessLabel} Name`, `Nombre de tu ${businessLabel}`)}
             </span>
             <span className="text-[2.25rem] leading-10 font-bold uppercase mb-4 max-w-full" style={wrap}>
               {data.name || "—"}
             </span>
-            <EditButton section={`${businessLabel} name`} onEdit={() => onEdit("name")} className="mt-auto" />
+            <EditButton section={t(`${businessLabel} name`, `nombre de tu ${businessLabel}`)} onEdit={() => onEdit("name")} className="mt-auto" />
           </div>
 
           <div className="flex-1 min-w-0 p-6 md:p-8 flex flex-col items-center text-center relative">
@@ -165,27 +176,27 @@ export default function IntakeReview({
               <Icon name="tag" className="w-12 h-12" />
             </div>
             <span className="text-[1rem] leading-6 tracking-widest intake-t-dim uppercase mb-3 block font-bold">
-              {businessLabel} Type
+              {t(`${businessLabel} Type`, `Tipo de ${businessLabel}`)}
             </span>
             <span className="text-[2.25rem] leading-10 font-bold uppercase mb-4 max-w-full" style={wrap}>
               {data.businessType || "—"}
             </span>
-            <EditButton section={`${businessLabel} type`} onEdit={() => onEdit("type")} className="mt-auto" />
+            <EditButton section={t(`${businessLabel} type`, `tipo de ${businessLabel}`)} onEdit={() => onEdit("type")} className="mt-auto" />
           </div>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 border-b-[1px] intake-b-dim">
         <div className="flex flex-col min-w-0 border-b-[1px] md:border-b-0 md:border-r-[1px] intake-b-dim">
         <SectionHeader
-          title="Your website will help customers"
+          title={t("Your website will help customers", "Tu sitio web ayudará a los clientes a")}
           section="goals"
-          label="what your website will help customers do"
+          label={t("what your website will help customers do", "lo que tu sitio web ayudará a hacer a los clientes")}
           onEdit={onEdit}
         />
         <div className="flex flex-col flex-1">
           {data.goals.length === 0 ? (
             <div className="p-5 text-[1.0625rem] leading-6 intake-t-dim tracking-wide">
-              Nothing selected yet.
+              {t("Nothing selected yet.", "Nada seleccionado todavía.")}
             </div>
           ) : (
             data.goals.map((goal) => (
@@ -206,15 +217,15 @@ export default function IntakeReview({
 
         <div className="flex flex-col min-w-0">
         <SectionHeader
-          title="What you already have"
+          title={t("What you already have", "Lo que ya tienes")}
           section="assets"
-          label="what you already have"
+          label={t("what you already have", "lo que ya tienes")}
           onEdit={onEdit}
         />
         <div className="p-5 sm:p-7 flex flex-col items-start gap-4 flex-1">
           {data.assets.length === 0 ? (
             <span className="text-[1.0625rem] leading-6 intake-t-dim tracking-wide">
-              Nothing yet — that’s completely okay.
+              {t("Nothing yet — that's completely okay.", "Nada todavía — eso está completamente bien.")}
             </span>
           ) : (
             data.assets.map((asset) => (
@@ -242,21 +253,21 @@ export default function IntakeReview({
         <div className="grid grid-cols-1 md:grid-cols-2 border-b-[1px] intake-b-dim">
           <div className="flex flex-col min-w-0 border-b-[1px] md:border-b-0 md:border-r-[1px] intake-b-dim">
             <SectionHeader
-              title="Preferred Style"
+              title={t("Preferred Style", "Estilo Preferido")}
               section="style"
-              label="Preferred Style"
+              label={t("Preferred Style", "Estilo Preferido")}
               onEdit={onEdit}
             />
             <div className="p-6 md:p-8 flex-1">
               <span className="text-[1.5rem] leading-8 font-bold uppercase block" style={wrap}>{data.style.title}</span>
               {data.style.link && (
                 <span className="text-[0.875rem] leading-5 tracking-wide intake-t-dim block mt-3" style={wrap}>
-                  Site you like: {data.style.link}
+                  {t("Site you like:", "Sitio que te gusta:")} {data.style.link}
                 </span>
               )}
               {data.style.linkNotes && (
                 <span className="text-[0.875rem] leading-5 tracking-wide intake-t-dim block mt-2" style={wrap}>
-                  What stands out: {data.style.linkNotes}
+                  {t("What stands out:", "Qué destaca:")} {data.style.linkNotes}
                 </span>
               )}
             </div>
@@ -264,9 +275,9 @@ export default function IntakeReview({
 
           <div className="flex flex-col min-w-0">
             <SectionHeader
-              title="Preferred Plan"
+              title={t("Preferred Plan", "Plan Preferido")}
               section="plan"
-              label="Preferred Plan"
+              label={t("Preferred Plan", "Plan Preferido")}
               onEdit={onEdit}
             />
             <div className="p-6 md:p-8 flex-1">
@@ -278,9 +289,9 @@ export default function IntakeReview({
         <div className={`grid grid-cols-1 ${DOMAIN_STEP_ENABLED ? "md:grid-cols-2 " : ""}border-b-[1px] intake-b-dim`}>
           <div className={`flex flex-col min-w-0 ${DOMAIN_STEP_ENABLED ? "border-b-[1px] md:border-b-0 md:border-r-[1px] " : ""}intake-b-dim`}>
             <SectionHeader
-              title="When you need it"
+              title={t("When you need it", "Cuándo lo necesitas")}
               section="timeline"
-              label="when you need your website"
+              label={t("when you need your website", "cuándo necesitas tu sitio web")}
               onEdit={onEdit}
             />
             <div className="p-6 md:p-8 flex-1">
@@ -291,18 +302,18 @@ export default function IntakeReview({
           {DOMAIN_STEP_ENABLED && (
             <div className="flex flex-col min-w-0">
               <SectionHeader
-                title="Domain & hosting"
+                title={t("Domain & hosting", "Dominio y hosting")}
                 section="domain"
-                label="your domain and hosting answers"
+                label={t("your domain and hosting answers", "tus respuestas de dominio y hosting")}
                 onEdit={onEdit}
               />
               <div className="p-6 md:p-8 flex flex-col gap-5 flex-1">
                 <div>
-                  <span className="text-[0.875rem] leading-5 tracking-widest intake-t-dim uppercase block mb-1">Domain name</span>
+                  <span className="text-[0.875rem] leading-5 tracking-widest intake-t-dim uppercase block mb-1">{t("Domain name", "Nombre de dominio")}</span>
                   <span className="text-[1.5rem] leading-8 font-bold uppercase block" style={wrap}>{data.domain}</span>
                 </div>
                 <div>
-                  <span className="text-[0.875rem] leading-5 tracking-widest intake-t-dim uppercase block mb-1">Website hosting</span>
+                  <span className="text-[0.875rem] leading-5 tracking-widest intake-t-dim uppercase block mb-1">{t("Website hosting", "Hosting del sitio web")}</span>
                   <span className="text-[1.5rem] leading-8 font-bold uppercase block" style={wrap}>{data.hosting}</span>
                 </div>
               </div>
@@ -310,10 +321,10 @@ export default function IntakeReview({
           )}
         </div>
 
-        <SectionHeader title="Extra notes" />
+        <SectionHeader title={t("Extra notes", "Notas adicionales")} />
         <div className="p-6 md:p-8">
           <label htmlFor="extra-notes" className="block text-[0.875rem] leading-5 intake-t-dim tracking-wide mb-4">
-            Optional. Anything else we may have missed?
+            {t("Optional. Anything else we may have missed?", "Opcional. ¿Algo más que se nos haya pasado?")}
           </label>
           <textarea
             ref={notesRef}
@@ -322,7 +333,10 @@ export default function IntakeReview({
             rows={4}
             maxLength={2000}
             className="intake-input resize-none overflow-hidden"
-            placeholder="Features you have in mind, deadlines, sites you like, questions for us…"
+            placeholder={t(
+              "Features you have in mind, deadlines, sites you like, questions for us…",
+              "Funciones que tienes en mente, plazos, sitios que te gustan, preguntas para nosotros…"
+            )}
             autoComplete="off"
             value={notes}
             onChange={(event) => onNotesChange(event.target.value)}
@@ -358,9 +372,9 @@ export default function IntakeReview({
           </svg>
         </div>
         <span className="font-bold text-[1.0625rem] sm:text-[1.375rem] uppercase tracking-wide select-none z-0">
-          I’ve reviewed my answers and they look correct.
+          {t("I've reviewed my answers and they look correct.", "He revisado mis respuestas y se ven correctas.")}
         </span>
-        <label htmlFor="confirm-review" aria-label="Confirm review" className="absolute inset-0 z-10 cursor-pointer" />
+        <label htmlFor="confirm-review" aria-label={t("Confirm review", "Confirmar revisión")} className="absolute inset-0 z-10 cursor-pointer" />
       </div>
     </>
   );

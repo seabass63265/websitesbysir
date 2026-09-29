@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { useT } from "@/app/components/providers/LanguageProvider";
 
 /**
  * Homepage closing block — a compact blueprint-style card: a short pitch and
@@ -11,6 +12,7 @@ import { useEffect, useRef, useState } from "react";
  * globals.css; `prefers-reduced-motion` shows everything drawn straight away.
  */
 export default function BlueprintCta() {
+  const t = useT();
   const ref = useRef<HTMLDivElement>(null);
   const [visible, setVisible] = useState(false);
 
@@ -38,18 +40,22 @@ export default function BlueprintCta() {
       >
         <div className="bp__content">
           <h2 className="bp-anim-content bp-c1">
-            Your business deserves a website built around it.
+            {t(
+              "Your business deserves a website built around it.",
+              "Tu negocio merece un sitio web construido a su medida."
+            )}
           </h2>
           <p className="bp-anim-content bp-c2">
-            Every business starts somewhere. Whether you are opening your first
-            location, growing a family-owned business, or building something
-            entirely new, SIR_ can create a website around your goals, needs,
-            and budget.
+            {t(
+              "Every business starts somewhere. Whether you are opening your first location, growing a family-owned business, or building something entirely new, SIR_ can create a website around your goals, needs, and budget.",
+              "Todo negocio empieza en algún lugar. Ya sea que estés abriendo tu primera ubicación, haciendo crecer un negocio familiar, o construyendo algo completamente nuevo, SIR_ puede crear un sitio web alrededor de tus metas, necesidades y presupuesto."
+            )}
           </p>
           <p className="bp-anim-content bp-c2">
-            You do not need to understand technology or arrive with everything
-            figured out. Tell us about your business, and we will help you
-            plan, design, build, and launch the right website.
+            {t(
+              "You do not need to understand technology or arrive with everything figured out. Tell us about your business, and we will help you plan, design, build, and launch the right website.",
+              "No necesitas entender de tecnología ni llegar con todo resuelto. Cuéntanos sobre tu negocio y te ayudaremos a planear, diseñar, construir y lanzar el sitio web adecuado."
+            )}
           </p>
         </div>
 
@@ -146,7 +152,9 @@ export default function BlueprintCta() {
 
         <div className="bp__signature bp-anim-content bp-c3">
           <span className="bp__sig-name">Sebastian I. Rocha</span>
-          <span className="bp__sig-line">Founder &amp; Developer, SIR_</span>
+          <span className="bp__sig-line">
+            {t("Founder & Developer, SIR_", "Fundador y Desarrollador, SIR_")}
+          </span>
           <span className="bp__sig-line">Los Angeles, California</span>
         </div>
       </div>

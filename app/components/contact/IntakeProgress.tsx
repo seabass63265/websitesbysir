@@ -1,6 +1,7 @@
 "use client";
 
 import { createContext, useContext, useState } from "react";
+import { useT } from "@/app/components/providers/LanguageProvider";
 
 /**
  * The domain & hosting step (internal step 11, between the assets step and
@@ -36,26 +37,31 @@ export function useIntakeProgress(): Progress | null {
 
 /** "STEP 03 / 08" */
 export function IntakeStepLabel() {
+  const t = useT();
   const progress = useIntakeProgress();
   const pad = (n: number) => String(n).padStart(2, "0");
   const step = progress?.step ?? 1;
   const shown = STEP_ORDER.indexOf(step) + 1;
-  if (shown === 0) return <>Confirmed</>;
+  if (shown === 0) return <>{t("Confirmed", "Confirmado")}</>;
   return (
     <>
-      Step {pad(shown)} / {pad(TOTAL_STEPS)}
+      {t("Step", "Paso")} {pad(shown)} / {pad(TOTAL_STEPS)}
     </>
   );
 }
 
 /** Shown in the middle of the top row on the first question only. */
 export function IntakeStepNote() {
+  const t = useT();
   const progress = useIntakeProgress();
   if ((progress?.step ?? 1) !== 1) return null;
   return (
     <span className="col-span-3 row-start-2 md:col-span-1 md:col-start-2 md:row-start-1 mt-6 md:mt-0 text-center text-[0.9375rem] sm:text-[1.125rem] leading-7 font-bold tracking-[0.15em] uppercase">
-      {TOTAL_STEPS} quick questions. About 5 minutes.
-      <br className="hidden md:block" /> And hear back within 2–3 business days.
+      {t(
+        `${TOTAL_STEPS} quick questions. About 5 minutes.`,
+        `${TOTAL_STEPS} preguntas rápidas. Alrededor de 5 minutos.`
+      )}
+      <br className="hidden md:block" /> {t("And hear back within 2–3 business days.", "Y recibe respuesta dentro de 2 a 3 días hábiles.")}
     </span>
   );
 }

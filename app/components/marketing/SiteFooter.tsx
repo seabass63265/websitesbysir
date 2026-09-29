@@ -1,28 +1,32 @@
+"use client";
+
 import FounderHelmet from "@/app/components/marketing/FounderHelmet";
 import { TransitionLink } from "@/app/components/providers/PageTransition";
+import { useT } from "@/app/components/providers/LanguageProvider";
 
 /**
  * Homepage footer — nav links, wordmark, and contact links under a dotted
  * fade-in band. Ported from the standalone footer mockup, re-themed to the
- * site's white ground / navy ink. Homepage only. Server component.
+ * site's white ground / navy ink. Homepage only.
  *
  * This project's global `.text-sm/.text-xs/.border-t` classes shadow
  * Tailwind's same-named utilities, so those sizes are arbitrary values here.
  */
-const navLinks = [
-  { label: "About", href: "/why-sir" },
-  { label: "Contact", href: "/contact" },
-];
-
-const contactLinks = [
-  { label: "Works", href: "/work", internal: true },
-  { label: "Email", href: "mailto:hello@sirwebsites.com" },
-];
-
 const linkClass =
   "group flex items-center text-brand/60 hover:text-brand transition-colors duration-300 p-1 -m-1 uppercase";
 
 export default function SiteFooter() {
+  const t = useT();
+  const navLinks = [
+    { label: t("About", "Nosotros"), href: "/why-sir" },
+    { label: t("Contact", "Contacto"), href: "/contact" },
+  ];
+
+  const contactLinks = [
+    { label: t("Works", "Trabajos"), href: "/work", internal: true },
+    { label: t("Email", "Correo"), href: "mailto:hello@sirwebsites.com" },
+  ];
+
   return (
     <footer className="w-full">
       <div className="max-w-6xl mx-auto px-8 w-full">
@@ -44,7 +48,7 @@ export default function SiteFooter() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-12 md:gap-8 pt-16 pb-16 items-start">
           <nav
             className="flex flex-col gap-5 items-start text-[0.875rem]"
-            aria-label="Footer navigation"
+            aria-label={t("Footer navigation", "Navegación del pie de página")}
           >
             {navLinks.map((link) => (
               <TransitionLink
@@ -71,14 +75,17 @@ export default function SiteFooter() {
               <span className="text-xl font-bold tracking-tight">SIR_</span>
             </TransitionLink>
             <p className="text-[clamp(0.65rem,3vw,1rem)] whitespace-nowrap text-brand/60 mt-1">
-              A Web Studio for Businesses at Every Stage
+              {t(
+                "A Web Studio for Businesses at Every Stage",
+                "Un estudio web para negocios en cada etapa"
+              )}
             </p>
             <p className="text-base text-brand/60 mt-1">Los Angeles, CA</p>
           </div>
 
           <nav
             className="flex flex-col gap-5 items-end text-[0.875rem]"
-            aria-label="Contact links"
+            aria-label={t("Contact links", "Enlaces de contacto")}
           >
             {contactLinks.map((link) => {
               const content = (

@@ -4,6 +4,7 @@ import localFont from "next/font/local";
 import { Analytics } from "@vercel/analytics/next";
 import SmoothScrollProvider from "@/app/components/providers/SmoothScrollProvider";
 import { PageTransitionProvider } from "@/app/components/providers/PageTransition";
+import { LanguageProvider } from "@/app/components/providers/LanguageProvider";
 import "./globals.css";
 import {
   defaultPreview,
@@ -66,9 +67,11 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       className={`${spaceMono.variable} ${anton.variable} ${knewave.variable} ${display.variable} ${displayItalic.variable}`}
     >
       <body>
-        <PageTransitionProvider>
-          <SmoothScrollProvider>{children}</SmoothScrollProvider>
-        </PageTransitionProvider>
+        <LanguageProvider>
+          <PageTransitionProvider>
+            <SmoothScrollProvider>{children}</SmoothScrollProvider>
+          </PageTransitionProvider>
+        </LanguageProvider>
         <Analytics />
       </body>
     </html>

@@ -1,4 +1,7 @@
+"use client";
+
 import { stylePreviews, type StylePreviewKey } from "@/app/components/contact/IntakeStylePreviews";
+import { useT } from "@/app/components/providers/LanguageProvider";
 
 /**
  * One style direction: a wireframe thumbnail, a short description and two
@@ -25,6 +28,7 @@ export default function IntakeStyleCard({
   onChange: () => void;
   onExplore: () => void;
 }) {
+  const t = useT();
   const id = `style-${value}`;
   const Preview = stylePreviews[value];
   const buttonBase =
@@ -45,7 +49,7 @@ export default function IntakeStyleCard({
         onClick={onChange}
         className="intake-radio"
       />
-      <label htmlFor={id} aria-label={`Select ${title}`} className="absolute inset-0 z-10 cursor-pointer" />
+      <label htmlFor={id} aria-label={t(`Select ${title}`, `Seleccionar ${title}`)} className="absolute inset-0 z-10 cursor-pointer" />
       <div className="intake-style-card__box absolute top-4 right-4 w-5 h-5 z-20 pointer-events-none" />
 
       <div className="p-5 pb-0 flex-grow flex flex-col z-0 relative pointer-events-none">
@@ -87,11 +91,11 @@ export default function IntakeStyleCard({
         >
           {checked ? (
             <>
-              <span className="group-hover/choose:hidden">✓ Chosen</span>
-              <span className="hidden group-hover/choose:inline">✕ Deselect</span>
+              <span className="group-hover/choose:hidden">✓ {t("Chosen", "Elegido")}</span>
+              <span className="hidden group-hover/choose:inline">✕ {t("Deselect", "Deseleccionar")}</span>
             </>
           ) : (
-            "Choose this direction"
+            t("Choose this direction", "Elegir esta dirección")
           )}
         </label>
         <button
@@ -99,7 +103,7 @@ export default function IntakeStyleCard({
           onClick={onExplore}
           className={`${buttonBase} group/btn intake-b-med text-[var(--intake-fg)] hover:bg-[var(--intake-fg)] hover:text-[var(--intake-bg)]`}
         >
-          Explore this website{" "}
+          {t("Explore this website", "Explorar este sitio web")}{" "}
           <span className="inline-block group-hover/btn:translate-x-1 transition-transform ml-0.5">→</span>
         </button>
       </div>

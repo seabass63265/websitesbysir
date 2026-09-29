@@ -4,6 +4,7 @@ import { useState } from "react";
 import { businessCategories } from "@/app/components/work/businessCategories";
 import DeviceShowcase from "@/app/components/marketing/DeviceShowcase";
 import { useSmoothScroll } from "@/app/components/providers/SmoothScrollProvider";
+import { useT } from "@/app/components/providers/LanguageProvider";
 
 type Category = (typeof businessCategories)[number];
 
@@ -16,6 +17,7 @@ type Category = (typeof businessCategories)[number];
 export default function BusinessShowcase() {
   const [selected, setSelected] = useState<Category | null>(null);
   const lenis = useSmoothScroll();
+  const t = useT();
 
   function select(item: Category) {
     const next = item.slug === selected?.slug ? null : item;
@@ -34,7 +36,7 @@ export default function BusinessShowcase() {
       selected={selected}
       filters={
         <div className="business-showcase">
-          <div className="text-xs business-showcase__eyebrow">Built for</div>
+          <div className="text-xs business-showcase__eyebrow">{t("Built for", "Hecho para")}</div>
           <ul className="business-showcase__list">
             {businessCategories.map((item) => (
               <li key={item.slug}>
@@ -46,7 +48,7 @@ export default function BusinessShowcase() {
                   aria-pressed={item.slug === selected?.slug}
                   onClick={() => select(item)}
                 >
-                  {item.number} &mdash; {item.label}
+                  {item.number} &mdash; {t(item.label, item.labelEs)}
                 </button>
               </li>
             ))}

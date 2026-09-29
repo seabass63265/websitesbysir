@@ -1,3 +1,7 @@
+"use client";
+
+import { useT } from "@/app/components/providers/LanguageProvider";
+
 /**
  * One selectable answer. The native radio is visually hidden and its
  * `:checked` state drives the card styling in globals.css (.intake-radio +
@@ -30,6 +34,7 @@ export default function IntakeOptionCard({
   /** The already-chosen card was clicked again. */
   onClear: () => void;
 }) {
+  const t = useT();
   return (
     <label className="block h-full cursor-pointer">
       <input
@@ -58,7 +63,7 @@ export default function IntakeOptionCard({
             <span
               className="text-[2rem] leading-8 font-bold"
               style={{ letterSpacing: "0.05em" }}
-              aria-label={`Price level ${price.length} of 3`}
+              aria-label={t(`Price level ${price.length} of 3`, `Nivel de precio ${price.length} de 3`)}
             >
               {price}
             </span>

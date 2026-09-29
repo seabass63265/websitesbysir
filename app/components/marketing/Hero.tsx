@@ -1,4 +1,7 @@
+"use client";
+
 import CircularGallery from "@/app/components/marketing/CircularGallery";
+import { useT } from "@/app/components/providers/LanguageProvider";
 
 /**
  * Landing hero — the circular image gallery doubles as the hero visual,
@@ -7,27 +10,34 @@ import CircularGallery from "@/app/components/marketing/CircularGallery";
  * for the cut-down sizing that keeps it clear of the orbiting images).
  */
 export default function Hero() {
+  const t = useT();
   return (
     <CircularGallery hideCta>
       <h1 className="circular-gallery__hero-heading">
-        Websites
+        {t("Websites", "Sitios Web")}
         <br />
-        For
+        {t("For", "Para")}
         <br />
-        Business
+        {t("Business", "Negocios")}
       </h1>
       <div className="circular-gallery__hero-text">
-        Custom websites for businesses at every stage and budget.
+        {t(
+          "Custom websites for businesses at every stage and budget.",
+          "Sitios web personalizados para negocios en cada etapa y presupuesto."
+        )}
         <br />
-        We put your business online. 
+        {t("We put your business online.", "Ponemos tu negocio en línea.")}
         <br />
-        Founded by <strong>S</strong>ebastian <strong>I</strong>.{" "}
-        <strong>R</strong>ocha. Designed and developed by{" "}
+        {t("Founded by", "Fundado por")}{" "}
+        <strong>S</strong>ebastian <strong>I</strong>.{" "}
+        <strong>R</strong>ocha.{" "}
+        {t("Designed and developed by", "Diseñado y desarrollado por")}{" "}
         <strong>SIR</strong>.
       </div>
       <div className="circular-gallery__hero-location">Los Angeles, CA</div>
       <a href="#services" className="btn-pill circular-gallery__hero-cta">
-        Let&apos;s Start <span aria-hidden="true">&nbsp;&rarr;</span>
+        {t("Let's Start", "Comencemos")}{" "}
+        <span aria-hidden="true">&nbsp;&rarr;</span>
       </a>
     </CircularGallery>
   );
