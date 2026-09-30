@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Space_Mono, Anton, Knewave } from "next/font/google";
 import localFont from "next/font/local";
 import { Analytics } from "@vercel/analytics/next";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 import SmoothScrollProvider from "@/app/components/providers/SmoothScrollProvider";
 import { PageTransitionProvider } from "@/app/components/providers/PageTransition";
 import { LanguageProvider } from "@/app/components/providers/LanguageProvider";
@@ -85,6 +86,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
           </LanguageProvider>
         </ThemeProvider>
         <Analytics />
+        <SpeedInsights />
       </body>
     </html>
   );

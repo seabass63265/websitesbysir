@@ -130,8 +130,23 @@ export default function WorkSlider({
     });
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 
+    // Matches --color-bg (see globals.css) so the scene doesn't paint over
+    // the page's dark-mode background with a hardcoded white fill.
+    const readBg = () =>
+      new THREE.Color(
+        getComputedStyle(document.documentElement)
+          .getPropertyValue("--color-bg")
+          .trim() || "#ffffff"
+      );
+
     const scene = new THREE.Scene();
-    scene.background = new THREE.Color(0xffffff);
+    scene.background = readBg();
+
+    const onThemeChange = () => {
+      scene.background = readBg();
+    };
+    window.addEventListener("sir:theme-change", onThemeChange);
+    window.addEventListener("storage", onThemeChange);
 
     const camera = new THREE.PerspectiveCamera(45, 1, 0.1, 100);
     camera.position.z = 5;
@@ -490,6 +505,8 @@ export default function WorkSlider({
       window.removeEventListener("mousemove", onMouseMove);
       window.removeEventListener("mouseup", onMouseUp);
       window.removeEventListener("resize", sizeToSection);
+      window.removeEventListener("sir:theme-change", onThemeChange);
+      window.removeEventListener("storage", onThemeChange);
 
       meshes.forEach((mesh) => mesh.geometry.dispose());
       textures.forEach((texture) => texture.dispose());
