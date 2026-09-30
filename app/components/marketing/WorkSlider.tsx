@@ -50,14 +50,23 @@ const wrap = (value: number, range: number) => ((value % range) + range) % range
 const zeroPad = (n: number) => String(n).padStart(2, "0");
 const isVideoSrc = (src: string) => /\.(mp4|webm|mov)$/i.test(src);
 
+/** Below this many pixels of total mouse/touch movement between press and
+ * release, a press-release is treated as a click/tap on whatever slide is
+ * under it, not the start of a drag. */
+const CLICK_DRIFT_PX = 6;
+
 export default function WorkSlider({
   slides,
   glideIn = false,
+  onSlideClick,
 }: {
   slides: Slide[];
   /** Start scrolled off and glide the slides into place (used when the
    * visitor switches category, so the new set eases in instead of cutting). */
   glideIn?: boolean;
+  /** Fired with a slide when it's clicked/tapped (not dragged) — e.g. to
+   * open it in a lightbox. */
+  onSlideClick?: (slide: Slide) => void;
 }) {
   const sectionRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -65,6 +74,40 @@ export default function WorkSlider({
   const counterRef = useRef<HTMLParagraphElement>(null);
   const markerRef = useRef<HTMLDivElement>(null);
   const infoRef = useRef<HTMLDivElement>(null);
+  // The main effect below only ever mounts once ([] deps — see its own
+  // comment), so it reads the latest callback through this ref instead of
+  // closing over a stale one.
+  const onSlideClickRef = useRef(onSlideClick);
+
+  useEffect(() => {
+    onSlideClickRef.current = onSlideClick;
+  }, [onSlideClick]);
+
+  // Same story for `slides`: the meshes/textures are only ever built once
+  // from the slides the component mounted with, but a slide's `name` can
+  // change afterward (a language toggle re-localizes it — see
+  // WorkShowcase's `localizeSlideName`) without the media changing, so the
+  // title text and click handler need the latest names, not the mount-time
+  // ones.
+  const slidesRef = useRef(slides);
+  // Tracks whichever slide index the scroll animation loop currently has
+  // centered, so the effect below can refresh the on-screen title text
+  // immediately on a language change instead of waiting for the visitor to
+  // scroll past another slide.
+  const activeSlideIndexRef = useRef(-1);
+  const isFirstSlidesEffect = useRef(true);
+
+  useEffect(() => {
+    slidesRef.current = slides;
+    if (isFirstSlidesEffect.current) {
+      isFirstSlidesEffect.current = false;
+      return;
+    }
+    const index = activeSlideIndexRef.current;
+    if (index >= 0 && titleRef.current) {
+      titleRef.current.textContent = slides[index]?.name ?? "";
+    }
+  }, [slides]);
 
   useEffect(() => {
     const section = sectionRef.current;
@@ -226,7 +269,26 @@ export default function WorkSlider({
     let touchStartY = 0;
     let touchLastY = 0;
     let activeSlideIndex = -1;
+    activeSlideIndexRef.current = -1;
     let scrollTimeout: ReturnType<typeof setTimeout>;
+
+    // Click/tap-to-open: total on-screen movement between press and release,
+    // separate from `dragDelta`/momentum above, which track the slider's
+    // own scroll drag rather than "did the pointer basically stay put."
+    const raycaster = new THREE.Raycaster();
+    let mouseDownX = 0;
+    let mouseDrift = 0;
+    let touchStartX = 0;
+    let touchDrift = 0;
+
+    function raycastSlideAt(clientX: number, clientY: number) {
+      const rect = canvas!.getBoundingClientRect();
+      const ndcX = ((clientX - rect.left) / rect.width) * 2 - 1;
+      const ndcY = -(((clientY - rect.top) / rect.height) * 2 - 1);
+      raycaster.setFromCamera(new THREE.Vector2(ndcX, ndcY), camera);
+      const hit = raycaster.intersectObjects(meshes)[0];
+      if (hit) onSlideClickRef.current?.(slidesRef.current[hit.object.userData.index as number]);
+    }
 
     const addDistortionBurst = (amount: number) => {
       if (reduceMotion) return;
@@ -246,6 +308,8 @@ export default function WorkSlider({
 
     function onTouchStart(event: TouchEvent) {
       touchStartY = touchLastY = event.touches[0].clientY;
+      touchStartX = event.touches[0].clientX;
+      touchDrift = 0;
       isScrolling = false;
       scrollMomentum = 0;
     }
@@ -254,12 +318,13 @@ export default function WorkSlider({
       event.preventDefault();
       const deltaY = event.touches[0].clientY - touchLastY;
       touchLastY = event.touches[0].clientY;
+      touchDrift += Math.abs(deltaY);
       addDistortionBurst(Math.abs(deltaY) * 0.02);
       scrollTarget -= deltaY * config.touchSpeed;
       isScrolling = true;
     }
 
-    function onTouchEnd() {
+    function onTouchEnd(event: TouchEvent) {
       const swipeVelocity = (touchLastY - touchStartY) * 0.005;
       if (Math.abs(swipeVelocity) > 0.5) {
         scrollMomentum = -swipeVelocity * config.touchMomentum;
@@ -267,12 +332,19 @@ export default function WorkSlider({
         isScrolling = true;
         setTimeout(() => (isScrolling = false), 800);
       }
+      const touch = event.changedTouches[0];
+      const totalDrift = touchDrift + Math.abs(touch.clientX - touchStartX);
+      if (touch && totalDrift < CLICK_DRIFT_PX) {
+        raycastSlideAt(touch.clientX, touch.clientY);
+      }
     }
 
     function onMouseDown(event: MouseEvent) {
       isDragging = true;
       dragStartY = event.clientY;
       dragDelta = 0;
+      mouseDownX = event.clientX;
+      mouseDrift = 0;
       scrollMomentum = 0;
       canvas!.style.cursor = "grabbing";
     }
@@ -282,12 +354,13 @@ export default function WorkSlider({
       const deltaY = event.clientY - dragStartY;
       dragStartY = event.clientY;
       dragDelta = deltaY;
+      mouseDrift += Math.abs(deltaY);
       addDistortionBurst(Math.abs(deltaY) * 0.02);
       scrollTarget -= deltaY * config.dragSpeed;
       isScrolling = true;
     }
 
-    function onMouseUp() {
+    function onMouseUp(event: MouseEvent) {
       if (!isDragging) return;
       isDragging = false;
       canvas!.style.cursor = "grab";
@@ -296,6 +369,10 @@ export default function WorkSlider({
         addDistortionBurst(Math.abs(dragDelta) * 0.005);
         isScrolling = true;
         setTimeout(() => (isScrolling = false), 800);
+      }
+      const totalDrift = mouseDrift + Math.abs(event.clientX - mouseDownX);
+      if (totalDrift < CLICK_DRIFT_PX) {
+        raycastSlideAt(event.clientX, event.clientY);
       }
     }
 
@@ -382,7 +459,8 @@ export default function WorkSlider({
 
       if (closestIndex !== activeSlideIndex) {
         activeSlideIndex = closestIndex;
-        titleEl!.textContent = slides[activeSlideIndex].name;
+        activeSlideIndexRef.current = activeSlideIndex;
+        titleEl!.textContent = slidesRef.current[activeSlideIndex].name;
         counterEl!.textContent = `${zeroPad(activeSlideIndex + 1)} / ${zeroPad(totalSlides)}`;
         markerEl!.textContent = `Selected ${zeroPad(activeSlideIndex + 1)}`;
       }

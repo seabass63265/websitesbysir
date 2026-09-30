@@ -15,6 +15,10 @@ export type WorkCategory = {
   hasDemo: boolean;
 };
 
+/** "All Features" sentinel — not a real category, same idea as
+ * ALL_BUSINESSES_SLUG in businessCategories.ts. */
+export const ALL_FEATURES_SLUG = "all";
+
 export const workCategories: WorkCategory[] = [
   {
     number: "01",

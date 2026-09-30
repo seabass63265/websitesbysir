@@ -1,4 +1,4 @@
-import WorkSlider from "@/app/components/marketing/WorkSlider";
+import WorkSlider, { type Slide } from "@/app/components/marketing/WorkSlider";
 import { PlaceholderDemo } from "@/app/components/work/CategorySection";
 import { sliderCollections } from "@/app/components/work/sliderCollections";
 
@@ -11,16 +11,24 @@ import { sliderCollections } from "@/app/components/work/sliderCollections";
 export default function SliderContent({
   collectionId,
   glideIn,
+  onSlideClick,
 }: {
   collectionId: string;
   glideIn?: boolean;
+  /** See WorkSlider — opens the clicked slide in WorkShowcase's lightbox. */
+  onSlideClick?: (slide: Slide) => void;
 }) {
   const active =
     sliderCollections.find((collection) => collection.id === collectionId) ??
     sliderCollections[0];
 
   return active.slides.length > 0 ? (
-    <WorkSlider key={active.id} slides={active.slides} glideIn={glideIn} />
+    <WorkSlider
+      key={active.id}
+      slides={active.slides}
+      glideIn={glideIn}
+      onSlideClick={onSlideClick}
+    />
   ) : (
     <PlaceholderDemo title={active.label} />
   );

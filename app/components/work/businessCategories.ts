@@ -17,7 +17,7 @@ export const ALL_BUSINESSES_SLUG = "all";
 // in showcaseMedia.ts — everyone else still shows a "coming soon" screen in
 // the device showcase.
 export const businessCategories: BusinessCategory[] = [
-  { number: "01", slug: "professional-services", label: "Professional Services", labelEs: "Servicios Profesionales" },
+  { number: "01", slug: "professional-services", label: "Schools, Education, & Training", labelEs: "Escuelas, Educación, y Capacitación" },
   { number: "02", slug: "marketing-agency", label: "Marketing & Creative Agency", labelEs: "Agencia de Marketing y Creatividad" },
   { number: "03", slug: "nonprofit", label: "Nonprofit", labelEs: "Organización sin Fines de Lucro" },
   { number: "04", slug: "food-restaurants", label: "Food & Restaurants", labelEs: "Comida y Restaurantes" },

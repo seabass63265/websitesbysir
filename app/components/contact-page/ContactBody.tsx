@@ -12,12 +12,6 @@ const icons = {
       <rect x="3" y="6" width="18" height="12" />
     </>
   ),
-  phone: (
-    <>
-      <rect x="6" y="2" width="12" height="20" />
-      <path d="M12 18H12.01" strokeWidth="2" strokeLinecap="round" />
-    </>
-  ),
   studio: (
     <>
       <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
@@ -83,13 +77,6 @@ export default function ContactBody() {
                   <div>
                     <div className="contact-row__label">{t("Email", "Correo")}</div>
                     <div className="contact-row__value">hello@sirwebsites.com</div>
-                  </div>
-                </a>
-                <a href="tel:+13104993005" className="contact-row">
-                  <div className="contact-row__icon"><Icon name="phone" /></div>
-                  <div>
-                    <div className="contact-row__label">{t("Phone", "Teléfono")}</div>
-                    <div className="contact-row__value">(310) 499-3005</div>
                   </div>
                 </a>
                 <div className="contact-row">
