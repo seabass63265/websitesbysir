@@ -3289,40 +3289,65 @@ select {
   color: #4ade80;
 }
 
-/* Limited-launch-offer corner promo (LaunchOfferToast). Sits below the
-   fullscreen nav's z-index (130) so opening the menu covers it instead of
-   floating on top. */
-.promo-toast {
+/* Limited-launch-offer modal (LaunchOfferToast) — centered panel over a
+   blurred backdrop, same presentation as the language toast (.lang-backdrop
+   / .lang-toast) but dismissible rather than a forced choice. Sits just
+   below the language toast's z-index so the two never compete if both were
+   somehow open. */
+.promo-backdrop {
   position: fixed;
-  right: 1.5rem;
-  bottom: 1.5rem;
-  z-index: 110;
-  width: min(300px, calc(100vw - 2rem));
-  padding: 1.25rem 1.375rem 1.5rem;
-  background-color: var(--brand);
-  color: var(--bg);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.3);
+  inset: 0;
+  z-index: 145;
+  background-color: rgba(255, 255, 255, 0.35);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
   opacity: 0;
   visibility: hidden;
-  transform: translateY(1.5rem);
-  transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1),
-    opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1), visibility 0s linear 0.6s;
+  cursor: pointer;
+  transition: opacity 0.7s ease, visibility 0s linear 0.7s;
 }
 
-.promo-toast.is-open {
+.promo-backdrop.is-open {
   opacity: 1;
   visibility: visible;
-  transform: translateY(0);
   transition-delay: 0s;
 }
 
-.promo-toast__close {
+.promo-modal {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  z-index: 146;
+  width: min(380px, calc(100% - 2rem));
+  transform: translate(-50%, calc(-50% + 3rem));
+  opacity: 0;
+  visibility: hidden;
+  transition: transform 0.7s cubic-bezier(0.16, 1, 0.3, 1),
+    opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1), visibility 0s linear 0.7s;
+}
+
+.promo-modal.is-open {
+  transform: translate(-50%, -50%);
+  opacity: 1;
+  visibility: visible;
+  transition-delay: 0s;
+}
+
+.promo-modal__panel {
+  position: relative;
+  padding: 1.75rem 1.75rem 2rem;
+  background-color: var(--brand);
+  color: var(--bg);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.4);
+}
+
+.promo-modal__close {
   position: absolute;
-  top: 0.5rem;
-  right: 0.5rem;
-  width: 1.75rem;
-  height: 1.75rem;
+  top: 0.75rem;
+  right: 0.75rem;
+  width: 2rem;
+  height: 2rem;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -3330,63 +3355,143 @@ select {
   border: 0;
   color: var(--bg);
   opacity: 0.6;
-  font-size: 1.25rem;
+  font-size: 1.375rem;
   line-height: 1;
   cursor: pointer;
   transition: opacity 0.2s ease;
 }
 
-.promo-toast__close:hover {
+.promo-modal__close:hover {
   opacity: 1;
 }
 
-.promo-toast__title {
-  padding-right: 1.25rem;
-  font-size: 0.8125rem;
+.promo-modal__close:focus-visible {
+  outline: 2px solid var(--bg);
+  outline-offset: 2px;
+}
+
+.promo-modal__eyebrow {
+  margin-bottom: 0.75rem;
+  font-size: 0.625rem;
   font-weight: 700;
-  letter-spacing: 0.06em;
+  letter-spacing: 0.2em;
   text-transform: uppercase;
-  line-height: 1.35;
-  margin-bottom: 0.625rem;
+  opacity: 0.6;
 }
 
-.promo-toast__body {
+.promo-modal__title {
+  padding-right: 1.25rem;
+  font-size: 1.0625rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  text-transform: uppercase;
+  line-height: 1.3;
+  margin-bottom: 0.75rem;
+}
+
+.promo-modal__body {
   font-size: 0.8125rem;
-  line-height: 1.5;
+  line-height: 1.55;
   opacity: 0.8;
-  margin-bottom: 1.125rem;
+  margin-bottom: 1.5rem;
 }
 
-.promo-toast__cta {
+.promo-modal__cta {
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
-  padding: 0.625rem 1rem;
+  padding: 0.75rem 1.25rem;
   background: var(--bg);
   color: var(--brand);
+  border: 0;
+  font-family: inherit;
   font-size: 0.75rem;
   font-weight: 700;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  transition: background-color 0.2s ease, color 0.2s ease, gap 0.2s ease;
+  cursor: pointer;
+  transition: background-color 0.2s ease, color 0.2s ease, gap 0.2s ease,
+    opacity 0.2s ease;
 }
 
-.promo-toast__cta:hover {
+.promo-modal__cta:hover {
   gap: 0.75rem;
 }
 
-@media (max-width: 900px) {
-  .promo-toast {
-    right: 1rem;
-    bottom: 1rem;
-    left: 1rem;
-    width: auto;
+.promo-modal__cta:disabled {
+  cursor: default;
+  opacity: 0.7;
+}
+
+.promo-modal__cta:focus-visible {
+  outline: 2px solid var(--bg);
+  outline-offset: 2px;
+}
+
+/* Small "claimed" confirmation toast — same bottom-center card pattern as
+   the intake form's .intake-toast, kept as its own class since it can
+   appear outside the intake flow (any industry page). */
+.promo-confirm-wrap {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 2rem;
+  z-index: 147;
+  display: flex;
+  justify-content: center;
+  padding: 0 1rem;
+  pointer-events: none;
+}
+
+.promo-confirm {
+  max-width: 26rem;
+  padding: 1rem 1.5rem;
+  background: var(--brand);
+  color: var(--bg);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.3);
+  font-size: 0.8125rem;
+  line-height: 1.4;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  text-align: center;
+  animation: promo-confirm-in 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.promo-confirm.is-leaving {
+  animation: promo-confirm-out 0.4s cubic-bezier(0.55, 0, 0.55, 0.2) forwards;
+}
+
+@keyframes promo-confirm-in {
+  from {
+    opacity: 0;
+    transform: translateY(1.5rem);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes promo-confirm-out {
+  from {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(1.5rem);
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .promo-toast {
+  .promo-backdrop,
+  .promo-modal,
+  .promo-modal__cta {
     transition: none;
+  }
+  .promo-confirm {
+    animation: none;
   }
 }
 

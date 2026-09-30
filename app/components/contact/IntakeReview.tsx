@@ -6,9 +6,11 @@
  * plus the "I've reviewed my answers" confirmation. Presentational: the
  * flow owns the answers and what "Edit" does.
  */
-import { useLayoutEffect, useRef } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
+import { usePathname } from "next/navigation";
 import { DOMAIN_STEP_ENABLED } from "@/app/components/contact/IntakeProgress";
 import { useT } from "@/app/components/providers/LanguageProvider";
+import { launchOfferClaimedKey } from "@/lib/launchOffer";
 
 const icons = {
   store:
@@ -139,6 +141,16 @@ export default function IntakeReview({
   businessLabel?: string;
 }) {
   const t = useT();
+  const pathname = usePathname();
+  const [discountClaimed, setDiscountClaimed] = useState(false);
+  useEffect(() => {
+    try {
+      setDiscountClaimed(localStorage.getItem(launchOfferClaimedKey(pathname)) === "1");
+    } catch {
+      // Ignore — just won't show the badge.
+    }
+  }, [pathname]);
+
   // The notes box grows with what's typed (and re-fits when the width changes
   // how the text wraps) instead of scrolling inside a fixed-height box.
   const notesRef = useRef<HTMLTextAreaElement>(null);
@@ -282,6 +294,11 @@ export default function IntakeReview({
             />
             <div className="p-6 md:p-8 flex-1">
               <span className="text-[1.5rem] leading-8 font-bold uppercase block" style={wrap}>{data.plan}</span>
+              {discountClaimed && (
+                <span className="inline-block mt-4 px-3 py-1.5 bg-[#FFD60A] text-[var(--intake-fg)] text-[0.8125rem] leading-5 font-bold uppercase tracking-wide">
+                  {t("🎉 Launch discount applied — 10% off", "🎉 Descuento de lanzamiento aplicado — 10% de descuento")}
+                </span>
+              )}
             </div>
           </div>
         </div>

@@ -1,7 +1,9 @@
 "use client";
 
 import { Fragment, useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
+import { usePathname } from "next/navigation";
 import { useSmoothScroll } from "@/app/components/providers/SmoothScrollProvider";
+import { launchOfferClaimedKey } from "@/lib/launchOffer";
 import { DOMAIN_STEP_ENABLED, useIntakeProgress } from "@/app/components/contact/IntakeProgress";
 import { TransitionLink, usePageTransition } from "@/app/components/providers/PageTransition";
 import IntakeToast from "@/app/components/contact/IntakeToast";
@@ -91,6 +93,7 @@ function IntakeSteps({
   notify,
 }: IntakeFormProps & { notify: (message: string) => void }) {
   const t = useT();
+  const pathname = usePathname();
   const options = [
     {
       value: "new_website",
@@ -1857,8 +1860,15 @@ function IntakeSteps({
         event.preventDefault();
         // Continue only appears once the box is ticked; this is just a guard.
         if (!confirmed || submitting) return;
+        let discountClaimed = false;
+        try {
+          discountClaimed = localStorage.getItem(launchOfferClaimedKey(pathname)) === "1";
+        } catch {
+          // Ignore.
+        }
         const payload = {
           source: "intake" as const,
+          launchDiscountClaimed: discountClaimed,
           industry: pricing?.label ?? "General",
           projectType,
           businessName: businessName.trim(),
