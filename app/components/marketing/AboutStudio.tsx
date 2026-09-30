@@ -114,7 +114,7 @@ export default function AboutStudio() {
             <div
               className={
                 lang === "es"
-                  ? "w-full lg:w-[calc(100%+2rem)] lg:-mr-8 mt-12 border border-brand"
+                  ? "w-full lg:w-[calc(100%+3rem)] lg:-mr-12 mt-12 border border-brand"
                   : "w-full mt-12 border border-brand"
               }
             >
@@ -125,7 +125,7 @@ export default function AboutStudio() {
                 {stats.map((stat, index) => (
                   <div
                     key={stat.label}
-                    className={`${lang === "es" ? "p-6 md:p-7" : "p-6"} flex flex-col items-center justify-center text-center${
+                    className={`${lang === "es" ? "p-6 md:p-8" : "p-6"} flex flex-col items-center justify-center text-center${
                       index < stats.length - 1
                         ? " border-b md:border-b-0 md:border-r border-brand"
                         : ""
