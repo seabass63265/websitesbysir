@@ -105,10 +105,20 @@ export default function DeviceScene({
   const controllerRef = useRef<Controller | null>(null);
   const [ready, setReady] = useState(false);
   const onFocusChangeRef = useRef(onFocusChange);
+  // The mount effect below only runs once ([] deps), so it can't see a later
+  // language switch directly — it reads this ref (kept current here) instead
+  // of closing over `comingSoonText`, and the selection effect further down
+  // re-triggers a screen rebuild whenever `comingSoonText` changes so an
+  // already-showing placeholder texture actually gets redrawn.
+  const comingSoonTextRef = useRef(comingSoonText);
 
   useEffect(() => {
     onFocusChangeRef.current = onFocusChange;
   }, [onFocusChange]);
+
+  useEffect(() => {
+    comingSoonTextRef.current = comingSoonText;
+  }, [comingSoonText]);
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -205,7 +215,7 @@ export default function DeviceScene({
         screenAspect: number
       ): ITexture {
         if (!src) {
-          const texture = placeholderTexture(label, screenAspect, font, comingSoonText) as unknown as ITexture;
+          const texture = placeholderTexture(label, screenAspect, font, comingSoonTextRef.current) as unknown as ITexture;
           screenTextures.push(texture);
           return texture;
         }
@@ -361,7 +371,9 @@ export default function DeviceScene({
 
   useEffect(() => {
     if (ready) controllerRef.current?.setSelection(selection);
-  }, [ready, selection]);
+    // comingSoonText: a language switch should redraw an already-showing
+    // placeholder screen, not just affect the next selection.
+  }, [ready, selection, comingSoonText]);
 
   return (
     <>
