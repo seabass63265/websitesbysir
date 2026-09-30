@@ -5000,6 +5000,18 @@ a.contact-row:focus-visible {
   display: none;
 }
 
+/* The Spanish line ("Todos los negocios. Todos los presupuestos. En
+   serio_") runs noticeably longer than the English one it's sized for, so
+   at the same 3.5cqw it overflowed past the right edge and clipped "serio_".
+   Scaled down by the same ratio the extra characters add. Desktop only —
+   on phones (below) the line already wraps to its own big stacked rows, so
+   English and Spanish share that same sizing. */
+@media (min-width: 769px) {
+  html[lang="es"] .budget-statement .budget-statement__title {
+    font-size: 2.6cqw;
+  }
+}
+
 @media (max-width: 768px) {
   .pad-global.budget-statement {
     padding-top: 0.5rem;
