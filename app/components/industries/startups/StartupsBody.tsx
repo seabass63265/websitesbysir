@@ -11,6 +11,7 @@ import PlatformConnections from "@/app/components/industries/startups/PlatformCo
 import PricingSection from "@/app/components/industries/startups/PricingSection";
 import NumberedSection from "@/app/components/industries/NumberedSection";
 import IntakeSection from "@/app/components/contact/IntakeSection";
+import LaunchOfferToast from "@/app/components/marketing/LaunchOfferToast";
 import { useT } from "@/app/components/providers/LanguageProvider";
 
 /**
@@ -77,6 +78,7 @@ export default function StartupsBody() {
     <>
       <ScrollToTop />
       <RestaurantsPageLoader />
+      <LaunchOfferToast />
       <StartupHeader />
       <main className="grid-container">
         <StartupHero />

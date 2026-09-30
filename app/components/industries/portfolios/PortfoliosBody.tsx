@@ -11,6 +11,7 @@ import PlatformConnections from "@/app/components/industries/portfolios/Platform
 import PricingSection from "@/app/components/industries/portfolios/PricingSection";
 import NumberedSection from "@/app/components/industries/NumberedSection";
 import IntakeSection from "@/app/components/contact/IntakeSection";
+import LaunchOfferToast from "@/app/components/marketing/LaunchOfferToast";
 import { useT } from "@/app/components/providers/LanguageProvider";
 
 /**
@@ -65,6 +66,7 @@ export default function PortfoliosBody() {
     <>
       <ScrollToTop />
       <RestaurantsPageLoader />
+      <LaunchOfferToast />
       <PortfolioHeader />
       <main className="grid-container">
         <PortfolioHero />

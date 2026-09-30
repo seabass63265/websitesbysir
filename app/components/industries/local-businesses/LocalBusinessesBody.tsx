@@ -11,6 +11,7 @@ import ProcessSection from "@/app/components/industries/local-businesses/Process
 import PricingSection from "@/app/components/industries/local-businesses/PricingSection";
 import NumberedSection from "@/app/components/industries/NumberedSection";
 import IntakeSection from "@/app/components/contact/IntakeSection";
+import LaunchOfferToast from "@/app/components/marketing/LaunchOfferToast";
 import { useT } from "@/app/components/providers/LanguageProvider";
 
 /**
@@ -85,6 +86,7 @@ export default function LocalBusinessesBody() {
     <>
       <ScrollToTop />
       <RestaurantsPageLoader />
+      <LaunchOfferToast />
       <LocalBusinessHeader />
       <main className="grid-container">
         <LocalBusinessHero />

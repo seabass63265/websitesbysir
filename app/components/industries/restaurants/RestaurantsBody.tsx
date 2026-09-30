@@ -11,6 +11,7 @@ import LaunchProcess from "@/app/components/industries/restaurants/LaunchProcess
 import PricingSection from "@/app/components/industries/restaurants/PricingSection";
 import NumberedSection from "@/app/components/industries/NumberedSection";
 import IntakeSection from "@/app/components/contact/IntakeSection";
+import LaunchOfferToast from "@/app/components/marketing/LaunchOfferToast";
 import { useT } from "@/app/components/providers/LanguageProvider";
 
 /**
@@ -57,6 +58,7 @@ export default function RestaurantsBody() {
     <>
       <ScrollToTop />
       <RestaurantsPageLoader />
+      <LaunchOfferToast />
       <RestaurantsHeader />
       <main className="grid-container">
         <RestaurantsHero />

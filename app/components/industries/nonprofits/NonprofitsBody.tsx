@@ -11,6 +11,7 @@ import ProcessSection from "@/app/components/industries/nonprofits/ProcessSectio
 import PricingSection from "@/app/components/industries/nonprofits/PricingSection";
 import NumberedSection from "@/app/components/industries/NumberedSection";
 import IntakeSection from "@/app/components/contact/IntakeSection";
+import LaunchOfferToast from "@/app/components/marketing/LaunchOfferToast";
 import { useT } from "@/app/components/providers/LanguageProvider";
 
 /**
@@ -69,6 +70,7 @@ export default function NonprofitsBody() {
     <>
       <ScrollToTop />
       <RestaurantsPageLoader />
+      <LaunchOfferToast />
       <NonprofitHeader />
       <main className="grid-container">
         <NonprofitHero />
