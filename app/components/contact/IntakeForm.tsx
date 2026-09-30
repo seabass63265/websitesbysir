@@ -1347,6 +1347,9 @@ function IntakeSteps({
     setStyleError(false);
   };
   const explore = (name: string) => console.log(`Exploring website: ${name}`);
+  // Temporarily hidden: the "Which style feels right" intro + example cards
+  // + "Show me more" toggle. Flip back to true to bring them back.
+  const SHOW_STYLE_EXAMPLES = false;
 
   return (
     <form
@@ -1372,66 +1375,70 @@ function IntakeSteps({
       }}
     >
       <div ref={gridRef} className="mb-10">
-        <div className="grid grid-cols-1 md:grid-cols-[minmax(0,1.35fr)_minmax(0,1fr)] gap-x-16 gap-y-6 items-start mb-10">
-          <IntakeIntro
-            eyebrow={t("A little visual inspiration.", "Un poco de inspiración visual.")}
-            title={
-              <>
-                {t("Which style", "¿Qué estilo")}
-                <br />
-                {t("feels right for", "se siente correcto para")}
-                <br />
-                {t(`your ${businessLabel}?`, `tu ${businessLabel}?`)}
-              </>
-            }
-          />
-          {/* Top padding = the eyebrow line + its margin, plus half the extra height of the
-              title's first line, so the text sits level with "WHICH STYLE". */}
-          <p className="text-base sm:text-lg leading-relaxed max-w-xl intake-t-dim md:pt-[3.6rem]">
-            {t(
-              "Choose an example for inspiration, not an exact template. We'll customize your website. You can select a style, ask us to choose, or skip this step for now.",
-              "Elige un ejemplo como inspiración, no una plantilla exacta. Personalizaremos tu sitio web. Puedes elegir un estilo, pedirnos que elijamos, o saltar este paso por ahora."
-            )}
-          </p>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
-          {styleOptions.map((option) => (
-            <IntakeStyleCard
-              key={option.value}
-              {...option}
-              checked={styleDirection === option.value}
-              onChange={() => chooseStyle(option.value)}
-              onExplore={() => explore(option.title)}
-            />
-          ))}
-        </div>
-
-        {showMoreStyles && (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
-            {moreStyleOptions.map((option) => (
-              <IntakeStyleCard
-                key={option.value}
-                {...option}
-                checked={styleDirection === option.value}
-                onChange={() => chooseStyle(option.value)}
-                onExplore={() => explore(option.title)}
+        {SHOW_STYLE_EXAMPLES && (
+          <>
+            <div className="grid grid-cols-1 md:grid-cols-[minmax(0,1.35fr)_minmax(0,1fr)] gap-x-16 gap-y-6 items-start mb-10">
+              <IntakeIntro
+                eyebrow={t("A little visual inspiration.", "Un poco de inspiración visual.")}
+                title={
+                  <>
+                    {t("Which style", "¿Qué estilo")}
+                    <br />
+                    {t("feels right for", "se siente correcto para")}
+                    <br />
+                    {t(`your ${businessLabel}?`, `tu ${businessLabel}?`)}
+                  </>
+                }
               />
-            ))}
-          </div>
+              {/* Top padding = the eyebrow line + its margin, plus half the extra height of the
+                  title's first line, so the text sits level with "WHICH STYLE". */}
+              <p className="text-base sm:text-lg leading-relaxed max-w-xl intake-t-dim md:pt-[3.6rem]">
+                {t(
+                  "Choose an example for inspiration, not an exact template. We'll customize your website. You can select a style, ask us to choose, or skip this step for now.",
+                  "Elige un ejemplo como inspiración, no una plantilla exacta. Personalizaremos tu sitio web. Puedes elegir un estilo, pedirnos que elijamos, o saltar este paso por ahora."
+                )}
+              </p>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+              {styleOptions.map((option) => (
+                <IntakeStyleCard
+                  key={option.value}
+                  {...option}
+                  checked={styleDirection === option.value}
+                  onChange={() => chooseStyle(option.value)}
+                  onExplore={() => explore(option.title)}
+                />
+              ))}
+            </div>
+
+            {showMoreStyles && (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+                {moreStyleOptions.map((option) => (
+                  <IntakeStyleCard
+                    key={option.value}
+                    {...option}
+                    checked={styleDirection === option.value}
+                    onChange={() => chooseStyle(option.value)}
+                    onExplore={() => explore(option.title)}
+                  />
+                ))}
+              </div>
+            )}
+
+            <div className="flex justify-center mb-6">
+              <button
+                type="button"
+                onClick={() => setShowMoreStyles((open) => !open)}
+                className="cursor-pointer text-[0.75rem] leading-4 tracking-widest intake-t-dim uppercase hover:text-[var(--intake-fg)] transition-colors py-2 px-6 border intake-b-dim hover:border-[var(--intake-fg)]"
+              >
+                {showMoreStyles ? t("Show me less", "Mostrar menos") : t("Show me more", "Mostrar más")}
+              </button>
+            </div>
+
+            <AndOrDivider label={t("And/Or", "Y/O")} />
+          </>
         )}
-
-        <div className="flex justify-center mb-6">
-          <button
-            type="button"
-            onClick={() => setShowMoreStyles((open) => !open)}
-            className="cursor-pointer text-[0.75rem] leading-4 tracking-widest intake-t-dim uppercase hover:text-[var(--intake-fg)] transition-colors py-2 px-6 border intake-b-dim hover:border-[var(--intake-fg)]"
-          >
-            {showMoreStyles ? t("Show me less", "Mostrar menos") : t("Show me more", "Mostrar más")}
-          </button>
-        </div>
-
-        <AndOrDivider label={t("And/Or", "Y/O")} />
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-x-16 gap-y-6 items-start mb-10">
           <IntakeIntro
