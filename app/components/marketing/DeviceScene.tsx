@@ -35,6 +35,8 @@ export type SceneSelection = {
   label: string;
   desktop?: string;
   mobile?: string;
+  /** Per-recording cover-fit zoom for the phone screen — see ShowcaseMedia. */
+  mobileZoom?: number;
 } | null;
 
 type Device = "macbook" | "iphone";
@@ -197,14 +199,18 @@ export default function DeviceScene({
         videos = [];
       }
 
-      function coverFit(texture: ITexture, mediaAspect: number, screenAspect: number) {
+      // `zoom` = 1 is an exact cover-fit (crops the recording down to the
+      // screen's aspect ratio with no gaps). Below 1, it shows a bit more of
+      // the recording — i.e. zooms out — at the cost of a slight stretch on
+      // the cropped axis, since the screen quad's own aspect can't change.
+      function coverFit(texture: ITexture, mediaAspect: number, screenAspect: number, zoom = 1) {
         texture.repeat.set(1, 1);
         texture.offset.set(0, 0);
         if (mediaAspect > screenAspect) {
-          texture.repeat.x = screenAspect / mediaAspect;
+          texture.repeat.x = Math.min(1, screenAspect / mediaAspect / zoom);
           texture.offset.x = (1 - texture.repeat.x) / 2;
         } else {
-          texture.repeat.y = mediaAspect / screenAspect;
+          texture.repeat.y = Math.min(1, mediaAspect / screenAspect / zoom);
           texture.offset.y = (1 - texture.repeat.y) / 2;
         }
       }
@@ -212,7 +218,8 @@ export default function DeviceScene({
       function screenFor(
         src: string | undefined,
         label: string,
-        screenAspect: number
+        screenAspect: number,
+        zoom = 1
       ): ITexture {
         if (!src) {
           const texture = placeholderTexture(label, screenAspect, font, comingSoonTextRef.current) as unknown as ITexture;
@@ -230,7 +237,7 @@ export default function DeviceScene({
         const texture = new VideoTexture(video) as unknown as ITexture;
         texture.colorSpace = SRGBColorSpace;
         video.addEventListener("loadedmetadata", () => {
-          coverFit(texture, video.videoWidth / video.videoHeight, screenAspect);
+          coverFit(texture, video.videoWidth / video.videoHeight, screenAspect, zoom);
         });
         screenTextures.push(texture);
         return texture;
@@ -246,7 +253,14 @@ export default function DeviceScene({
             macMaterial.emissiveMap = screenFor(selection.desktop, selection.label, MAC_ASPECT);
           }
           if (phoneMaterial) {
-            phoneMaterial.emissiveMap = screenFor(selection.mobile, selection.label, PHONE_ASPECT);
+            // Per-recording: most mobile screens stay at the default tight
+            // cover-fit; only ones explicitly set in showcaseMedia.ts back off.
+            phoneMaterial.emissiveMap = screenFor(
+              selection.mobile,
+              selection.label,
+              PHONE_ASPECT,
+              selection.mobileZoom ?? 1
+            );
           }
         }
         macMaterial?.setDirty();

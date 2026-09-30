@@ -13,17 +13,20 @@ export type BusinessCategory = {
 
 export const ALL_BUSINESSES_SLUG = "all";
 
+// The first three slots are the only categories with a real demo recording
+// in showcaseMedia.ts — everyone else still shows a "coming soon" screen in
+// the device showcase.
 export const businessCategories: BusinessCategory[] = [
-  { number: "01", slug: "food-restaurants", label: "Food & Restaurants", labelEs: "Comida y Restaurantes" },
-  { number: "02", slug: "barber-beauty", label: "Barber & Beauty", labelEs: "Barbería y Belleza" },
-  { number: "03", slug: "home-services", label: "Home Services", labelEs: "Servicios para el Hogar" },
-  { number: "04", slug: "professional-services", label: "Professional Services", labelEs: "Servicios Profesionales" },
-  { number: "05", slug: "retail", label: "Retail", labelEs: "Comercio Minorista" },
-  { number: "06", slug: "pet-shop", label: "Pet Shop / Pet Supply", labelEs: "Tienda de Mascotas" },
-  { number: "07", slug: "repair-services", label: "Repair Services", labelEs: "Servicios de Reparación" },
-  { number: "08", slug: "artist-performer", label: "Artist / Performer", labelEs: "Artista / Intérprete" },
-  { number: "09", slug: "event-planner", label: "Event Planner / Event Services", labelEs: "Organización de Eventos" },
-  { number: "10", slug: "tattoo-shop", label: "Tattoo Shop / Tattoo Artist", labelEs: "Estudio de Tatuajes" },
-  { number: "11", slug: "marketing-agency", label: "Marketing & Creative Agency", labelEs: "Agencia de Marketing y Creatividad" },
-  { number: "12", slug: "nonprofit", label: "Nonprofit", labelEs: "Organización sin Fines de Lucro" },
+  { number: "01", slug: "professional-services", label: "Professional Services", labelEs: "Servicios Profesionales" },
+  { number: "02", slug: "marketing-agency", label: "Marketing & Creative Agency", labelEs: "Agencia de Marketing y Creatividad" },
+  { number: "03", slug: "nonprofit", label: "Nonprofit", labelEs: "Organización sin Fines de Lucro" },
+  { number: "04", slug: "food-restaurants", label: "Food & Restaurants", labelEs: "Comida y Restaurantes" },
+  { number: "05", slug: "barber-beauty", label: "Barber & Beauty", labelEs: "Barbería y Belleza" },
+  { number: "06", slug: "home-services", label: "Home Services", labelEs: "Servicios para el Hogar" },
+  { number: "07", slug: "retail", label: "Retail", labelEs: "Comercio Minorista" },
+  { number: "08", slug: "pet-shop", label: "Pet Shop / Pet Supply", labelEs: "Tienda de Mascotas" },
+  { number: "09", slug: "repair-services", label: "Repair Services", labelEs: "Servicios de Reparación" },
+  { number: "10", slug: "artist-performer", label: "Artist / Performer", labelEs: "Artista / Intérprete" },
+  { number: "11", slug: "event-planner", label: "Event Planner / Event Services", labelEs: "Organización de Eventos" },
+  { number: "12", slug: "tattoo-shop", label: "Tattoo Shop / Tattoo Artist", labelEs: "Estudio de Tatuajes" },
 ];

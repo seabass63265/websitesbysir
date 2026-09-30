@@ -86,7 +86,7 @@ export default function DeviceShowcase({
   const selection = useMemo(() => {
     if (!slug || !label) return null;
     const media = businessShowcase[slug] ?? {};
-    return { label, desktop: media.desktop, mobile: media.mobile };
+    return { label, desktop: media.desktop, mobile: media.mobile, mobileZoom: media.mobileZoom };
   }, [slug, label]);
 
   return (

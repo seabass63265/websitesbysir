@@ -14,6 +14,11 @@ export type ShowcaseMedia = {
   /** Path under /public, e.g. "/seabassaq1.mp4". */
   desktop?: string;
   mobile?: string;
+  /** Cover-fit zoom for `mobile` only: 1 (default) crops tight to the phone
+   * screen's aspect ratio; below 1 shows more of the recording (zoomed out)
+   * at the cost of a slight stretch. Per-video, since it depends on how
+   * close that particular recording's own aspect is to the phone screen's. */
+  mobileZoom?: number;
 };
 
 export const businessShowcase: Record<string, ShowcaseMedia> = {
@@ -23,6 +28,8 @@ export const businessShowcase: Record<string, ShowcaseMedia> = {
   },
   "marketing-agency": {
     desktop: "/lmuccg9.mp4",
+    mobile: "/lmuccgmobile.mp4",
+    mobileZoom: 0.85,
   },
   nonprofit: {
     desktop: "/carlo2.mp4",
