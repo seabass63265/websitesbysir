@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import gsap from "gsap";
 import { useSmoothScroll } from "@/app/components/providers/SmoothScrollProvider";
 import { usePageTransition } from "@/app/components/providers/PageTransition";
-import { useT } from "@/app/components/providers/LanguageProvider";
+import { useLanguage, useT } from "@/app/components/providers/LanguageProvider";
 
 type PrimaryLink = { num: string; label: string; href: string; offset?: boolean };
 type SecondaryLink = { label: string; href: string };
@@ -32,6 +32,7 @@ export default function NavMenu({
   compact?: boolean;
 }) {
   const t = useT();
+  const { lang, setLang } = useLanguage();
   const resolvedPrimary =
     primaryLinks ?? [
       { num: "I", label: t("Home", "Inicio"), href: "/", offset: true },
@@ -162,6 +163,26 @@ export default function NavMenu({
         <span className="menu-toggle__icon">
           <span className="menu-toggle__line menu-toggle__line--top" />
           <span className="menu-toggle__line menu-toggle__line--bottom" />
+        </span>
+      </button>
+
+      {/* Standing language switch — available on every page, independent of
+          the first-visit LanguageToast. Toggles the same LanguageProvider
+          state, so every useT() call site updates live. */}
+      <button
+        type="button"
+        className="lang-toggle"
+        onClick={() => setLang(lang === "en" ? "es" : "en")}
+        aria-label={
+          lang === "en" ? "Switch to Spanish" : "Cambiar a inglés"
+        }
+      >
+        <span className={lang === "en" ? "lang-toggle__opt is-active" : "lang-toggle__opt"}>
+          EN
+        </span>
+        <span className="lang-toggle__sep" aria-hidden="true">/</span>
+        <span className={lang === "es" ? "lang-toggle__opt is-active" : "lang-toggle__opt"}>
+          ES
         </span>
       </button>
 
