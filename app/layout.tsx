@@ -5,6 +5,7 @@ import { Analytics } from "@vercel/analytics/next";
 import SmoothScrollProvider from "@/app/components/providers/SmoothScrollProvider";
 import { PageTransitionProvider } from "@/app/components/providers/PageTransition";
 import { LanguageProvider } from "@/app/components/providers/LanguageProvider";
+import { ThemeProvider } from "@/app/components/providers/ThemeProvider";
 import "./globals.css";
 import {
   defaultPreview,
@@ -65,13 +66,24 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
     <html
       lang="en"
       className={`${spaceMono.variable} ${anton.variable} ${knewave.variable} ${display.variable} ${displayItalic.variable}`}
+      suppressHydrationWarning
     >
+      <head>
+        <script
+          dangerouslySetInnerHTML={{
+            __html:
+              '(function(){try{if(localStorage.getItem("sir_theme")==="dark"){document.documentElement.dataset.theme="dark";}}catch(e){}})();',
+          }}
+        />
+      </head>
       <body>
-        <LanguageProvider>
-          <PageTransitionProvider>
-            <SmoothScrollProvider>{children}</SmoothScrollProvider>
-          </PageTransitionProvider>
-        </LanguageProvider>
+        <ThemeProvider>
+          <LanguageProvider>
+            <PageTransitionProvider>
+              <SmoothScrollProvider>{children}</SmoothScrollProvider>
+            </PageTransitionProvider>
+          </LanguageProvider>
+        </ThemeProvider>
         <Analytics />
       </body>
     </html>

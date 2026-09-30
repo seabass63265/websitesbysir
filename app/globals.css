@@ -46,6 +46,19 @@
   --header-height: 86px;
 }
 
+/* Dark theme — same tokens (--brand ink / --bg paper), overridden for
+   :root[data-theme="dark"] (set by ThemeProvider before paint via the
+   inline anti-flash script in app/layout.tsx, and kept in sync after
+   mount via document.documentElement.dataset.theme). Every utility that
+   already reads --color-brand/--color-bg (bg-brand, text-brand, bg-bg,
+   text-bg, ...) and every component that reads --brand/--bg picks this
+   up automatically — no per-component dark styles needed except where
+   something locally hardcodes a literal color instead of the token. */
+:root[data-theme="dark"] {
+  --color-brand: #e8eef4;
+  --color-bg: #04111d;
+}
+
 /* Wrapped in Tailwind's `base` layer (rather than left unlayered, unlike
    the rest of this file — see the note above) so Tailwind's margin/padding
    utilities (p-*, m-*, mx-auto, etc.), which live in the higher-priority
@@ -1865,10 +1878,11 @@ select {
   align-self: center;
 }
 
-/* Standing EN/ES switch, always on screen (not just the first-visit toast). */
+/* Standing EN/ES switch, always on screen (not just the first-visit toast).
+   Stacked above .theme-toggle, which takes the bottom-most spot. */
 .lang-toggle {
   position: fixed;
-  bottom: 1.5rem;
+  bottom: 4.25rem;
   left: 1.5rem;
   z-index: 140;
   display: inline-flex;
@@ -1912,8 +1926,62 @@ select {
   outline-offset: 2px;
 }
 
+/* Standing LIGHT/DARK switch, mirrors .lang-toggle, stacked directly below
+   it in the same bottom-left corner. */
+.theme-toggle {
+  position: fixed;
+  bottom: 1.5rem;
+  left: 1.5rem;
+  z-index: 140;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  padding: 0.5rem 0.75rem;
+  background-color: var(--bg);
+  border: 1px solid var(--brand);
+  border-radius: 999px;
+  font-family: var(--font-mono), ui-monospace, monospace;
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: var(--brand);
+  cursor: pointer;
+}
+
+.theme-toggle__opt {
+  opacity: 0.4;
+  transition: opacity 0.2s ease;
+}
+
+.theme-toggle__opt.is-active {
+  opacity: 1;
+}
+
+.theme-toggle__sep {
+  opacity: 0.3;
+}
+
+.theme-toggle:hover .theme-toggle__opt {
+  opacity: 0.7;
+}
+
+.theme-toggle:hover .theme-toggle__opt.is-active {
+  opacity: 1;
+}
+
+.theme-toggle:focus-visible {
+  outline: 2px solid var(--brand);
+  outline-offset: 2px;
+}
+
 @media (max-width: 900px) {
   .lang-toggle {
+    bottom: 3.25rem;
+    left: 1rem;
+    padding: 0.4375rem 0.625rem;
+  }
+
+  .theme-toggle {
     bottom: 1rem;
     left: 1rem;
     padding: 0.4375rem 0.625rem;
@@ -3077,12 +3145,12 @@ select {
    `.border-*` so they can't collide with the design-system classes above.
    ============================================================ */
 .intake-page {
-  --intake-bg: #ffffff;
-  --intake-fg: #003153;
-  --border-med: rgba(0, 49, 83, 0.3);
-  --intake-dim: rgba(0, 49, 83, 0.15);
-  --intake-ph: rgba(0, 49, 83, 0.1);
-  --text-dim: rgba(0, 49, 83, 0.6);
+  --intake-bg: var(--bg);
+  --intake-fg: var(--brand);
+  --border-med: color-mix(in srgb, var(--brand) 30%, transparent);
+  --intake-dim: color-mix(in srgb, var(--brand) 15%, transparent);
+  --intake-ph: color-mix(in srgb, var(--brand) 10%, transparent);
+  --text-dim: color-mix(in srgb, var(--brand) 60%, transparent);
   background-color: var(--intake-bg);
   color: var(--intake-fg);
   font-family: var(--font-main);
@@ -3932,10 +4000,10 @@ select {
 .intake-toast {
   max-width: 32rem;
   padding: 1rem 1.5rem;
-  background: #003153;
-  color: #ffffff;
-  border: 1px solid #ffffff;
-  outline: 1px solid #003153;
+  background: var(--brand);
+  color: var(--bg);
+  border: 1px solid var(--bg);
+  outline: 1px solid var(--brand);
   font-family: var(--font-mono);
   font-size: 0.8125rem;
   line-height: 1.25rem;
@@ -4011,13 +4079,11 @@ select {
    site-wide unlayered input/textarea/h1/a rules.
    ============================================================ */
 .contact-page {
-  --brand: #003153;
-  --bg: #ffffff;
-  --border: 1px solid rgba(0, 49, 83, 0.2);
+  --border: 1px solid color-mix(in srgb, var(--brand) 20%, transparent);
   position: relative;
   min-height: 100vh;
-  background-color: #ffffff;
-  color: #003153;
+  background-color: var(--bg);
+  color: var(--brand);
   overflow: hidden;
 }
 
@@ -4027,8 +4093,8 @@ select {
   z-index: 0;
   pointer-events: none;
   background-image:
-    linear-gradient(to right, rgba(0, 49, 83, 0.05) 1px, transparent 1px),
-    linear-gradient(to bottom, rgba(0, 49, 83, 0.05) 1px, transparent 1px);
+    linear-gradient(to right, color-mix(in srgb, var(--brand) 5%, transparent) 1px, transparent 1px),
+    linear-gradient(to bottom, color-mix(in srgb, var(--brand) 5%, transparent) 1px, transparent 1px);
   background-size: 100px 100px;
 }
 
@@ -4078,7 +4144,7 @@ select {
   font-weight: 700;
   letter-spacing: 0.2em;
   text-transform: uppercase;
-  color: rgba(0, 49, 83, 0.55);
+  color: color-mix(in srgb, var(--brand) 55%, transparent);
 }
 
 .contact-hero__title {
@@ -4088,7 +4154,7 @@ select {
   line-height: 1.05;
   letter-spacing: -0.025em;
   text-transform: uppercase;
-  color: #003153;
+  color: var(--brand);
 }
 
 .contact-hero__italic {
@@ -4099,7 +4165,7 @@ select {
   max-width: 36rem;
   font-size: 0.875rem;
   line-height: 1.625;
-  color: rgba(0, 49, 83, 0.6);
+  color: color-mix(in srgb, var(--brand) 60%, transparent);
 }
 
 @media (min-width: 640px) {
@@ -4153,14 +4219,14 @@ select {
   font-weight: 700;
   letter-spacing: 0.2em;
   text-transform: uppercase;
-  color: rgba(0, 49, 83, 0.55);
+  color: color-mix(in srgb, var(--brand) 55%, transparent);
 }
 
 .contact-rows {
   display: flex;
   flex-direction: column;
-  border-top: 1px solid rgba(0, 49, 83, 0.2);
-  background: #ffffff;
+  border-top: 1px solid color-mix(in srgb, var(--brand) 20%, transparent);
+  background: var(--bg);
 }
 
 .contact-row {
@@ -4168,19 +4234,19 @@ select {
   align-items: center;
   gap: 1.5rem;
   padding: 1.25rem 1rem;
-  border-bottom: 1px solid rgba(0, 49, 83, 0.2);
+  border-bottom: 1px solid color-mix(in srgb, var(--brand) 20%, transparent);
   transition: background-color 0.2s;
   outline: none;
 }
 
 a.contact-row:hover,
 div.contact-row:hover {
-  background: rgba(0, 49, 83, 0.03);
+  background: color-mix(in srgb, var(--brand) 3%, transparent);
 }
 
 a.contact-row:focus-visible {
-  background: rgba(0, 49, 83, 0.05);
-  box-shadow: inset 0 0 0 2px #003153;
+  background: color-mix(in srgb, var(--brand) 5%, transparent);
+  box-shadow: inset 0 0 0 2px var(--brand);
 }
 
 .contact-row__icon {
@@ -4190,14 +4256,14 @@ a.contact-row:focus-visible {
   display: flex;
   align-items: center;
   justify-content: center;
-  border: 1px solid rgba(0, 49, 83, 0.2);
-  background: #ffffff;
-  color: rgba(0, 49, 83, 0.7);
+  border: 1px solid color-mix(in srgb, var(--brand) 20%, transparent);
+  background: var(--bg);
+  color: color-mix(in srgb, var(--brand) 70%, transparent);
   transition: border-color 0.2s;
 }
 
 .contact-row:hover .contact-row__icon {
-  border-color: rgba(0, 49, 83, 0.55);
+  border-color: color-mix(in srgb, var(--brand) 55%, transparent);
 }
 
 .contact-row__svg {
@@ -4211,14 +4277,14 @@ a.contact-row:focus-visible {
   font-weight: 700;
   letter-spacing: 0.1em;
   text-transform: uppercase;
-  color: rgba(0, 49, 83, 0.5);
+  color: color-mix(in srgb, var(--brand) 50%, transparent);
 }
 
 .contact-row__value {
   font-size: 0.875rem;
   font-weight: 700;
   letter-spacing: -0.025em;
-  color: #003153;
+  color: var(--brand);
 }
 
 @media (min-width: 640px) {
@@ -4240,7 +4306,7 @@ a.contact-row:focus-visible {
   line-height: 1.4;
   letter-spacing: 0;
   text-wrap: balance;
-  color: rgba(0, 49, 83, 0.75);
+  color: color-mix(in srgb, var(--brand) 75%, transparent);
   transition: color 0.2s;
 }
 
@@ -4256,7 +4322,7 @@ a.contact-row:focus-visible {
 }
 
 .contact-side__intake:hover {
-  color: #003153;
+  color: var(--brand);
 }
 
 @media (min-width: 1024px) {
@@ -4271,8 +4337,8 @@ a.contact-row:focus-visible {
   position: relative;
   width: 100%;
   padding: 1.5rem;
-  border: 1px solid rgba(0, 49, 83, 0.2);
-  background: #ffffff;
+  border: 1px solid color-mix(in srgb, var(--brand) 20%, transparent);
+  background: var(--bg);
 }
 
 @media (min-width: 640px) {
@@ -4335,35 +4401,35 @@ a.contact-row:focus-visible {
   font-weight: 700;
   letter-spacing: 0.15em;
   text-transform: uppercase;
-  color: rgba(0, 49, 83, 0.5);
+  color: color-mix(in srgb, var(--brand) 50%, transparent);
 }
 
 .contact-input {
   width: 100%;
   padding: 1rem;
-  border: 1px solid rgba(0, 49, 83, 0.2);
+  border: 1px solid color-mix(in srgb, var(--brand) 20%, transparent);
   border-radius: 0;
   background: transparent;
   font-family: inherit;
   font-size: 0.875rem;
   line-height: 1.4;
-  color: #003153;
+  color: var(--brand);
   outline: none;
   transition: all 0.15s;
 }
 
 .contact-input::placeholder {
-  color: rgba(0, 49, 83, 0.2);
+  color: color-mix(in srgb, var(--brand) 20%, transparent);
   opacity: 1;
 }
 
 .contact-input:focus {
-  border-color: rgba(0, 49, 83, 0.6);
-  background: rgba(0, 49, 83, 0.02);
+  border-color: color-mix(in srgb, var(--brand) 60%, transparent);
+  background: color-mix(in srgb, var(--brand) 2%, transparent);
 }
 
 .contact-input:focus-visible {
-  box-shadow: 0 0 0 1px #003153;
+  box-shadow: 0 0 0 1px var(--brand);
 }
 
 .contact-input--area {
@@ -4374,8 +4440,8 @@ a.contact-row:focus-visible {
 .contact-input:-webkit-autofill,
 .contact-input:-webkit-autofill:hover,
 .contact-input:-webkit-autofill:focus {
-  -webkit-text-fill-color: #003153;
-  -webkit-box-shadow: 0 0 0 1000px #ffffff inset;
+  -webkit-text-fill-color: var(--brand);
+  -webkit-box-shadow: 0 0 0 1000px var(--bg) inset;
   transition: background-color 5000s ease-in-out 0s;
 }
 
@@ -4388,7 +4454,7 @@ a.contact-row:focus-visible {
 }
 
 .contact-input--area::-webkit-scrollbar-thumb {
-  background: rgba(0, 49, 83, 0.2);
+  background: color-mix(in srgb, var(--brand) 20%, transparent);
 }
 
 /* -- topic radios -- */
@@ -4404,8 +4470,8 @@ a.contact-row:focus-visible {
   flex-grow: 1;
   align-items: center;
   padding: 0.75rem 1rem;
-  border: 1px solid rgba(0, 49, 83, 0.2);
-  background: #ffffff;
+  border: 1px solid color-mix(in srgb, var(--brand) 20%, transparent);
+  background: var(--bg);
   cursor: pointer;
   transition: border-color 0.2s, background-color 0.2s;
 }
@@ -4417,12 +4483,12 @@ a.contact-row:focus-visible {
 }
 
 .contact-topic:hover {
-  border-color: rgba(0, 49, 83, 0.4);
-  background: rgba(0, 49, 83, 0.02);
+  border-color: color-mix(in srgb, var(--brand) 40%, transparent);
+  background: color-mix(in srgb, var(--brand) 2%, transparent);
 }
 
 .contact-topic:focus-within {
-  box-shadow: inset 0 0 0 2px #003153;
+  box-shadow: inset 0 0 0 2px var(--brand);
 }
 
 .contact-topic__input {
@@ -4441,7 +4507,7 @@ a.contact-row:focus-visible {
   width: 0.875rem;
   height: 0.875rem;
   margin-right: 0.75rem;
-  border: 1px solid rgba(0, 49, 83, 0.4);
+  border: 1px solid color-mix(in srgb, var(--brand) 40%, transparent);
   transition: background-color 0.2s, border-color 0.2s;
 }
 
@@ -4451,16 +4517,16 @@ a.contact-row:focus-visible {
   letter-spacing: 0.05em;
   text-transform: uppercase;
   white-space: nowrap;
-  color: rgba(0, 49, 83, 0.7);
+  color: color-mix(in srgb, var(--brand) 70%, transparent);
 }
 
 .contact-topic__input:checked ~ .contact-topic__box {
-  border-color: #003153;
-  background: #003153;
+  border-color: var(--brand);
+  background: var(--brand);
 }
 
 .contact-topic__input:checked ~ .contact-topic__label {
-  color: #003153;
+  color: var(--brand);
 }
 
 /* -- error + submit -- */
@@ -4484,15 +4550,15 @@ a.contact-row:focus-visible {
   width: 100%;
   margin-top: auto;
   padding: 1.25rem 2.5rem;
-  border: 1px solid #003153;
+  border: 1px solid var(--brand);
   border-radius: 0;
-  background: #003153;
+  background: var(--brand);
   font-family: inherit;
   font-size: 0.75rem;
   font-weight: 700;
   letter-spacing: 0.15em;
   text-transform: uppercase;
-  color: #ffffff;
+  color: var(--bg);
   cursor: pointer;
   outline: none;
   transition: all 0.3s;
@@ -4509,7 +4575,7 @@ a.contact-row:focus-visible {
 
 .contact-submit:hover {
   background: transparent;
-  color: #003153;
+  color: var(--brand);
 }
 
 .contact-submit:hover .contact-submit__arrow {
@@ -4517,7 +4583,7 @@ a.contact-row:focus-visible {
 }
 
 .contact-submit:focus-visible {
-  box-shadow: 0 0 0 2px #ffffff, 0 0 0 4px #003153;
+  box-shadow: 0 0 0 2px var(--bg), 0 0 0 4px var(--brand);
 }
 
 /* -- sent state -- */
@@ -4537,8 +4603,8 @@ a.contact-row:focus-visible {
   width: 4rem;
   height: 4rem;
   margin-bottom: 2rem;
-  border: 1px solid rgba(0, 49, 83, 0.2);
-  color: #003153;
+  border: 1px solid color-mix(in srgb, var(--brand) 20%, transparent);
+  color: var(--brand);
 }
 
 .contact-sent__check {
@@ -4559,14 +4625,14 @@ a.contact-row:focus-visible {
   font-weight: 700;
   letter-spacing: -0.025em;
   text-transform: uppercase;
-  color: #003153;
+  color: var(--brand);
 }
 
 .contact-sent__text {
   max-width: 24rem;
   margin-bottom: 3rem;
   font-size: 0.875rem;
-  color: rgba(0, 49, 83, 0.6);
+  color: color-mix(in srgb, var(--brand) 60%, transparent);
 }
 
 .contact-sent__reset {
@@ -4579,7 +4645,7 @@ a.contact-row:focus-visible {
   font-weight: 700;
   letter-spacing: 0.15em;
   text-transform: uppercase;
-  color: rgba(0, 49, 83, 0.5);
+  color: color-mix(in srgb, var(--brand) 50%, transparent);
   cursor: pointer;
   outline: none;
   transition: color 0.2s, border-color 0.2s;
@@ -4587,8 +4653,8 @@ a.contact-row:focus-visible {
 
 .contact-sent__reset:hover,
 .contact-sent__reset:focus-visible {
-  border-bottom-color: #003153;
-  color: #003153;
+  border-bottom-color: var(--brand);
+  color: var(--brand);
 }
 
 @media (min-width: 640px) {
@@ -4984,7 +5050,19 @@ a.contact-row:focus-visible {
 }
 
 /* Device showcase (DeviceShowcase.tsx / DeviceScene.tsx): a
-   caption strip, then a stage holding the 3D laptop + phone canvas. */
+   caption strip, then a stage holding the 3D laptop + phone canvas.
+   Pinned to the light palette regardless of --data-theme (like the device
+   mockups themselves) — the 3D scene's lighting/shadows and the screenshots
+   it plays are staged for a white backdrop, so the whole module stays a
+   consistent light island rather than following the page into dark mode. */
+.device-showcase {
+  --brand: #003153;
+  --bg: #ffffff;
+  --border: 1px solid #003153;
+  background-color: var(--bg);
+  color: var(--brand);
+}
+
 .device-showcase__caption {
   display: flex;
   flex-wrap: wrap;
@@ -5226,7 +5304,7 @@ a.contact-row:focus-visible {
 }
 
 .bp {
-  --bp-ink-light: rgba(0, 49, 83, 0.4);
+  --bp-ink-light: color-mix(in srgb, var(--brand) 40%, transparent);
   --bp-ease: cubic-bezier(0.2, 0.8, 0.2, 1);
   display: grid;
   grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr);

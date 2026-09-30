@@ -72,7 +72,7 @@ export default function WhyWorkWithMe() {
   return (
     <section id="why-me" className="blueprint-field border-b-[1px]">
       <div className="max-w-7xl mx-auto px-6 py-24 md:px-12 md:py-32 flex flex-col gap-16 md:gap-24">
-        <div className="border border-brand bg-white/95 backdrop-blur-sm shadow-2xl p-8 md:p-12 lg:p-16 relative overflow-hidden group">
+        <div className="border border-brand bg-bg/95 backdrop-blur-sm shadow-2xl p-8 md:p-12 lg:p-16 relative overflow-hidden group">
           <div className="absolute top-0 right-0 p-4 opacity-20 group-hover:opacity-40 transition-opacity duration-700 pointer-events-none">
             <svg
               width="60"
@@ -108,7 +108,7 @@ export default function WhyWorkWithMe() {
           </div>
         </div>
 
-        <article className="border border-brand bg-white/95 backdrop-blur-sm shadow-xl flex flex-col lg:flex-row group">
+        <article className="border border-brand bg-bg/95 backdrop-blur-sm shadow-xl flex flex-col lg:flex-row group">
           <div className="p-8 md:p-12 lg:p-16 flex-1 flex flex-col">
             <div className="mb-12">
               <h3 className="text-2xl font-bold tracking-tight inline-block border-b-2 border-brand pb-2">
@@ -146,7 +146,7 @@ export default function WhyWorkWithMe() {
                     className="flex items-center justify-center group/node cursor-default"
                     key={node}
                   >
-                    <div className="bg-white border border-brand px-6 py-3 w-48 text-center shadow-[0_0_0_rgba(0,49,83,0)] group-hover/node:shadow-[0_0_15px_rgba(0,49,83,0.2)] group-hover/node:bg-brand group-hover/node:text-white transition-all duration-300 relative z-10">
+                    <div className="bg-bg border border-brand px-6 py-3 w-48 text-center shadow-[0_0_0_rgba(0,49,83,0)] group-hover/node:shadow-[0_0_15px_rgba(0,49,83,0.2)] group-hover/node:bg-brand group-hover/node:text-bg transition-all duration-300 relative z-10">
                       <span className="text-[0.75rem] font-bold uppercase tracking-widest">
                         {node}
                       </span>
@@ -158,13 +158,13 @@ export default function WhyWorkWithMe() {
           </div>
         </article>
 
-        <article className="border border-brand bg-white shadow-2xl flex flex-col relative overflow-hidden ring-1 ring-brand/20 ring-offset-4 ring-offset-white">
+        <article className="border border-brand bg-bg shadow-2xl flex flex-col relative overflow-hidden ring-1 ring-brand/20 ring-offset-4 ring-offset-bg">
           <div className="absolute inset-0 blueprint-field blueprint-field--dense opacity-20 pointer-events-none" />
           <div className="scan-line animate-scan h-[200%] top-[-50%]" />
 
-          <div className="p-8 md:p-12 lg:p-16 relative z-10 border-b-[1px] border-brand bg-white/80 backdrop-blur-sm">
+          <div className="p-8 md:p-12 lg:p-16 relative z-10 border-b-[1px] border-brand bg-bg/80 backdrop-blur-sm">
             <div className="mb-10">
-              <span className="inline-block border border-brand/30 px-4 py-2 text-[0.875rem] font-bold uppercase tracking-widest text-brand/60 mb-6 bg-white">
+              <span className="inline-block border border-brand/30 px-4 py-2 text-[0.875rem] font-bold uppercase tracking-widest text-brand/60 mb-6 bg-bg">
                 Engineered, Not Generated
               </span>
               <h3 className="text-2xl md:text-3xl font-bold tracking-tight inline-block border-b-2 border-brand pb-2">
@@ -196,7 +196,7 @@ export default function WhyWorkWithMe() {
             </div>
           </div>
 
-          <div className="border-b-[1px] border-brand bg-white z-10 flex overflow-x-auto whitespace-nowrap p-4 text-[10px] uppercase tracking-[0.2em] font-bold text-brand/50 justify-start md:justify-center items-center gap-4">
+          <div className="border-b-[1px] border-brand bg-bg z-10 flex overflow-x-auto whitespace-nowrap p-4 text-[10px] uppercase tracking-[0.2em] font-bold text-brand/50 justify-start md:justify-center items-center gap-4">
             {pipeline.map((step, index) => (
               <span key={step} className="inline-flex items-center gap-4">
                 <span className="text-brand">{step}</span>
@@ -207,10 +207,10 @@ export default function WhyWorkWithMe() {
             ))}
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 relative z-10 bg-white/90 backdrop-blur-md">
+          <div className="grid grid-cols-1 md:grid-cols-2 relative z-10 bg-bg/90 backdrop-blur-md">
             <div className="p-8 md:p-12 lg:p-16 flex flex-col justify-start bg-brand/[0.01]">
               <div className="mb-10">
-                <span className="inline-block border border-brand/30 px-4 py-2 text-[0.875rem] font-bold uppercase tracking-widest text-brand/60 mb-6 bg-white">
+                <span className="inline-block border border-brand/30 px-4 py-2 text-[0.875rem] font-bold uppercase tracking-widest text-brand/60 mb-6 bg-bg">
                   Approach A
                 </span>
                 <h4 className="text-2xl font-bold tracking-tight text-brand/60 line-through decoration-brand/30">
@@ -235,7 +235,7 @@ export default function WhyWorkWithMe() {
               <div className="absolute bottom-0 right-0 w-4 h-4 border-b-2 border-r-2 border-brand/50" />
 
               <div className="mb-10">
-                <span className="inline-block border border-brand px-4 py-2 text-[0.875rem] font-bold uppercase tracking-widest text-white bg-brand mb-6">
+                <span className="inline-block border border-brand px-4 py-2 text-[0.875rem] font-bold uppercase tracking-widest text-bg bg-brand mb-6">
                   My Approach
                 </span>
                 <h4 className="text-2xl font-bold tracking-tight text-brand">
@@ -256,7 +256,7 @@ export default function WhyWorkWithMe() {
             </div>
           </div>
 
-          <div className="border-t-[1px] border-brand p-12 md:p-24 relative z-10 bg-white overflow-hidden flex items-center justify-center min-h-[40vh]">
+          <div className="border-t-[1px] border-brand p-12 md:p-24 relative z-10 bg-bg overflow-hidden flex items-center justify-center min-h-[40vh]">
             <div className="absolute inset-0 opacity-10 pointer-events-none flex items-center justify-center text-brand">
               <svg
                 width="100%"
@@ -294,7 +294,7 @@ export default function WhyWorkWithMe() {
               </svg>
             </div>
 
-            <h3 className="text-3xl md:text-5xl lg:text-6xl font-bold tracking-tighter text-center leading-tight max-w-5xl bg-white/70 p-4 relative z-10 text-brand shadow-2xl">
+            <h3 className="text-3xl md:text-5xl lg:text-6xl font-bold tracking-tighter text-center leading-tight max-w-5xl bg-bg/70 p-4 relative z-10 text-brand shadow-2xl">
               A prompt can generate code.
               <br className="hidden md:block" />
               <span className="text-brand/60">
@@ -304,7 +304,7 @@ export default function WhyWorkWithMe() {
           </div>
         </article>
 
-        <article className="border border-brand bg-white/95 backdrop-blur-sm shadow-xl flex flex-col lg:flex-row group">
+        <article className="border border-brand bg-bg/95 backdrop-blur-sm shadow-xl flex flex-col lg:flex-row group">
           <div className="p-8 md:p-12 lg:p-16 flex-1 flex flex-col order-1 lg:order-2">
             <div className="mb-12">
               <h3 className="text-2xl font-bold tracking-tight inline-block border-b-2 border-brand pb-2">
@@ -351,11 +351,11 @@ export default function WhyWorkWithMe() {
                 <div className="absolute left-0 top-1/2 -translate-x-1/2 -translate-y-1/2 w-2 h-2 bg-brand rounded-full z-10" />
                 <div className="absolute right-0 top-1/2 translate-x-1/2 -translate-y-1/2 w-2 h-2 bg-brand rounded-full z-10" />
 
-                <div className="bg-brand border border-brand text-white p-4 md:p-6 text-center shadow-[0_0_30px_rgba(0,49,83,0.15)] relative z-20 group-hover:scale-105 transition-transform duration-500 w-full mx-2 md:mx-4">
+                <div className="bg-brand border border-brand text-bg p-4 md:p-6 text-center shadow-[0_0_30px_rgba(0,49,83,0.15)] relative z-20 group-hover:scale-105 transition-transform duration-500 w-full mx-2 md:mx-4">
                   <span className="block text-[0.75rem] md:text-[0.875rem] font-bold leading-relaxed tracking-widest uppercase">
                     Built to work.
                     <br />
-                    <span className="text-white/50 block my-2">&#10005;</span>
+                    <span className="text-bg/50 block my-2">&#10005;</span>
                     Built to matter.
                   </span>
                 </div>
@@ -380,7 +380,7 @@ export default function WhyWorkWithMe() {
         </article>
 
         <div className="mt-12 md:mt-24 text-center flex flex-col items-center gap-10 md:gap-14 relative z-10 pb-12">
-          <div className="max-w-2xl mx-auto border border-brand/20 bg-white/80 p-8 md:p-12 backdrop-blur-sm relative">
+          <div className="max-w-2xl mx-auto border border-brand/20 bg-bg/80 p-8 md:p-12 backdrop-blur-sm relative">
             <div className="absolute top-0 left-0 w-2 h-2 border-t-[1px] border-l-[1px] border-brand" />
             <div className="absolute top-0 right-0 w-2 h-2 border-t-[1px] border-r-[1px] border-brand" />
             <div className="absolute bottom-0 left-0 w-2 h-2 border-b-[1px] border-l-[1px] border-brand" />
@@ -397,7 +397,7 @@ export default function WhyWorkWithMe() {
 
           <a
             href="/intake"
-            className="group btn-pill filled relative gap-4 overflow-hidden hover:shadow-[0_0_40px_rgba(0,49,83,0.3)] focus:outline-none focus:ring-2 focus:ring-brand focus:ring-offset-2 focus:ring-offset-white"
+            className="group btn-pill filled relative gap-4 overflow-hidden hover:shadow-[0_0_40px_rgba(0,49,83,0.3)] focus:outline-none focus:ring-2 focus:ring-brand focus:ring-offset-2 focus:ring-offset-bg"
           >
             <span className="relative z-10 flex items-center gap-4">
               Start a Project
@@ -405,7 +405,7 @@ export default function WhyWorkWithMe() {
                 &rarr;
               </span>
             </span>
-            <div className="absolute inset-0 h-[200%] w-full bg-gradient-to-b from-transparent via-white/20 to-transparent top-[-100%] group-hover:animate-flow-down pointer-events-none" />
+            <div className="absolute inset-0 h-[200%] w-full bg-gradient-to-b from-transparent via-bg/20 to-transparent top-[-100%] group-hover:animate-flow-down pointer-events-none" />
           </a>
         </div>
       </div>

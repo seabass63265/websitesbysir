@@ -295,7 +295,7 @@ export default function IntakeReview({
             <div className="p-6 md:p-8 flex-1">
               <span className="text-[1.5rem] leading-8 font-bold uppercase block" style={wrap}>{data.plan}</span>
               {discountClaimed && (
-                <span className="inline-block mt-4 px-3 py-1.5 bg-[#FFD60A] text-[var(--intake-fg)] text-[0.8125rem] leading-5 font-bold uppercase tracking-wide">
+                <span className="inline-block mt-4 px-3 py-1.5 bg-[#FFD60A] text-[#003153] text-[0.8125rem] leading-5 font-bold uppercase tracking-wide">
                   {t("🎉 Launch discount applied — 10% off", "🎉 Descuento de lanzamiento aplicado — 10% de descuento")}
                 </span>
               )}

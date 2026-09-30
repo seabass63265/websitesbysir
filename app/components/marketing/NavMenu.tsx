@@ -5,6 +5,7 @@ import gsap from "gsap";
 import { useSmoothScroll } from "@/app/components/providers/SmoothScrollProvider";
 import { usePageTransition } from "@/app/components/providers/PageTransition";
 import { useLanguage, useT } from "@/app/components/providers/LanguageProvider";
+import { useTheme } from "@/app/components/providers/ThemeProvider";
 
 type PrimaryLink = { num: string; label: string; href: string; offset?: boolean };
 type SecondaryLink = { label: string; href: string };
@@ -33,6 +34,7 @@ export default function NavMenu({
 }) {
   const t = useT();
   const { lang, setLang } = useLanguage();
+  const { theme, setTheme } = useTheme();
   const resolvedPrimary =
     primaryLinks ?? [
       { num: "I", label: t("Home", "Inicio"), href: "/", offset: true },
@@ -183,6 +185,24 @@ export default function NavMenu({
         <span className="lang-toggle__sep" aria-hidden="true">/</span>
         <span className={lang === "es" ? "lang-toggle__opt is-active" : "lang-toggle__opt"}>
           ES
+        </span>
+      </button>
+
+      {/* Standing light/dark switch — same pattern as the lang-toggle. */}
+      <button
+        type="button"
+        className="theme-toggle"
+        onClick={() => setTheme(theme === "light" ? "dark" : "light")}
+        aria-label={
+          theme === "light" ? "Switch to dark mode" : "Switch to light mode"
+        }
+      >
+        <span className={theme === "light" ? "theme-toggle__opt is-active" : "theme-toggle__opt"}>
+          LIGHT
+        </span>
+        <span className="theme-toggle__sep" aria-hidden="true">/</span>
+        <span className={theme === "dark" ? "theme-toggle__opt is-active" : "theme-toggle__opt"}>
+          DARK
         </span>
       </button>
 
