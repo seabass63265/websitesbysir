@@ -2,7 +2,7 @@
 
 import { TransitionLink } from "@/app/components/providers/PageTransition";
 import FounderHelmet from "@/app/components/marketing/FounderHelmet";
-import { useT } from "@/app/components/providers/LanguageProvider";
+import { useLanguage, useT } from "@/app/components/providers/LanguageProvider";
 
 /**
  * "About the studio" block on /why-sir, directly under the budget statement
@@ -36,6 +36,7 @@ function IndustryLink({
 
 export default function AboutStudio() {
   const t = useT();
+  const { lang } = useLanguage();
 
   const principles = [
     {
@@ -106,8 +107,17 @@ export default function AboutStudio() {
               )}
             </p>
 
-            {/* Stats band */}
-            <div className="w-full mt-12 border border-brand">
+            {/* Stats band. The Spanish titles ("PERSONALIZADO", "HÁBILES") run
+                longer than their English counterparts, so this box gets a
+                touch more room — wider on lg screens, more padding in each
+                cell — only when lang is "es". */}
+            <div
+              className={
+                lang === "es"
+                  ? "w-full lg:w-[calc(100%+2rem)] lg:-mr-8 mt-12 border border-brand"
+                  : "w-full mt-12 border border-brand"
+              }
+            >
               <div className="bg-brand text-bg py-4 px-4 text-center font-bold uppercase text-[0.8125rem] md:text-[0.875rem] tracking-widest w-full">
                 {t("Built for businesses at every stage", "Hecho para negocios en cada etapa")}
               </div>
@@ -115,13 +125,13 @@ export default function AboutStudio() {
                 {stats.map((stat, index) => (
                   <div
                     key={stat.label}
-                    className={`p-6 flex flex-col items-center justify-center text-center${
+                    className={`${lang === "es" ? "p-6 md:p-7" : "p-6"} flex flex-col items-center justify-center text-center${
                       index < stats.length - 1
                         ? " border-b md:border-b-0 md:border-r border-brand"
                         : ""
                     }`}
                   >
-                    <div className="text-[1.25rem] md:text-[1.5rem] font-bold uppercase leading-[1.15] mb-3">
+                    <div className="text-[1.25rem] md:text-[1.5rem] font-bold uppercase leading-[1.15] mb-3 break-words">
                       {stat.title}
                     </div>
                     <div className="text-[10px] md:text-[0.75rem] text-brand/50 uppercase tracking-widest max-w-[170px]">

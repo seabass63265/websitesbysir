@@ -37,7 +37,7 @@ export default function NavMenu({
     primaryLinks ?? [
       { num: "I", label: t("Home", "Inicio"), href: "/", offset: true },
       { num: "II", label: t("Works", "Trabajos"), href: "/work", offset: false },
-      { num: "III", label: "Why SIR_", href: "/why-sir", offset: true },
+      { num: "III", label: t("Why SIR_", "Por qué SIR_"), href: "/why-sir", offset: true },
       { num: "IV", label: t("Contact", "Contacto"), href: "/contact", offset: false },
     ];
   const resolvedSecondaryTop =
