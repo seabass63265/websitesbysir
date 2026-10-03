@@ -76,9 +76,9 @@ export default function PricingSection() {
         "Para restaurantes y cafés que quieren que su sitio web apoye activamente pedidos, reservaciones, y crecimiento de clientes."
       ),
       featured: true,
-      price: "$2,000",
+      price: "$2,250",
       priceUnit: t("one-time build", "pago único de desarrollo"),
-      monthlyPrice: "$200",
+      monthlyPrice: "$180",
       monthlyUnit: t("per month\nfor hosting & maintenance", "al mes\npor hosting y mantenimiento"),
       buildItems: [
         t("Up to 6 pages", "Hasta 6 páginas"),
