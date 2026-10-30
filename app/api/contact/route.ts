@@ -51,11 +51,19 @@ export async function POST(request: Request) {
       : typeof fields.businessName === "string"
         ? fields.businessName
         : "";
-  const email = typeof fields.email === "string" ? fields.email : "";
+  const email = typeof fields.email === "string" ? fields.email.trim() : "";
 
   if (!email) {
     return NextResponse.json({ error: "email is required" }, { status: 400 });
   }
+
+  // The client only loosely checks for an "@" before letting someone submit,
+  // so something like "jane@gmail" or a stray space can slip through. Resend
+  // validates replyTo strictly and rejects the *whole* send over it (a 422 —
+  // seen in prod logs tanking otherwise-good submissions), so a malformed
+  // address should just lose the reply-to convenience, not the submission.
+  const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  const replyTo = EMAIL_RE.test(email) ? email : undefined;
 
   const subject =
     source === "intake"
@@ -66,7 +74,7 @@ export async function POST(request: Request) {
     const { error } = await getResend().emails.send({
       from: process.env.CONTACT_FROM_EMAIL ?? "SIR_ Website <onboarding@resend.dev>",
       to: process.env.CONTACT_INBOX ?? "delivered@resend.dev",
-      replyTo: email,
+      ...(replyTo ? { replyTo } : {}),
       subject,
       text: formatBody(fields),
     });
