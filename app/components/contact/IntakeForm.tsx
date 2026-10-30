@@ -4,6 +4,7 @@ import { Fragment, useCallback, useEffect, useLayoutEffect, useRef, useState } f
 import { usePathname } from "next/navigation";
 import { useSmoothScroll } from "@/app/components/providers/SmoothScrollProvider";
 import { launchOfferClaimedKey } from "@/lib/launchOffer";
+import { submitContact } from "@/lib/submitContact";
 import { DOMAIN_STEP_ENABLED, useIntakeProgress } from "@/app/components/contact/IntakeProgress";
 import { TransitionLink, usePageTransition } from "@/app/components/providers/PageTransition";
 import IntakeToast from "@/app/components/contact/IntakeToast";
@@ -1897,29 +1898,23 @@ function IntakeSteps({
           notes: notes.trim(),
         };
         setSubmitting(true);
-        try {
-          const res = await fetch("/api/contact", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(payload),
-          });
-          if (!res.ok) throw new Error("Request failed");
+        const ok = await submitContact(payload);
+        if (ok) {
           const now = new Date();
           const time = now.toLocaleTimeString("en-US", { hour12: false, hour: "2-digit", minute: "2-digit" });
           const date = now.toLocaleDateString("en-US", { month: "2-digit", day: "2-digit", year: "2-digit" });
           setSubmittedAt(`${time} ${date}`);
           goToStep(10);
           savedScroll.current = 0;
-        } catch {
+        } else {
           notify(
             t(
               "Something went wrong sending your project — please try again.",
               "Algo salió mal al enviar tu proyecto — por favor intenta de nuevo."
             )
           );
-        } finally {
-          setSubmitting(false);
         }
+        setSubmitting(false);
       }}
     >
       <div ref={gridRef} className="mb-10">

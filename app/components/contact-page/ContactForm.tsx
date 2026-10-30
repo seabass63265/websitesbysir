@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useT } from "@/app/components/providers/LanguageProvider";
+import { submitContact } from "@/lib/submitContact";
 
 /**
  * The general contact form. Same behaviour as the design: name, email and a
@@ -42,27 +43,21 @@ export default function ContactForm() {
     setShowError(false);
     setSendError(false);
     setSending(true);
-    try {
-      const res = await fetch("/api/contact", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          source: "contact",
-          name: name.trim(),
-          email: email.trim(),
-          topic: topic || "None specified",
-          message: message.trim(),
-        }),
-      });
-      if (!res.ok) throw new Error("Request failed");
+    const ok = await submitContact({
+      source: "contact",
+      name: name.trim(),
+      email: email.trim(),
+      topic: topic || "None specified",
+      message: message.trim(),
+    });
+    if (ok) {
       setSent(true);
-    } catch {
+    } else {
       setSendError(true);
       setPulse(true);
       window.setTimeout(() => setPulse(false), 300);
-    } finally {
-      setSending(false);
     }
+    setSending(false);
   }
 
   function reset() {
