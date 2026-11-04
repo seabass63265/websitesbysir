@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useT } from "@/app/components/providers/LanguageProvider";
-import { submitContact } from "@/lib/submitContact";
+import { submitContact, contactFailureMessage, type SubmitContactFailure } from "@/lib/submitContact";
 
 /**
  * The general contact form. Same behaviour as the design: name, email and a
@@ -24,12 +24,12 @@ export default function ContactForm() {
   const [showError, setShowError] = useState(false);
   const [pulse, setPulse] = useState(false);
   const [sending, setSending] = useState(false);
-  const [sendError, setSendError] = useState(false);
+  const [sendError, setSendError] = useState<SubmitContactFailure | null>(null);
   const [sent, setSent] = useState(false);
 
   const clearError = () => {
     setShowError(false);
-    setSendError(false);
+    setSendError(null);
   };
 
   async function submit(event: React.FormEvent<HTMLFormElement>) {
@@ -41,19 +41,19 @@ export default function ContactForm() {
       return;
     }
     setShowError(false);
-    setSendError(false);
+    setSendError(null);
     setSending(true);
-    const ok = await submitContact({
+    const result = await submitContact({
       source: "contact",
       name: name.trim(),
       email: email.trim(),
       topic: topic || "None specified",
       message: message.trim(),
     });
-    if (ok) {
+    if (result.ok) {
       setSent(true);
     } else {
-      setSendError(true);
+      setSendError(result.reason);
       setPulse(true);
       window.setTimeout(() => setPulse(false), 300);
     }
@@ -190,10 +190,7 @@ export default function ContactForm() {
       )}
       {sendError && (
         <div role="alert" className="contact-error">
-          {t(
-            "Something went wrong sending your message — please try again.",
-            "Algo salió mal al enviar tu mensaje — por favor intenta de nuevo."
-          )}
+          {contactFailureMessage(sendError, t)}
         </div>
       )}
 

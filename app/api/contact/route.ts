@@ -54,7 +54,10 @@ export async function POST(request: Request) {
   const email = typeof fields.email === "string" ? fields.email.trim() : "";
 
   if (!email) {
-    return NextResponse.json({ error: "email is required" }, { status: 400 });
+    return NextResponse.json(
+      { error: "email is required", reason: "invalid_email" },
+      { status: 400 }
+    );
   }
 
   // The client only loosely checks for an "@" before letting someone submit,
@@ -80,7 +83,10 @@ export async function POST(request: Request) {
     });
 
     if (error) {
-      return NextResponse.json({ error: error.message }, { status: 502 });
+      return NextResponse.json(
+        { error: error.message, reason: "email_service" },
+        { status: 502 }
+      );
     }
 
     try {
@@ -103,6 +109,6 @@ export async function POST(request: Request) {
     return NextResponse.json({ ok: true });
   } catch (err) {
     const message = err instanceof Error ? err.message : "Unexpected error";
-    return NextResponse.json({ error: message }, { status: 500 });
+    return NextResponse.json({ error: message, reason: "server" }, { status: 500 });
   }
 }
