@@ -19,6 +19,7 @@ export default function SiteFooter() {
   const t = useT();
   const navLinks = [
     { label: t("About", "Nosotros"), href: "/why-sir" },
+    { label: "Blog", href: "/blog" },
     { label: t("Contact", "Contacto"), href: "/contact" },
   ];
 

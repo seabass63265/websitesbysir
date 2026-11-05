@@ -40,7 +40,8 @@ export default function NavMenu({
       { num: "I", label: t("Home", "Inicio"), href: "/", offset: true },
       { num: "II", label: t("Works", "Trabajos"), href: "/work", offset: false },
       { num: "III", label: t("Why SIR_", "Por qué SIR_"), href: "/why-sir", offset: true },
-      { num: "IV", label: t("Contact", "Contacto"), href: "/contact", offset: false },
+      { num: "IV", label: "Blog", href: "/blog", offset: false },
+      { num: "V", label: t("Contact", "Contacto"), href: "/contact", offset: false },
     ];
   const resolvedSecondaryTop =
     secondaryTop ?? [
